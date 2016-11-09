@@ -1,0 +1,303 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 目录页 -->
+<mapper namespace="com.qcacg.mapper.UserAndBookMapper">
+
+    <resultMap id="UserAndBookMap" type="com.qcacg.entity.user.UserAndBook">
+        <id column="UserId" property="userId"/>
+        <result column="UserName" property="userName"/>
+        <result column="Telephone" property="telephone"/>
+        <result column="Information" property="information"/>
+        <collection property="userEntitys" ofType="com.qcacg.entity.UserEntity"/>
+    </resultMap>
+
+    <!-- 获取作者信息和与作者相关信息 -->
+    <select id="findUserAndBookByBookId" resultMap="UserAndBookMap" parameterType="java.lang.Long">
+        SELECT
+        sys_user.UserId AS userId,
+        sys_user.UserName AS userName,
+        sys_user.Telephone AS telephone,
+        sys_user.Information AS information,
+        wor_book.BookId as bookId,
+        wor_book.BookName as BookName
+        FROM
+        sys_user, wor_book
+        WHERE
+        sys_user.UserId = wor_book.UserId
+        AND
+        wor_book.BookId != #{wor_book.BookId}
+        AND
+        wor_book.UserId = (SELECT wor_book.UserId FROM wor_book WHERE wor_book.BookId = #{wor_book.bookId})
+        ORDER BY
+        wor_book.BookId
+    </select>
+    <!--作者信息-->
+    <select id="findUserByBookId" resultType="com.qcacg.entity.UserEntity" parameterType="java.lang.Long">
+        SELECT
+            UserId AS userId,
+            UserName AS userName,
+            Information AS information
+        FROM
+         sys_user
+        WHERE
+            sys_user.UserId = (SELECT UserId FROM wor_book WHERE wor_book.BookId = #{wor_book.bookId})
+    </select>
+
+    <resultMap id="BookEntityResultMap" type="com.qcacg.entity.BookEntity">
+        <id column="BookId" property="bookId"/>
+        <result column="UserId" property="userId"/>
+        <result column="BookName" property="bookName"/>
+        <result column="Sort" property="sort"/>
+        <result column="BookIntroduction" property="bookIntroduction"/>
+        <result column="BookUpdate" property="bookUpdate"/>
+        <result column="BookCoverImage" property="bookCoverImage"/>
+        <result column="BookWordCount" property="bookWordCount"/>
+        <result column="BookStatus" property="bookStatus"/>
+        <result column="BookHit" property="bookHit"/>
+        <result column="BookCollect" property="bookCollect"/>
+        <result column="BookCopperCoins" property="bookCopperCoins"/>
+        <result column="BookSilverCoins" property="bookSilverCoins"/>
+        <collection property="bookTypeList" ofType="java.lang.Long" resultMap="longResultMap"/>
+    </resultMap>
+    <resultMap id="longResultMap" type="java.lang.Long">
+        <result column="BookTypeId" property="bookTypeList"/>
+    </resultMap>
+    <!--作品相关-->
+    <select id="findUserOtherBookByBookId" resultMap="BookEntityResultMap" parameterType="java.lang.Long">
+        SELECT
+        wor_book.BookId as bookId,
+        wor_book.UserId AS userId,
+        wor_book.BookName as bookName,
+        wor_book.Sort AS sort,
+        wor_book.BookIntroduction AS bookIntroduction,
+        wor_book.BookUpdate AS bookUpdate,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookStatus AS bookStatus,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookSilverCoins AS bookSilverCoins,
+        wor_book_bookType.BookTypeId AS bookTypeId
+        FROM
+        wor_book, wor_book_bookType
+        WHERE
+        wor_book.BookId = wor_book_bookType.BookId
+        AND
+        wor_book_bookType.BookId != #{wor_book.bookId}
+        AND
+        wor_book.UserId = (SELECT UserId FROM wor_book WHERE wor_book.BookId = #{wor_book.bookId})
+    </select>
+
+
+    <resultMap id="BookTypeResultMap" type="com.qcacg.entity.BookTypeEntity">
+        <id column="bookTypeId" property="bookTypeId"/>
+        <result column="bookTypeName" property="bookTypeName"/>
+    </resultMap>
+
+    <!-- 分类信息 -->
+    <select id="findBookTypeByBookId" resultMap="BookTypeResultMap" parameterType="java.lang.Long">
+        SELECT
+        wor_booktype.BookTypeId AS bookTypeId,
+        wor_booktype.BookTypeName AS bookTypeName
+        FROM
+        wor_booktype
+        WHERE
+        wor_booktype.BookTypeId IN (SELECT wor_book_booktype.BookTypeId FROM wor_book_booktype WHERE wor_book_booktype.BookId = #{wor_book.BookId})
+    </select>
+
+    <resultMap id="VolumeResultMap" type="com.qcacg.entity.volume.VolumeCustom">
+        <id column="volumeId" property="volumeId"/>
+        <result column="bookId" property="bookId"/>
+        <result column="volumeName" property="volumeName"/>
+        <result column="volumeWordCount" property="volumeWordCount"/>
+        <collection property="contentEntityList" ofType="com.qcacg.entity.ContentEntity" resultMap="ContentResultMap"/>
+    </resultMap>
+
+    <resultMap id="ContentResultMap" type="com.qcacg.entity.ContentEntity">
+        <id column="contentId" property="contentId"/>
+        <result column="volumeId" property="volumeId"/>
+        <result column="contentTitle" property="contentTitle"/>
+        <result column="content" property="content"/>
+        <result column="contentWordCount" property="contentWordCount"/>
+        <result column="contentUpdate" property="contentUpdate"/>
+        <result column="contentStatus" property="contentStatus"/>
+        <result column="contentUrl" property="contentUrl"/>
+    </resultMap>
+    <select id="findVolumeAndContentByVolumeId" resultMap="VolumeResultMap" parameterType="java.lang.Long">
+        SELECT
+        wor_volume.VolumeId AS volumeId,
+        wor_volume.BookId AS bookId,
+        wor_volume.VolumeName AS volumeName,
+        wor_volume.VolumeWordCount AS volumeWordCount,
+        wor_content.ContentId AS contentId,
+        wor_content.VolumeId AS volumeId,
+        wor_content.ContentTitle AS contentTitle,
+        wor_content.Content AS content,
+        wor_content.ContentWordCount AS contentWordCount,
+        wor_content.ContentUpdate AS contentUpdate,
+        wor_content.ContentStatus AS contentStatus,
+        wor_content.ContentUrl AS contentUrl
+        FROM
+        wor_content,
+        wor_volume
+        WHERE
+        wor_volume.VolumeId = wor_content.VolumeId
+        AND
+        wor_volume.VolumeStatus = 0
+        AND
+        wor_volume.VolumeId  = #{volumeId}
+    </select>
+
+    <!-- 目录 -->
+    <select id="findVolumeAndContentByBookId" resultMap="VolumeResultMap" parameterType="Map">
+        SELECT
+        wor_volume.VolumeId AS volumeId,
+        wor_volume.BookId AS bookId,
+        wor_volume.VolumeName AS volumeName,
+        wor_volume.VolumeWordCount AS volumeWordCount,
+        wor_content.ContentId AS contentId,
+        wor_content.VolumeId AS volumeId,
+        wor_content.ContentTitle AS contentTitle,
+        wor_content.Content AS content,
+        wor_content.ContentWordCount AS contentWordCount,
+        wor_content.ContentUpdate AS contentUpdate,
+        wor_content.ContentStatus AS contentStatus,
+        wor_content.ContentUrl AS contentUrl
+        FROM
+        wor_volume LEFT JOIN wor_content
+        ON
+        wor_volume.VolumeId = wor_content.VolumeId
+        WHERE
+        wor_content.ContentStatus = '0'
+        AND
+        wor_volume.VolumeStatus = 0
+        AND
+        wor_volume.BookId = #{bookId}
+        ORDER BY
+        wor_volume.VolumeId
+    </select>
+
+    <select id="findBookByBookId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
+        SELECT
+	UserId AS userId,
+	BookId AS bookId,
+	BookWordCount AS BookWordCount,
+	BookCoverImage AS bookCoverImage,
+	BookIntroduction AS BookIntroduction,
+	BookHit AS bookHit,
+	BookCopperCoins AS bookCopperCoins
+FROM
+	wor_book
+WHERE
+    wor_book.BookStatus = '0'
+AND
+	wor_book.BookId = #{wor_book.BookId}
+    </select>
+    <!-- 根据contentId查找content -->
+    <select id="findContentByContentId" resultType="com.qcacg.entity.ContentEntity" parameterType="java.lang.Long">
+SELECT
+    ContentId AS contentId,
+	VolumeId AS volumeId,
+	ContentTitle AS contentTitle,
+	Content AS content,
+	ContentWordCount AS contentWordCount,
+	ContentStatus AS contentStatus,
+	ContentUrl AS contentUrl
+FROM
+	wor_content
+WHERE
+	wor_content.ContentId = #{wor_content.ContentId}
+    </select>
+
+    <!-- 根据volumeId查找contentId -->
+    <select id="findContentByVolumeId" resultType="com.qcacg.entity.ContentEntity" parameterType="java.lang.Long">
+        SELECT
+          ContentId
+        FROM
+          wor_content
+        WHERE
+          wor_content.VolumeId = #{wor_content.VolumeId}
+    </select>
+
+    <update id="updateContentByContentId" parameterType="java.util.List">
+        <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+            UPDATE wor_content
+            <set>
+            wor_content.VolumeId = #{item.volumeId},
+            wor_content.ContentTitle = #{item.contentTitle},
+            wor_content.Content = #{item.content},
+            wor_content.ContentWordCount = #{item.contentWordCount},
+            wor_content.ContentStatus = #{item.contentStatus},
+            wor_content.ContentUrl = #{item.contentUrl},
+            wor_content.ContentUpdate = #{item.contentUpdate, jdbcType=DATE}
+            </set>
+            WHERE
+              wor_content.ContentId = #{item.contentId}
+        </foreach>
+    </update>
+
+    <update id="updateVolumeIdByContentId" parameterType="java.util.List">
+        <foreach collection="list" item="content" index="index" open="" close="" separator=";">
+            UPDATE wor_content
+            SET
+              wor_content.VolumeId = #{content.volumeId},
+              wor_content.ContentUpdate = #{content.contentUpdate}
+            WHERE
+              wor_content.ContentId = #{content.contentId}
+        </foreach>
+    </update>
+
+    <select id="findVolumeByVolumeId" resultType="com.qcacg.entity.VolumeEntity" parameterType="java.lang.Long">
+      SELECT
+        BookId AS bookId,
+        VolumeName AS volumeName,
+        VolumeWordCount AS volumeWordCount
+      FROM
+        wor_volume
+      WHERE
+        wor_volume.VolumeId = #{volumeId}
+    </select>
+
+    <update id="updateVolumeByVolumeId" parameterType="java.lang.Long">
+        <foreach collection="list" item="volume" index="index" open="" close="" separator=";">
+            UPDATE wor_volume
+            SET
+              wor_volume.BookId = #{volume.bookId},
+              wor_volume.VolumeName = #{volume.volumeName},
+              wor_volume.VolumeWordCount = #{volume.volumeWordCount}
+            WHERE
+              wor_volume.VolumeId = #{volume.volumeId}
+        </foreach>
+    </update>
+
+
+    <select id="findVolumes" resultMap="VolumeResultMap" parameterType="java.util.List">
+        SELECT
+        wor_volume.VolumeId AS volumeId,
+        wor_volume.BookId AS bookId,
+        wor_volume.VolumeName AS volumeName,
+        wor_volume.VolumeWordCount AS volumeWordCount,
+        wor_content.ContentId AS contentId,
+        wor_content.VolumeId AS volumeId,
+        wor_content.ContentTitle AS contentTitle,
+        wor_content.Content AS content,
+        wor_content.ContentWordCount AS contentWordCount,
+        wor_content.ContentUpdate AS contentUpdate,
+        wor_content.ContentStatus AS contentStatus,
+        wor_content.ContentUrl AS contentUrl
+        FROM
+        wor_content,
+        wor_volume
+        WHERE
+        wor_content.VolumeId = wor_volume.VolumeId
+        AND
+        wor_volume.VolumeStatus = 0
+        AND
+        wor_volume.VolumeId
+        IN
+        <foreach collection="list" index="index" open="(" close=")" item="item" separator=",">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
