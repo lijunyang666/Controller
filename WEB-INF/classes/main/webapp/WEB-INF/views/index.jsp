@@ -4,7 +4,9 @@
 	<head>
 		<meta charset="utf-8" />
 		<title>轻悦轻小说</title>
-
+		<script type="text/javascript" language="JavaScript">
+			window.location.href = "http://www.qcacg.cn"
+		</script>
 		<link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath }/css/main-A.css" />
 		<script type="text/javascript" src="${pageContext.servletContext.contextPath }/js/user-info-C.js"></script>
 		<link rel="shortcut icon" href="http://www.qcacg.com/favicon.ico" type="image/x-icon" />

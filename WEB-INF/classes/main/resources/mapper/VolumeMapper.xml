@@ -4,11 +4,20 @@
 <mapper namespace="com.qcacg.mapper.VolumeMapper">
 
 
-    <select id="findVolumeByBookId" resultType="com.qcacg.entity.VolumeEntity" parameterType="java.lang.Long">
+    <resultMap id="VolumeResultMap" type="com.qcacg.entity.volume.VolumeCustom">
+        <id column="volumeId" property="volumeId"/>
+        <result column="bookId" property="bookId"/>
+        <result column="volumeName" property="volumeName"/>
+        <result column="volumeWordCount" property="volumeWordCount"/>
+    </resultMap>
+
+
+    <select id="findVolumeByBookId" resultMap="VolumeResultMap" parameterType="java.lang.Long">
     SELECT
-    wor_volume.VolumeId,
-    wor_volume.VolumeName,
-    wor_volume.VolumeWordCount
+    wor_volume.BookId AS bookId,
+    wor_volume.VolumeId AS volumeId,
+    wor_volume.VolumeName AS volumeName,
+    wor_volume.VolumeWordCount AS volumeWordCount
     FROM
     wor_volume
     WHERE
