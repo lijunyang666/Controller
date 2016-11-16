@@ -13,7 +13,30 @@ wor_booktype
 
     </select>
 
-
+    <select id="findBookByBookTypeId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
+        SELECT
+          wor_book.BookId,
+          wor_book.UserId,
+          wor_book.BookName,
+          wor_book.BookCoverImage,
+          wor_book.UserId,
+          wor_book.Sort,
+          wor_book.BookIntroduction,
+          wor_book.BookUpdate,
+          wor_book.BookWordCount,
+          wor_book.BookStatus,
+          wor_book.BookHit,
+          wor_book.BookCollect,
+          wor_book.BookCopperCoins,
+          wor_book.BookSilverCoins
+        FROM
+          wor_book
+        INNER JOIN (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+                      WHERE wor_book_booktype.BookTypeId = #{bookTypeId}) booktype
+        ON wor_book.BookId = booktype.BookId
+        WHERE
+          wor_book.BookStatus = '0'
+    </select>
 
 
 </mapper>
