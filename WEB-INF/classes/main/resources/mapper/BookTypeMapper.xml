@@ -12,14 +12,64 @@ FROM
 wor_booktype
 
     </select>
+    
+    <resultMap id="bookInfoResult" type="com.qcacg.entity.book.BookInfoEntity">
+        <id column="BookId" property="bookId"/>
+        <result column="UserId" property="userId"/>
+        <result column="BookName" property="bookName"/>
+        <result column="Sort" property="sort"/>
+        <result column="BookIntroduction" property="bookIntroduction"/>
+        <result column="BookUpdate" property="bookUpdate"/>
+        <result column="BookCoverImage" property="bookCoverImage"/>
+        <result column="BookWordCount" property="bookWordCount"/>
+        <result column="BookStatus" property="bookStatus"/>
+        <result column="BookHit" property="bookHit"/>
+        <result column="BookCollect" property="bookCollect"/>
+        <result column="BookCopperCoins" property="bookCopperCoins"/>
+        <result column="UserName" property="author"/>
+        <association property="volumeEntity" javaType="com.qcacg.entity.VolumeEntity">
+            <id column="VolumeId" property="volumeId"/>
+            <result column="VolumeName" property="volumeName"/>
+        </association>
+    </resultMap>
 
-    <select id="findBookByBookTypeId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
+    <select id="test" resultMap="bookInfoResult" parameterType="java.lang.Long">
         SELECT
           wor_book.BookId,
           wor_book.UserId,
           wor_book.BookName,
           wor_book.BookCoverImage,
+          wor_book.Sort,
+          wor_book.BookIntroduction,
+          wor_book.BookUpdate,
+          wor_book.BookWordCount,
+          wor_book.BookStatus,
+          wor_book.BookHit,
+          wor_book.BookCollect,
+          wor_book.BookCopperCoins,
+		  newest.id as VolumeId,
+		  newest.VolumeName,
+		  sys_user.UserName
+        FROM
+          wor_book
+LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+        INNER JOIN (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+                      WHERE wor_book_booktype.BookTypeId = #{bookTypeId}) booktype
+        ON wor_book.BookId = booktype.BookId
+				LEFT JOIN (SELECT MAX(VolumeId) as id, VolumeName, BookId
+from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
+				ON booktype.BookId = newest.BookId
+        WHERE
+          wor_book.BookStatus = '0';
+    </select>
+
+    <select id="findBookByBookTypeId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
+        SELECT
+          wor_
+          wor_book.BookId,
           wor_book.UserId,
+          wor_book.BookName,
+          wor_book.BookCoverImage,
           wor_book.Sort,
           wor_book.BookIntroduction,
           wor_book.BookUpdate,

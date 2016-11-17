@@ -111,6 +111,7 @@
 				/bookCollect/** = anon
 				/bookType/** = anon
 				/catalog/** = anon
+				/bookHit/** = anon
 			</value>
 		</property>
 	</bean>
