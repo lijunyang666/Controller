@@ -65,7 +65,6 @@ from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
 
     <select id="findBookByBookTypeId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
         SELECT
-          wor_
           wor_book.BookId,
           wor_book.UserId,
           wor_book.BookName,
@@ -89,4 +88,83 @@ from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
     </select>
 
 
+    <select id="search" resultMap="bookInfoResult" parameterType="com.qcacg.entity.book.PageVo">
+        SELECT
+        wor_book.BookId,
+        wor_book.UserId,
+        wor_book.BookName,
+        wor_book.BookCoverImage,
+        wor_book.Sort,
+        wor_book.BookIntroduction,
+        wor_book.BookUpdate,
+        wor_book.BookWordCount,
+        wor_book.BookStatus,
+        wor_book.BookHit,
+        wor_book.BookCollect,
+        wor_book.BookCopperCoins,
+        newest.id as VolumeId,
+        newest.VolumeName,
+        sign.UserName
+        FROM
+        wor_book
+        INNER JOIN
+          (SELECT UserName, UserId FROM sys_user
+              <include refid="query_user_where"/>) sign
+        ON wor_book.UserId = sign.UserId
+        INNER JOIN
+          (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+              <include refid="query_booktype"/> ) booktype
+        ON wor_book.BookId = booktype.BookId
+        LEFT JOIN (SELECT MAX(VolumeId) as id, VolumeName, BookId
+        from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
+        ON booktype.BookId = newest.BookId
+        WHERE
+        wor_book.BookStatus = '0'
+        <include refid="screen"/>
+        ORDER BY	${orderByStr} DESC
+        LIMIT #{page.startRow},#{page.pageSize}
+    </select>
+    
+    <sql id="query_user_where">
+      <if test="isSign != null">
+        WHERE
+        UserStatus = #{isSign, jdbcType=CHAR}
+      </if>
+    </sql>
+    <sql id="query_booktype">
+        <if test="bookTypeId != null">
+            WHERE wor_book_booktype.BookTypeId = #{bookTypeId}
+        </if>
+        <if test="bookTypeId == null">
+            GROUP BY BookId
+        </if>
+    </sql>
+    <sql id="screen">
+        <if test="wordMin != null and wordMax != null">
+            AND
+            wor_book.BookWordCount BETWEEN #{wordMin} AND #{wordMax}
+        </if>
+    </sql>
+
+
+    <select id="sum" resultType="java.lang.Integer" parameterType="com.qcacg.entity.book.PageVo">
+        SELECT
+        count(wor_book.BookId)
+        FROM
+        wor_book
+        INNER JOIN
+        (SELECT UserName, UserId FROM sys_user
+        <include refid="query_user_where"/>) sign
+        ON wor_book.UserId = sign.UserId
+        INNER JOIN
+        (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+        <include refid="query_booktype"/> ) booktype
+        ON wor_book.BookId = booktype.BookId
+        LEFT JOIN (SELECT MAX(VolumeId) as id, VolumeName, BookId
+        from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
+        ON booktype.BookId = newest.BookId
+        WHERE
+        wor_book.BookStatus = '0'
+        <include refid="screen"/>
+    </select>
 </mapper>
