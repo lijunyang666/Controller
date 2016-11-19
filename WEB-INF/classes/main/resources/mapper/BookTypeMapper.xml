@@ -140,6 +140,11 @@ from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
         </if>
     </sql>
     <sql id="screen">
+        <if test="keyword != null">
+            AND
+            wor_book.BookName LIKE CONCAT('%',#{keyword},'%')
+            OR sign.UserName LIKE CONCAT('%',#{keyword},'%')
+        </if>
         <if test="wordMin != null and wordMax != null">
             AND
             wor_book.BookWordCount BETWEEN #{wordMin} AND #{wordMax}
