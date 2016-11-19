@@ -27,6 +27,7 @@ wor_booktype
         <result column="BookCollect" property="bookCollect"/>
         <result column="BookCopperCoins" property="bookCopperCoins"/>
         <result column="UserName" property="author"/>
+        <result column="UserHead" property="userHeadImg"/>
         <association property="volumeEntity" javaType="com.qcacg.entity.VolumeEntity">
             <id column="VolumeId" property="volumeId"/>
             <result column="VolumeName" property="volumeName"/>
@@ -60,7 +61,7 @@ LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
 from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
 				ON booktype.BookId = newest.BookId
         WHERE
-          wor_book.BookStatus = '0';
+          wor_book.BookStatus = '0'
     </select>
 
     <select id="findBookByBookTypeId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
@@ -104,13 +105,13 @@ from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
         wor_book.BookCopperCoins,
         newest.id as VolumeId,
         newest.VolumeName,
-        sign.UserName
+        sys_user.UserName,
+        sys_user.UserHead
         FROM
         wor_book
         INNER JOIN
-          (SELECT UserName, UserId FROM sys_user
-              <include refid="query_user_where"/>) sign
-        ON wor_book.UserId = sign.UserId
+          sys_user
+        ON wor_book.UserId = sys_user.UserId
         INNER JOIN
           (SELECT wor_book_booktype.BookId FROM wor_book_booktype
               <include refid="query_booktype"/> ) booktype
@@ -140,10 +141,14 @@ from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
         </if>
     </sql>
     <sql id="screen">
+        <if test="isSign != null">
+            AND
+            wor_book.BookIsSign = #{isSign}
+        </if>
         <if test="keyword != null">
             AND
             wor_book.BookName LIKE CONCAT('%',#{keyword},'%')
-            OR sign.UserName LIKE CONCAT('%',#{keyword},'%')
+            OR sys_user.UserName LIKE CONCAT('%',#{keyword},'%')
         </if>
         <if test="wordMin != null and wordMax != null">
             AND
@@ -158,15 +163,14 @@ from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
         FROM
         wor_book
         INNER JOIN
-        (SELECT UserName, UserId FROM sys_user
-        <include refid="query_user_where"/>) sign
-        ON wor_book.UserId = sign.UserId
+            sys_user
+        ON wor_book.UserId = sys_user.UserId
         INNER JOIN
-        (SELECT wor_book_booktype.BookId FROM wor_book_booktype
-        <include refid="query_booktype"/> ) booktype
+            (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+            <include refid="query_booktype"/> ) booktype
         ON wor_book.BookId = booktype.BookId
         LEFT JOIN (SELECT MAX(VolumeId) as id, VolumeName, BookId
-        from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
+            from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
         ON booktype.BookId = newest.BookId
         WHERE
         wor_book.BookStatus = '0'
