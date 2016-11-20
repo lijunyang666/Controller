@@ -7774,7 +7774,7 @@ CREATE TRIGGER `triger6` AFTER UPDATE ON `wor_content` FOR EACH ROW begin
   update wor_volume
   set VolumeWordCount=(SELECT sum(ContentWordCount)
   FROM wor_content WHERE wor_content.VolumeId =new.VolumeId )
-  where VolumeId =new.VolumeId ;
+  where VolumeId =new.VolumeId;
 end
 ;;
 DELIMITER ;
