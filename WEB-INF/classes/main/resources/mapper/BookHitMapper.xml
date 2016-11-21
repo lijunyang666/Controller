@@ -20,6 +20,22 @@ ORDER BY
 wor_bookhit.BookHitDate DESC
     </select>
 
+    <select id="findBookByContentId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT
+          wor_volume.BookId
+        FROM wor_volume
+        WHERE
+          wor_volume.VolumeId =
+          (SELECT wor_content.VolumeId FROM wor_content
+              WHERE wor_content.ContentId = #{contentId})
+    </select>
 
+    <update id="updateBookHit" parameterType="com.qcacg.entity.BookHitEntity">
+        UPDATE wor_bookhit SET wor_bookhit.ContentId = #{contentId}
+        WHERE
+        wor_bookhit.BookId = #{bookId}
+        AND
+        wor_bookhit.UserId = #{userId}
+    </update>
 
 </mapper>
