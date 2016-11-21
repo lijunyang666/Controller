@@ -22,8 +22,9 @@
             <result column="userHead" property="userHead"/>
         </association>
     </resultMap>
-    
-    <select id="findBookByIsRecom" resultMap="BookResultMap">
+
+    <!-- 查找所有未被推荐的书 -->
+    <select id="findAllBook" resultMap="BookResultMap">
 SELECT
 	wor_book.BookId AS bookId,
 	wor_book.UserId AS userId,
@@ -47,8 +48,43 @@ FROM
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
 WHERE
     wor_book.IsRecommended = '0'
+    AND
+    wor_book.BookStatus = '0'
     </select>
-    
+
+    <!-- 查找被推荐的书，并且在主页显示 -->
+    <select id="findBookByIsRecom" resultMap="BookResultMap">
+SELECT
+	wor_book.BookId AS bookId,
+	wor_book.UserId AS userId,
+	wor_book.BookName AS bookName,
+	wor_book.Sort AS sort,
+	wor_book.BookIntroduction AS bookIntroduction,
+	wor_book.BookUpdate AS bookUpdate,
+	wor_book.BookCoverImage AS bookCoverImage,
+	wor_book.BookWordCount AS bookWordCount,
+	wor_book.BookStatus AS bookStatus,
+	wor_book.BookHit AS bookHit,
+	wor_book.BookCollect AS bookCollect,
+	wor_book.BookCopperCoins AS bookCopperCoins,
+	wor_book.BookSilverCoins AS bookSilverCoins,
+	sys_user.UserId AS userId,
+	sys_user.UserName AS userName,
+	sys_user.Information AS information,
+	sys_user.UserHead AS userHead
+FROM
+	wor_book
+LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+WHERE
+    wor_book.BookStatus = '0'
+    AND
+    wor_book.IsRecommended = '1'
+    AND
+    wor_book.BookOnIndex != '0'
+    limit 0, 6
+    </select>
+
+    <!-- 查找90天内创建的新书，并且未被推荐 -->
     <select id="findBookByCreateTime" resultMap="BookResultMap">
 SELECT
     wor_book.BookId AS bookId,
@@ -71,6 +107,13 @@ SELECT
 FROM
 	wor_book
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+WHERE
+    wor_book.BookStatus = '0'
+AND
+    wor_book.IsRecommended = '0'
+AND
+    DATEDIFF(SYSDATE(),wor_book.BookCreateTime) BETWEEN 0 AND 90
+
 <!-- DATEDIFF(SYSDATE(),wor_book.BookCreateTime) -->
     </select>
 
@@ -114,23 +157,28 @@ wor_book.BookUpdate DESC
 
     </select>
 
-    <select id="findBookByBookUpDate" resultType="com.qcacg.entity.BookEntity" >
-        SELECT
-    wor_book.BookId,
-wor_book.UserId,
-wor_book.BookName,
-wor_book.Sort,
-wor_book.BookIntroduction,
-wor_book.BookUpdate,
-wor_book.BookCoverImage,
-wor_book.BookWordCount,
-wor_book.BookStatus,
-wor_book.BookHit,
-wor_book.BookCollect,
-wor_book.BookCopperCoins,
-wor_book.BookSilverCoins
+    <select id="findBookByBookUpDate" resultMap="BookResultMap" >
+      SELECT
+wor_book.BookId AS bookId,
+wor_book.UserId AS userId,
+wor_book.BookName AS bookName,
+wor_book.Sort AS sort,
+wor_book.BookIntroduction AS bookIntroduction,
+wor_book.BookUpdate AS bookUpdate,
+wor_book.BookCoverImage AS bookCoverImage,
+wor_book.BookWordCount AS bookWordCount,
+wor_book.BookStatus AS bookStatus,
+wor_book.BookHit AS bookHit,
+wor_book.BookCollect AS bookCollect,
+wor_book.BookCopperCoins AS bookCopperCoins,
+wor_book.BookSilverCoins AS bookSilverCoins,
+sys_user.UserId AS userId,
+sys_user.UserName AS userName,
+sys_user.Information AS information,
+sys_user.UserHead AS userHead
     FROM
     wor_book
+    LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
     WHERE
     wor_book.BookStatus = '0'
     ORDER BY
@@ -412,8 +460,8 @@ wor_book.BookUpdate ASC
         <selectKey keyProperty="bookId" resultType="java.lang.Long" order="AFTER">
             SELECT LAST_INSERT_ID() as bookId
         </selectKey>
-        INSERT INTO wor_book (bookId,userId,bookName,sort,bookIntroduction,bookCoverImage)
-        VALUES( #{bookId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{bookName,jdbcType=VARCHAR},#{sort,jdbcType=VARCHAR},#{bookIntroduction,jdbcType=VARCHAR},#{bookCoverImage,jdbcType=VARCHAR} )
+        INSERT INTO wor_book (bookId,userId,bookName,sort,bookIntroduction,bookCoverImage, wor_book.BookCreateTime)
+        VALUES( #{bookId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{bookName,jdbcType=VARCHAR},#{sort,jdbcType=VARCHAR},#{bookIntroduction,jdbcType=VARCHAR},#{bookCoverImage,jdbcType=VARCHAR}, #{bookCreateTime} )
     </insert>
 
     <update id="updateBook" parameterType="com.qcacg.entity.BookEntity">
