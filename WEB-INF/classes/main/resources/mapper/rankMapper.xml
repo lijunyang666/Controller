@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.RankMapper">
+
+    <resultMap id="rankResult" type="com.qcacg.entity.rank.RankResult">
+        <result column="bookId" property="bookId"/>
+        <result column="userId" property="userId"/>
+        <result column="bookName" property="bookName"/>
+        <result column="author" property="author"/>
+        <result column="bookCoverImage" property="bookCoverImage"/>
+        <result column="bookWordCount" property="bookWordCount"/>
+        <result column="bookHit" property="bookHit"/>
+        <result column="bookCopperCoins" property="bookCopperCoins"/>
+        <result column="bookUpdate" property="bookUpdate"/>
+        <result column="everyWeekCopperCoins" property="everyWeekCopperCoins"/>
+        <result column="everyWeekHit" property="everyWeekHit"/>
+        <result column="everyWeekWordCount" property="everyWeekWordCount"/>
+        <result column="everyMonthCopperCoins" property="everyMonthCopperCoins"/>
+        <result column="everyMonthHit" property="everyMonthHit"/>
+        <result column="everyMonthWordCount" property="everyMonthWordCount"/>
+    </resultMap>
+
+    <select id="getRankingList" resultMap="rankResult" parameterType="com.qcacg.entity.rank.RankVo">
+        SELECT
+        wor_book.BookId AS bookId,
+        wor_book.BookName AS bookName,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookUpdate AS bookUpdate,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.EveryWeekCopperCoins AS everyWeekCopperCoins,
+        wor_book.EveryWeekHit AS everyWeekHit,
+        wor_book.EveryWeekWordCount AS everyWeekWordCount,
+        wor_book.EveryMonthCopperCoins AS everyMonthCopperCoins,
+        wor_book.EveryMonthHit AS everyMonthHit,
+        wor_book.EveryMonthWordCount AS everyMonthWordCount,
+        sys_user.UserId AS userId,
+        sys_user.UserName AS author
+        FROM
+        wor_book
+        INNER JOIN
+          sys_user
+        ON wor_book.UserId = sys_user.UserId
+        INNER JOIN
+        (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+        <include refid="query_booktype"/> ) booktype
+        ON wor_book.BookId = booktype.BookId
+        WHERE
+        wor_book.BookStatus = '0'
+        ORDER BY #{column} DESC
+        limit #{page.startRow}, #{page.pageSize}
+    </select>
+
+    <select id="getCount" resultType="java.lang.Long" parameterType="com.qcacg.entity.rank.RankVo">
+        SELECT
+        count(wor_book.BookId)
+        FROM
+        wor_book
+        INNER JOIN
+        sys_user
+        ON wor_book.UserId = sys_user.UserId
+        INNER JOIN
+        (SELECT wor_book_booktype.BookId FROM wor_book_booktype
+        <include refid="query_booktype"/> ) booktype
+        ON wor_book.BookId = booktype.BookId
+        WHERE
+        wor_book.BookStatus = '0'
+    </select>
+
+    <sql id="query_booktype">
+        <if test="bookTypeId != null">
+            WHERE wor_book_booktype.BookTypeId = #{bookTypeId}
+        </if>
+        <if test="bookTypeId == null">
+            GROUP BY BookId
+        </if>
+    </sql>
+</mapper>

@@ -2,12 +2,23 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.BookHitMapper">
 
+    <resultMap id="BookHitResult" type="com.qcacg.entity.bookHit.BookHitCustom">
+        <id column="bookId" property="bookId"/>
+        <result column="bookName" property="bookName"/>
+        <result column="bookCoverImage" property="bookCoverImage"/>
+        <result column="bookHitId" property="bookHitId"/>
+        <result column="bookHitDate" property="bookHitDate"/>
+        <result column="contentId" property="contentId"/>
+    </resultMap>
 
-    <select id="findBookHitByUserId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
+    <select id="findBookHitByUserId" resultMap="BookHitResult" parameterType="java.lang.Long">
         SELECT
-wor_book.BookId,
-wor_book.BookName,
-wor_book.BookCoverImage
+wor_book.BookId AS bookId,
+wor_book.BookName AS bookName,
+wor_book.BookCoverImage AS bookCoverImage,
+wor_bookhit.BookHitId AS bookHitId,
+wor_bookhit.ContentId AS contentId,
+wor_bookhit.BookHitDate AS bookHitDate
 FROM
 wor_book ,
 wor_bookhit
@@ -30,6 +41,21 @@ wor_bookhit.BookHitDate DESC
               WHERE wor_content.ContentId = #{contentId})
     </select>
 
+    <select id="findBookHitByUserIdAndBookId" resultType="com.qcacg.entity.BookHitEntity"
+            parameterType="com.qcacg.entity.BookHitEntity">
+        SELECT
+          BookHitId AS bookHitId,
+          UserId AS userId,
+          BookId AS bookId,
+          ContentId AS contentId
+        FROM
+          wor_bookhit
+        WHERE
+          UserId = #{userId}
+        AND
+          BookId = #{bookId}
+    </select>
+
     <update id="updateBookHit" parameterType="com.qcacg.entity.BookHitEntity">
         UPDATE wor_bookhit SET wor_bookhit.ContentId = #{contentId}
         WHERE
@@ -38,4 +64,7 @@ wor_bookhit.BookHitDate DESC
         wor_bookhit.UserId = #{userId}
     </update>
 
+    <delete id="deleteBookHit" parameterType="java.lang.Long">
+        DELETE FROM wor_bookhit WHERE wor_bookhit.BookHitId = #{bookHitId}
+    </delete>
 </mapper>
