@@ -157,7 +157,28 @@ wor_book.BookUpdate DESC
 
     </select>
 
-    <select id="findBookByBookUpDate" resultMap="BookResultMap" >
+    <resultMap id="bookInfoResult" type="com.qcacg.entity.book.BookInfoEntity">
+        <id column="bookId" property="bookId"/>
+        <result column="userId" property="userId"/>
+        <result column="bookName" property="bookName"/>
+        <result column="sort" property="sort"/>
+        <result column="bookIntroduction" property="bookIntroduction"/>
+        <result column="bookUpdate" property="bookUpdate"/>
+        <result column="bookCoverImage" property="bookCoverImage"/>
+        <result column="bookWordCount" property="bookWordCount"/>
+        <result column="bookStatus" property="bookStatus"/>
+        <result column="bookHit" property="bookHit"/>
+        <result column="bookCollect" property="bookCollect"/>
+        <result column="bookCopperCoins" property="bookCopperCoins"/>
+        <result column="userName" property="author"/>
+        <result column="userHead" property="userHeadImg"/>
+        <association property="volumeEntity" javaType="com.qcacg.entity.VolumeEntity">
+            <id column="volumeId" property="volumeId"/>
+            <result column="volumeName" property="volumeName"/>
+        </association>
+    </resultMap>
+
+    <select id="findBookByBookUpDate" resultMap="bookInfoResult" >
       SELECT
 wor_book.BookId AS bookId,
 wor_book.UserId AS userId,
@@ -175,11 +196,17 @@ wor_book.BookSilverCoins AS bookSilverCoins,
 sys_user.UserId AS userId,
 sys_user.UserName AS userName,
 sys_user.Information AS information,
-sys_user.UserHead AS userHead
+sys_user.UserHead AS userHead,
+volume.volumeId AS volumeId,
+volume.VolumeName AS volumeName
     FROM
     wor_book
     LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+    ,(SELECT max(VolumeId) AS volumeId, VolumeName, BookId
+        FROM wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) as volume
     WHERE
+    wor_book.BookId = volume.BookId
+    AND
     wor_book.BookStatus = '0'
     ORDER BY
     wor_book.BookUpdate DESC
