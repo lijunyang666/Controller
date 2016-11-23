@@ -12,27 +12,28 @@ FROM
 wor_booktype
 
     </select>
-    
-    <resultMap id="bookInfoResult" type="com.qcacg.entity.book.BookInfoEntity">
-        <id column="BookId" property="bookId"/>
-        <result column="UserId" property="userId"/>
-        <result column="BookName" property="bookName"/>
-        <result column="Sort" property="sort"/>
-        <result column="BookIntroduction" property="bookIntroduction"/>
-        <result column="BookUpdate" property="bookUpdate"/>
-        <result column="BookCoverImage" property="bookCoverImage"/>
-        <result column="BookWordCount" property="bookWordCount"/>
-        <result column="BookStatus" property="bookStatus"/>
-        <result column="BookHit" property="bookHit"/>
-        <result column="BookCollect" property="bookCollect"/>
-        <result column="BookCopperCoins" property="bookCopperCoins"/>
-        <result column="UserName" property="author"/>
-        <result column="UserHead" property="userHeadImg"/>
-        <association property="volumeEntity" javaType="com.qcacg.entity.VolumeEntity">
-            <id column="VolumeId" property="volumeId"/>
-            <result column="VolumeName" property="volumeName"/>
-        </association>
-    </resultMap>
+
+
+<resultMap id="bookInfoResult" type="com.qcacg.entity.book.BookInfoEntity">
+    <id column="BookId" property="bookId"/>
+    <result column="UserId" property="userId"/>
+    <result column="BookName" property="bookName"/>
+    <result column="Sort" property="sort"/>
+    <result column="BookIntroduction" property="bookIntroduction"/>
+    <result column="BookUpdate" property="bookUpdate"/>
+    <result column="BookCoverImage" property="bookCoverImage"/>
+    <result column="BookWordCount" property="bookWordCount"/>
+    <result column="BookStatus" property="bookStatus"/>
+    <result column="BookHit" property="bookHit"/>
+    <result column="BookCollect" property="bookCollect"/>
+    <result column="BookCopperCoins" property="bookCopperCoins"/>
+    <result column="UserName" property="author"/>
+    <result column="UserHead" property="userHeadImg"/>
+    <association property="volumeEntity" javaType="com.qcacg.entity.VolumeEntity">
+        <id column="VolumeId" property="volumeId"/>
+        <result column="VolumeName" property="volumeName"/>
+    </association>
+</resultMap>
 
     <select id="test" resultMap="bookInfoResult" parameterType="java.lang.Long">
         SELECT

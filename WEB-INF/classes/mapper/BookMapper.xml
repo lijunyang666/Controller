@@ -197,15 +197,15 @@ sys_user.UserId AS userId,
 sys_user.UserName AS userName,
 sys_user.Information AS information,
 sys_user.UserHead AS userHead,
-volume.volumeId AS volumeId,
-volume.VolumeName AS volumeName
+volumeView.id AS volumeId,
+volumeView.VolumeName AS volumeName
     FROM
     wor_book
     LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
-    ,(SELECT max(VolumeId) AS volumeId, VolumeName, BookId
-        FROM wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) as volume
+    , (SELECT MAX(VolumeId) as id, VolumeName, BookId
+        from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) volumeView
     WHERE
-    wor_book.BookId = volume.BookId
+    volumeView.BookId = wor_book.BookId
     AND
     wor_book.BookStatus = '0'
     ORDER BY
