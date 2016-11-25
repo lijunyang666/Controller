@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.RelationMapper">
+
+    <resultMap id="userResult" type="com.qcacg.entity.UserEntity">
+        <id column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="userHead" property="userHead"/>
+        <result column="sex" property="sex"/>
+        <result column="information" property="information"/>
+        <result column="userAttention" property="userAttention"/>
+    </resultMap>
+
+    <select id="findAllAttention" resultMap="userResult" parameterType="java.lang.Long">
+        SELECT
+        sys_user.UserId AS userId,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead,
+        sys_user.Sex AS sex,
+        sys_user.Information AS information,
+        sys_user.UserAttention AS userAttention
+        FROM sys_user
+        INNER JOIN (SELECT ReceiveId, AttentionDate FROM sys_user_relation
+        WHERE UserId = #{send_id}) relation
+        ON sys_user.UserId = relation.ReceiveId
+    </select>
+
+    <select id="findUserByUserId" parameterType="com.qcacg.entity.user.UserPage" resultMap="userResult">
+        SELECT
+        sys_user.UserId AS userId,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead,
+        sys_user.Sex AS sex,
+        sys_user.Information AS information,
+        sys_user.UserAttention AS userAttention
+        FROM sys_user
+        INNER JOIN (SELECT ReceiveId, AttentionDate FROM sys_user_relation
+        WHERE UserId = #{send_id}) relation
+        ON sys_user.UserId = relation.ReceiveId
+        ORDER BY relation.AttentionDate
+        limit #{startRow}, #{pageSize}
+    </select>
+
+
+    <select id="findFansByUserId" parameterType="com.qcacg.entity.user.UserPage" resultMap="userResult">
+        SELECT
+        sys_user.UserId AS userId,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead,
+        sys_user.Sex AS sex,
+        sys_user.Information AS information,
+        sys_user.UserAttention AS userAttention
+        FROM sys_user
+        INNER JOIN (SELECT UserId, AttentionDate FROM sys_user_relation
+        WHERE ReceiveId = #{send_id}) relation
+        ON sys_user.UserId = relation.UserId
+        ORDER BY relation.AttentionDate
+        limit #{startRow}, #{pageSize}
+    </select>
+
+</mapper>

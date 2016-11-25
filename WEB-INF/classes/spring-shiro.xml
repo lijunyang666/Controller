@@ -114,6 +114,7 @@
 				/bookHit/** = anon
 				/index/** = anon
 				/rank/** = anon
+				/relation/** = anon
 			</value>
 		</property>
 	</bean>
