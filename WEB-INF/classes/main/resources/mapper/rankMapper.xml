@@ -49,7 +49,7 @@
         ON wor_book.BookId = booktype.BookId
         WHERE
         wor_book.BookStatus = '0'
-        ORDER BY #{column} DESC
+        ORDER BY ${column} DESC
         limit #{page.startRow}, #{page.pageSize}
     </select>
 
