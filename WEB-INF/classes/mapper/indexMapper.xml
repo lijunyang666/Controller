@@ -2,6 +2,8 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.IndexMapper">
+
+
     <resultMap id="BookResultMap" type="com.qcacg.entity.book.BookCustom">
         <id column="bookId" property="bookId"/>
         <result column="userId" property="userId"/>
