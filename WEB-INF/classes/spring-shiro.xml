@@ -115,6 +115,8 @@
 				/index/** = anon
 				/rank/** = anon
 				/relation/** = anon
+				/comment/** = anon
+				/reply/** = anon
 			</value>
 		</property>
 	</bean>
