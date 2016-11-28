@@ -49,9 +49,13 @@
         ON wor_book.BookId = booktype.BookId
         WHERE
         wor_book.BookStatus = '0'
-        ORDER BY #{column} DESC
+        <include refid="selectByTime"/>
+        ORDER BY ${column} DESC
         limit #{page.startRow}, #{page.pageSize}
     </select>
+    
+
+
 
     <select id="getCount" resultType="java.lang.Long" parameterType="com.qcacg.entity.rank.RankVo">
         SELECT
@@ -67,6 +71,7 @@
         ON wor_book.BookId = booktype.BookId
         WHERE
         wor_book.BookStatus = '0'
+        <include refid="selectByTime"/>
     </select>
 
     <sql id="query_booktype">
@@ -75,6 +80,13 @@
         </if>
         <if test="bookTypeId == null">
             GROUP BY BookId
+        </if>
+    </sql>
+
+    <sql id="selectByTime">
+        <if test="isByTime != null">
+            AND
+            DATEDIFF(SYSDATE(),wor_book.BookCreateTime) BETWEEN 0 AND 90
         </if>
     </sql>
 </mapper>

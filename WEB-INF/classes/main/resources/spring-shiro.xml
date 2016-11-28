@@ -85,7 +85,7 @@
 				/treegrid/** = anon
 				/denied.shtml = anon
 				/login.shtml = anon
-				/toLogin.shtml = anon
+				/getStatus.shtml = anon
 				/register.shtml = anon
 				/toRegister.shtml = anon
 				/type.shtml = anon
@@ -115,6 +115,8 @@
 				/index/** = anon
 				/rank/** = anon
 				/relation/** = anon
+				/comment/** = anon
+				/reply/** = anon
 			</value>
 		</property>
 	</bean>

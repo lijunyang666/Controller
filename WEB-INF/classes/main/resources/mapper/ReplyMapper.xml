@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.ReplyMapper">
+
+    <resultMap id="CommentResultMap" type="com.qcacg.entity.CommentEntity">
+        <id column="commentId" property="commentId"/>
+        <result column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="bookId" property="bookId"/>
+        <result column="commentContent" property="commentContent"/>
+        <result column="commentPicture" property="commentPicture"/>
+        <result column="commentDate" property="commentDate"/>
+        <collection property="replyEntityList" ofType="com.qcacg.entity.ReplyEntity" resultMap="RelyResultMap"/>
+    </resultMap>
+
+    <resultMap id="RelyResultMap" type="com.qcacg.entity.ReplyEntity">
+        <id column="replyId" property="replyId"/>
+        <result column="userId" property="userId"/>
+        <result column="userName" property="userName"/>
+        <result column="commentId" property="commentId"/>
+        <result column="replyContent" property="replyContent"/>
+        <result column="replyPicture" property="replyPicture"/>
+        <result column="replyDate" property="replyDate"/>
+        <result column="replyUserId" property="replyUserId"/>
+        <result column="replyUserName" property="replyUserName"/>
+    </resultMap>
+
+    <select id="findCommentAndReplyByReplyUserId" resultMap="CommentResultMap" parameterType="java.lang.Long">
+    SELECT
+    inf_comment.CommentId AS commentId,
+	inf_comment.UserId AS userId,
+	inf_comment.UserName AS userName,
+	inf_comment.BookId AS bookId,
+	inf_comment.CommentContent AS commentContent,
+	inf_comment.CommentPicture AS commentPicture,
+	inf_comment.CommentDate AS commentDate,
+	inf_reply.ReplyId AS replyId,
+	inf_reply.UserId AS userId,
+	inf_reply.UserName AS userName,
+	inf_reply.CommentId AS commentId,
+	inf_reply.ReplyContent AS replyContent,
+	inf_reply.ReplyPicture AS replyPicture,
+	inf_reply.ReplyDate AS replyDate,
+	inf_reply.ReplyUserId AS replyUserId,
+	inf_reply.ReplyUserName AS replyUserName
+    FROM
+	inf_reply,
+	inf_comment
+    WHERE
+    inf_reply.CommentId = inf_comment.CommentId
+    AND inf_reply.ReplyUserId = #{inf_reply.ReplyUserId}
+    ORDER BY
+    inf_reply.ReplyDate DESC
+    </select>
+
+    <insert id="insertReply" parameterType="com.qcacg.entity.ReplyEntity" useGeneratedKeys="true" keyProperty="replyId">
+        <selectKey keyProperty="replyId" resultType="java.lang.Long" order="AFTER">
+            SELECT LAST_INSERT_ID() as replyId
+        </selectKey>
+        INSERT INTO inf_reply (replyId,userId,userName,commentId,replyContent,replyPicture,replyUserId,replyUserName)
+        VALUES( #{replyId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},#{commentId,jdbcType=BIGINT},#{replyContent,jdbcType=VARCHAR},#{replyPicture,jdbcType=VARCHAR},#{replyUserId,jdbcType=BIGINT},#{replyUserName,jdbcType=VARCHAR})
+    </insert>
+
+    <delete id="deleteReply" parameterType="java.lang.Long">
+        DELETE FROM
+        inf_reply
+        WHERE
+        inf_reply.ReplyId = #{inf_reply.ReplyId}
+    </delete>
+</mapper>
