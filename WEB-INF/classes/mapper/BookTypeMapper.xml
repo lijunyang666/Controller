@@ -17,6 +17,7 @@ wor_booktype
 <resultMap id="bookInfoResult" type="com.qcacg.entity.book.BookInfoEntity">
     <id column="BookId" property="bookId"/>
     <result column="BookName" property="bookName"/>
+    <result column="BookIntroduction" property="bookIntroduction"/>
     <result column="BookUpdate" property="bookUpdate"/>
     <result column="BookCoverImage" property="bookCoverImage"/>
     <result column="BookWordCount" property="bookWordCount"/>
@@ -99,6 +100,7 @@ wor_booktype
         SELECT
         wor_book.BookId,
         wor_book.BookName,
+        wor_book.BookIntroduction,
         wor_book.BookCoverImage,
         wor_book.BookUpdate,
         wor_book.BookWordCount,

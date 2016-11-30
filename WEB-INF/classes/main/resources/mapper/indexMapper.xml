@@ -183,7 +183,7 @@ WHERE
             wor_book.BookIsSign,
             wor_content.ContentId,
             wor_content.ContentTitle,
-            wor_content.ContentUpdate
+            wor_content.ContentUpdate AS bookUpdate
         FROM
             wor_content
         INNER JOIN
