@@ -13,11 +13,12 @@
     wor_book
     WHERE
     wor_bookcollect.UserId = #{wor_bookcollect.UserId}
+    AND
+    wor_bookcollect.BookId = wor_book.BookId
     GROUP BY
     wor_bookcollect.BookId
     ORDER BY
     wor_bookcollect.BookCollectDate DESC
-
     </select>
 
 

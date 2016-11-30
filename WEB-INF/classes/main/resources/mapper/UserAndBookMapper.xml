@@ -302,4 +302,20 @@ WHERE
             #{item}
         </foreach>
     </select>
+
+
+    <select id="queryBook" resultType="com.qcacg.entity.book.Catalog" parameterType="java.lang.Long">
+SELECT
+	wor_volume.BookId,
+	wor_volume.VolumeId,
+	wor_content.ContentId,
+	wor_content.ContentTitle,
+	wor_content.ContentUrl
+FROM
+	wor_content
+INNER JOIN wor_volume
+ON wor_content.VolumeId = wor_volume.VolumeId
+WHERE wor_volume.BookId = #{bookId}
+ORDER BY wor_volume.VolumeId, wor_content.ContentId
+    </select>
 </mapper>
