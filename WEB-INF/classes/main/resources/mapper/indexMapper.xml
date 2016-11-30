@@ -58,6 +58,176 @@ WHERE
     limit #{pageNo}, #{pageSize}
     </select>
 
+    <resultMap id="indexResult" type="com.qcacg.entity.index.IndexResult">
+        <result column="bookId" property="bookId"/>
+        <result column="bookName" property="bookName"/>
+        <result column="bookCoverImage" property="bookCoverImage"/>
+        <result column="bookCopperCoins" property="bookCopperCoins"/>
+        <result column="bookWordCount" property="bookWordCount"/>
+        <result column="bookHit" property="bookHit"/>
+        <result column="bookCollect" property="bookCollect"/>
+        <result column="bookIsSign" property="bookIsSign"/>
+        <result column="bookUpdate" property="bookUpdate"/>
+        <result column="userName" property="author"/>
+        <result column="userHead" property="userHead"/>
+        <result column="contentId" property="contentId"/>
+        <result column="contentTitle" property="contentTitle"/>
+        <result column="contentUrl" property="contentUrl"/>
+    </resultMap>
+
+    <select id="findRecomBook" resultMap="indexResult" parameterType="com.qcacg.entity.book.Pagination">
+        SELECT
+        wor_book.BookId AS bookId,
+        wor_book.BookName AS bookName,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookIsSign AS bookIsSign,
+        wor_book.BookUpdate AS bookUpdate,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead
+        FROM wor_book
+        LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+        WHERE
+        wor_book.BookStatus = '0'
+        AND
+        wor_book.IsRecommended = '1'
+        ORDER BY
+        wor_book.BookOnIndex DESC
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <!-- 查找所有未被推荐的书 -->
+    <select id="findAllBook" resultMap="indexResult">
+        SELECT
+        wor_book.BookId AS bookId,
+        wor_book.BookName AS bookName,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookIsSign AS bookIsSign,
+        wor_book.BookUpdate AS bookUpdate,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead
+        FROM
+        wor_book
+        INNER JOIN sys_user ON wor_book.UserId = sys_user.UserId
+        WHERE
+        wor_book.IsRecommended = '0'
+        AND
+        wor_book.BookStatus = '0'
+    </select>
+
+
+    <!-- 查找90天内创建的新书，并且未被推荐 -->
+    <select id="findBookByCreateTime" resultMap="indexResult">
+        SELECT
+        wor_book.BookId AS bookId,
+        wor_book.BookName AS bookName,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookIsSign AS bookIsSign,
+        wor_book.BookUpdate AS bookUpdate,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead
+        FROM
+        wor_book
+        LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+        WHERE
+        wor_book.BookStatus = '0'
+        AND
+        wor_book.IsRecommended = '0'
+        AND
+        DATEDIFF(SYSDATE(),wor_book.BookCreateTime) BETWEEN 0 AND 90
+    </select>
+
+    <!-- bad sql -->
+    <!--<select id="findBookByContentUpdate" resultMap="indexResult" parameterType="com.qcacg.entity.book.Pagination">
+        SELECT
+        wor_book.BookId AS bookId,
+        wor_book.BookName AS bookName,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookIsSign AS bookIsSign,
+        wor_book.BookUpdate AS bookUpdate,
+        sys_user.UserName AS userName,
+        sys_user.UserHead AS userHead,
+        wor_content.ContentId AS contentId,
+        wor_content.ContentTitle AS contentTitle
+        FROM
+        wor_content
+        INNER JOIN wor_volume ON wor_content.VolumeId = wor_volume.VolumeId
+		INNER JOIN  wor_book ON wor_volume.BookId = wor_book.BookId
+		INNER JOIN  sys_user ON wor_book.UserId = sys_user.UserId
+        WHERE
+		wor_book.BookStatus = '0'
+		GROUP BY bookId
+		ORDER BY wor_content.ContentUpdate DESC 
+		limit #{startRow}, #{pageSize}
+    </select> -->
+    <select id="findBookByContentUpdate" resultMap="indexResult" parameterType="com.qcacg.entity.book.Pagination">
+        SELECT
+            wor_book.BookId,
+            wor_book.BookName,
+            sys_user.UserName,
+            wor_book.BookIsSign,
+            wor_content.ContentId,
+            wor_content.ContentTitle,
+            wor_content.ContentUpdate
+        FROM
+            wor_content
+        INNER JOIN
+                (
+                SELECT
+                    MAX(wor_content.ContentId) AS ContentId,
+                    wor_content.VolumeId
+                FROM
+                    wor_content
+                WHERE wor_content.ContentStatus = '0'
+                GROUP BY wor_content.VolumeId
+                ) AS last_content ON wor_content.ContentId = last_content.ContentId
+        INNER JOIN wor_volume ON wor_content.VolumeId = wor_volume.VolumeId
+        INNER JOIN wor_book ON wor_volume.BookId = wor_book.BookId
+        INNER JOIN sys_user ON wor_book.UserId = sys_user.UserId
+        WHERE
+            wor_volume.VolumeStatus = 0
+        AND
+            wor_book.BookStatus = '0'
+        AND
+            wor_volume.VolumeId
+        IN
+            (
+                SELECT
+                    MAX(wor_volume.VolumeId)
+                FROM
+                    (
+                        SELECT
+                            MAX(wor_content.ContentId) AS ContentId,
+                            wor_content.VolumeId
+                        FROM
+                            wor_content
+                        WHERE wor_content.ContentStatus = '0'
+                        GROUP BY wor_content.VolumeId
+                    ) AS last_content
+                        INNER JOIN wor_volume ON last_content.VolumeId = wor_volume.VolumeId
+                        INNER JOIN wor_book ON wor_volume.BookId = wor_book.BookId
+                        GROUP BY wor_book.BookId
+            )
+        ORDER BY
+            wor_content.ContentUpdate DESC
+        limit #{startRow}, #{pageSize}
+    </select>
+
     <select id="count" resultType="java.lang.Long">
 SELECT
   COUNT(wor_book.BookId)
@@ -65,10 +235,8 @@ FROM
 	wor_book
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
 WHERE
-    wor_book.BookStatus = '0'
-    AND
-    wor_book.IsRecommended = '1'
-    AND
-    wor_book.BookOnIndex = '0'
+        wor_book.BookStatus = '0'
+        AND
+        wor_book.IsRecommended = '1'
     </select>
 </mapper>

@@ -16,14 +16,11 @@ wor_booktype
 
 <resultMap id="bookInfoResult" type="com.qcacg.entity.book.BookInfoEntity">
     <id column="BookId" property="bookId"/>
-    <result column="UserId" property="userId"/>
     <result column="BookName" property="bookName"/>
-    <result column="Sort" property="sort"/>
-    <result column="BookIntroduction" property="bookIntroduction"/>
     <result column="BookUpdate" property="bookUpdate"/>
     <result column="BookCoverImage" property="bookCoverImage"/>
     <result column="BookWordCount" property="bookWordCount"/>
-    <result column="BookStatus" property="bookStatus"/>
+    <result column="BookIsSign" property="bookIsSign"/>
     <result column="BookHit" property="bookHit"/>
     <result column="BookCollect" property="bookCollect"/>
     <result column="BookCopperCoins" property="bookCopperCoins"/>
@@ -61,10 +58,10 @@ wor_booktype
     </select>
 
 
-    <select id="search" resultMap="bookInfoResult" parameterType="com.qcacg.entity.book.PageVo">
+    <!-- 错误sql -->
+    <!--<select id="search" resultMap="bookInfoResult" parameterType="com.qcacg.entity.book.PageVo">
         SELECT
         wor_book.BookId,
-        wor_book.UserId,
         wor_book.BookName,
         wor_book.BookCoverImage,
         wor_book.Sort,
@@ -93,6 +90,47 @@ wor_booktype
         ON booktype.BookId = newest.BookId
         WHERE
         wor_book.BookStatus = '0'
+        <include refid="screen"/>
+        ORDER BY	${orderByStr} DESC
+        LIMIT #{page.startRow},#{page.pageSize}
+    </select> -->
+    
+    <select id="search" resultMap="bookInfoResult" parameterType="com.qcacg.entity.book.PageVo">
+        SELECT
+        wor_book.BookId,
+        wor_book.BookName,
+        wor_book.BookCoverImage,
+        wor_book.BookUpdate,
+        wor_book.BookWordCount,
+        wor_book.BookHit,
+        wor_book.BookCollect,
+        wor_book.BookCopperCoins,
+        wor_book.BookIsSign,
+        wor_volume.VolumeId,
+        wor_volume.VolumeName,
+        sys_user.UserName,
+        sys_user.UserHead
+        FROM
+        wor_book
+        INNER JOIN wor_volume ON wor_volume.BookId = wor_book.BookId
+        INNER JOIN (
+							SELECT
+								wor_volume.BookId,
+								MAX(wor_volume.VolumeId) AS VolumeId
+							FROM
+								wor_volume
+							INNER JOIN
+								(SELECT wor_book_booktype.BookId
+									FROM wor_book_booktype
+                                <include refid="query_booktype"/>) AS booktype
+							ON wor_volume.BookId = booktype.BookId
+                            WHERE wor_volume.VolumeStatus = 0
+							GROUP BY wor_volume.BookId
+						) AS last_volume
+        ON wor_volume.VolumeId = last_volume.VolumeId
+        INNER JOIN sys_user ON wor_book.UserId = sys_user.UserId
+        WHERE
+	    wor_book.BookStatus = '0'
         <include refid="screen"/>
         ORDER BY	${orderByStr} DESC
         LIMIT #{page.startRow},#{page.pageSize}
@@ -126,6 +164,10 @@ wor_booktype
             AND
             wor_book.BookWordCount BETWEEN #{wordMin} AND #{wordMax}
         </if>
+        <if test="wordMin != null and wordMax == null" >
+            AND
+            wor_book.BookWordCount >= #{wordMin}
+        </if>
     </sql>
 
 
@@ -134,16 +176,23 @@ wor_booktype
         count(wor_book.BookId)
         FROM
         wor_book
-        INNER JOIN
-            sys_user
-        ON wor_book.UserId = sys_user.UserId
-        INNER JOIN
-            (SELECT wor_book_booktype.BookId FROM wor_book_booktype
-            <include refid="query_booktype"/> ) booktype
-        ON wor_book.BookId = booktype.BookId
-        LEFT JOIN (SELECT MAX(VolumeId) as id, VolumeName, BookId
-            from wor_volume WHERE VolumeStatus = 0 GROUP BY BookId) newest
-        ON booktype.BookId = newest.BookId
+        INNER JOIN wor_volume ON wor_volume.BookId = wor_book.BookId
+        INNER JOIN (
+                        SELECT
+                        wor_volume.BookId,
+                        MAX(wor_volume.VolumeId) AS VolumeId
+                        FROM
+                        wor_volume
+                        INNER JOIN
+                        (SELECT wor_book_booktype.BookId
+                        FROM wor_book_booktype
+                        <include refid="query_booktype"/>) AS booktype
+                        ON wor_volume.BookId = booktype.BookId
+                        WHERE wor_volume.VolumeStatus = 0
+                        GROUP BY wor_volume.BookId
+                    ) AS last_volume
+        ON wor_volume.VolumeId = last_volume.VolumeId
+        INNER JOIN sys_user ON wor_book.UserId = sys_user.UserId
         WHERE
         wor_book.BookStatus = '0'
         <include refid="screen"/>
