@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.AccountMapper">
+
+    <update id="updateSignStatus" parameterType="java.lang.Long">
+        UPDATE sys_user SET sys_user.SignStatus = '1', sys_user.SignDate = now()
+        WHERE sys_user.UserId = #{userId}
+    </update>
+
+</mapper>

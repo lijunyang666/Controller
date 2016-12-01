@@ -117,6 +117,7 @@
 				/relation/** = anon
 				/comment/** = anon
 				/reply/** = anon
+				/account/** = anon
 			</value>
 		</property>
 	</bean>

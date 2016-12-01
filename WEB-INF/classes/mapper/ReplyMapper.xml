@@ -15,8 +15,8 @@
 
     <resultMap id="RelyResultMap" type="com.qcacg.entity.ReplyEntity">
         <id column="replyId" property="replyId"/>
-        <result column="userId" property="userId"/>
-        <result column="userName" property="userName"/>
+        <result column="send_userId" property="userId"/>
+        <result column="send_userName" property="userName"/>
         <result column="commentId" property="commentId"/>
         <result column="replyContent" property="replyContent"/>
         <result column="replyPicture" property="replyPicture"/>
@@ -35,8 +35,8 @@
 	inf_comment.CommentPicture AS commentPicture,
 	inf_comment.CommentDate AS commentDate,
 	inf_reply.ReplyId AS replyId,
-	inf_reply.UserId AS userId,
-	inf_reply.UserName AS userName,
+	inf_reply.UserId AS send_userId,
+	inf_reply.UserName AS send_userName,
 	inf_reply.CommentId AS commentId,
 	inf_reply.ReplyContent AS replyContent,
 	inf_reply.ReplyPicture AS replyPicture,
