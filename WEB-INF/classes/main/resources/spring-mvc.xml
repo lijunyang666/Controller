@@ -18,7 +18,6 @@
 		<!-- 启用spring mvc 注解 -->
   	<context:annotation-config /> 
 	<context:component-scan base-package="com.qcacg.controller" />
-	<!--<context:annotation-scan base-package="com.qcacg.shiro.interceptors"/>-->
 	<context:component-scan base-package="com.qcacg.logAop" />
 
 	<!-- 启动对@AspectJ注解的支持 通知spring使用cglib而不是jdk的来生成代理方法 AOP可以拦截到Controller -->
@@ -76,4 +75,12 @@
 		<property name="cacheSeconds" value="120" />
 	</bean>
 
+	<!--
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/*.shtml"/>
+			<bean class="com.qcacg.shiro.interceptors.ResponseInterceptor"/>
+		</mvc:interceptor>
+	</mvc:interceptors>
+	-->
 </beans>
