@@ -5,6 +5,7 @@
 <display-name>qcacg</display-name>
 
 	<!--跨域过滤器00-->
+	<!--
 	<filter>
 		<filter-name>originFilter</filter-name>
 		<filter-class>com.qcacg.shiro.filter.OriginControlFilter</filter-class>
@@ -13,6 +14,7 @@
 		<filter-name>originFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	-->
 
 	<!--过滤字符集 -->
 	<filter>

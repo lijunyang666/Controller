@@ -86,4 +86,9 @@ wor_book.BookId = #{wor_book.BookId}
     <update id="removeContent" parameterType="java.lang.Long">
         UPDATE wor_content SET ContentStatus = '1' WHERE ContentId = #{contentId}
     </update>
+
+    <update id="hitPlus" parameterType="java.lang.Long">
+        UPDATE wor_book SET wor_book.BookHit = wor_book.BookHit + 1
+        WHERE wor_book.BookId = #{bookId}
+    </update>
 </mapper>

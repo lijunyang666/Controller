@@ -43,6 +43,7 @@
             <id column="userId" property="userId"/>
             <result column="userName" property="userName"/>
             <result column="information" property="information"/>
+            <result column="userHead" property="userHead"/>
         </association>
     </resultMap>
 
@@ -66,7 +67,8 @@
 	wor_book.BookSilverCoins AS bookSilverCoins,
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
-	sys_user.Information AS information
+	sys_user.Information AS information,
+	sys_user.UserHead AS userHead
 FROM
 	wor_book
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
