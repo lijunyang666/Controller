@@ -16,7 +16,6 @@
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 	-->
-
 	<!--过滤字符集 -->
 	<filter>
 		<filter-name>encodingFilter</filter-name>
