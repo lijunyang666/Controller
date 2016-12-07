@@ -5,7 +5,6 @@
 <display-name>qcacg</display-name>
 
 	<!--跨域过滤器00-->
-
 	<!--
 	<filter>
 		<filter-name>originFilter</filter-name>

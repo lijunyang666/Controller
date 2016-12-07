@@ -80,7 +80,22 @@ wor_book.BookId = #{wor_book.BookId}
     </update>
 
     <update id="updateContent" parameterType="com.qcacg.entity.ContentEntity">
-        UPDATE wor_content SET contentTitle=#{contentTitle},content=#{content},contentUrl=#{contentUrl},contentWordCount=#{contentWordCount} WHERE contentId=#{contentId}
+        UPDATE wor_content
+        <set>
+            <if test="contentTitle != null">
+                contentTitle=#{contentTitle},
+            </if>
+            <if test="content != null">
+                content=#{content},
+            </if>
+            <if test="contentUrl">
+                contentUrl=#{contentUrl},
+            </if>
+            <if test="contentWordCount != null">
+                contentWordCount=#{contentWordCount},
+            </if>
+        </set>
+        WHERE contentId=#{contentId}
     </update>
 
     <update id="removeContent" parameterType="java.lang.Long">
@@ -88,7 +103,11 @@ wor_book.BookId = #{wor_book.BookId}
     </update>
 
     <update id="hitPlus" parameterType="java.lang.Long">
-        UPDATE wor_book SET wor_book.BookHit = wor_book.BookHit + 1
+        UPDATE wor_book
+        SET
+          wor_book.BookHit = wor_book.BookHit + 1,
+          wor_book.EveryMonthHit = wor_book.EveryMonthHit + 1,
+          wor_book,EveryWeekHit = wor_book.EveryWeekHit + 1
         WHERE wor_book.BookId = #{bookId}
     </update>
 </mapper>

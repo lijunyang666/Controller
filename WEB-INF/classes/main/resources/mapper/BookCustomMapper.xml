@@ -109,6 +109,8 @@ WHERE
         AND
         wor_volume.VolumeStatus = 0
         AND
+        wor_content.ContentStatus = '0'
+        AND
         wor_volume.BookId = #{wor_volume.BookId}
         ORDER BY
         wor_volume.VolumeId

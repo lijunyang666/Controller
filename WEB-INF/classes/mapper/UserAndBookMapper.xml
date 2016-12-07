@@ -231,8 +231,7 @@ WHERE
             wor_content.Content = #{item.content},
             wor_content.ContentWordCount = #{item.contentWordCount},
             wor_content.ContentStatus = #{item.contentStatus},
-            wor_content.ContentUrl = #{item.contentUrl},
-            wor_content.ContentUpdate = #{item.contentUpdate, jdbcType=DATE}
+            wor_content.ContentUrl = #{item.contentUrl}
             </set>
             WHERE
               wor_content.ContentId = #{item.contentId}
@@ -243,8 +242,7 @@ WHERE
         <foreach collection="list" item="content" index="index" open="" close="" separator=";">
             UPDATE wor_content
             SET
-              wor_content.VolumeId = #{content.volumeId},
-              wor_content.ContentUpdate = #{content.contentUpdate}
+              wor_content.VolumeId = #{content.volumeId}
             WHERE
               wor_content.ContentId = #{content.contentId}
         </foreach>
