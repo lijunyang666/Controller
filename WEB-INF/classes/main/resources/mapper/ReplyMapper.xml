@@ -26,28 +26,37 @@
     </resultMap>
 
     <select id="findCommentAndReplyByReplyUserId" resultMap="CommentResultMap" parameterType="java.lang.Long">
-    SELECT
+SELECT
     inf_comment.CommentId AS commentId,
 	inf_comment.UserId AS userId,
-	inf_comment.UserName AS userName,
+	sys_user.UserName AS userName,
 	inf_comment.BookId AS bookId,
 	inf_comment.CommentContent AS commentContent,
 	inf_comment.CommentPicture AS commentPicture,
 	inf_comment.CommentDate AS commentDate,
 	inf_reply.ReplyId AS replyId,
 	inf_reply.UserId AS send_userId,
-	inf_reply.UserName AS send_userName,
+	u1.UserName AS send_userName,
 	inf_reply.CommentId AS commentId,
 	inf_reply.ReplyContent AS replyContent,
 	inf_reply.ReplyPicture AS replyPicture,
 	inf_reply.ReplyDate AS replyDate,
 	inf_reply.ReplyUserId AS replyUserId,
-	inf_reply.ReplyUserName AS replyUserName
+	u2.UserName AS replyUserName
     FROM
+  sys_user u1,
 	inf_reply,
-	inf_comment
+  sys_user u2,
+	inf_comment,
+  sys_user
     WHERE
     inf_reply.CommentId = inf_comment.CommentId
+		AND
+    inf_comment.UserId = sys_user.UserId
+    AND
+    inf_reply.UserId = u1.UserId
+    AND
+    inf_reply.ReplyUserId = u2.UserId
     AND inf_reply.ReplyUserId = #{inf_reply.ReplyUserId}
     ORDER BY
     inf_reply.ReplyDate DESC

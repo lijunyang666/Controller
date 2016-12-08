@@ -107,7 +107,7 @@ wor_book.BookId = #{wor_book.BookId}
         SET
           wor_book.BookHit = wor_book.BookHit + 1,
           wor_book.EveryMonthHit = wor_book.EveryMonthHit + 1,
-          wor_book,EveryWeekHit = wor_book.EveryWeekHit + 1
+          wor_book.EveryWeekHit = wor_book.EveryWeekHit + 1
         WHERE wor_book.BookId = #{bookId}
     </update>
 </mapper>
