@@ -55,6 +55,32 @@
     inf_comment.CommentDate
     </select>
 
+    <select id="findReplyByContentId" parameterType="com.qcacg.entity.comment.CommentReceive"
+            resultMap="RelyResultMap">
+    SELECT
+	inf_reply.ReplyId AS replyId,
+	inf_reply.UserId AS send_userId,
+	u1.UserName AS send_userName,
+	inf_reply.CommentId AS commentId,
+	inf_reply.ReplyContent AS replyContent,
+	inf_reply.ReplyPicture AS replyPicture,
+	inf_reply.ReplyDate AS replyDate,
+	inf_reply.ReplyUserId AS replyUserId,
+	u2.UserName AS replyUserName
+    FROM
+  sys_user u1,
+	inf_reply,
+  sys_user u2
+    WHERE
+    inf_reply.UserId = u1.UserId
+    AND
+    inf_reply.ReplyUserId = u2.UserId
+    AND inf_reply.CommentId = #{commentId}
+    ORDER BY
+    inf_reply.ReplyDate
+    limit #{startRow}, #{pageSize}
+    </select>
+
     <insert id="insertComment" parameterType="com.qcacg.entity.CommentEntity" useGeneratedKeys="true" keyProperty="commentId">
         <selectKey keyProperty="commentId" resultType="java.lang.Long" order="AFTER">
             SELECT LAST_INSERT_ID() as commentId
