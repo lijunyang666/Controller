@@ -43,6 +43,15 @@
             sys_user.UserId = (SELECT UserId FROM wor_book WHERE wor_book.BookId = #{wor_book.bookId})
     </select>
 
+    <select id="findUserIdByBookId" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT
+        wor_book.UserId
+        FROM
+        wor_book
+        WHERE
+        wor_book.BookId = #{bookId}
+    </select>
+
     <resultMap id="BookEntityResultMap" type="com.qcacg.entity.BookEntity">
         <id column="BookId" property="bookId"/>
         <result column="UserId" property="userId"/>

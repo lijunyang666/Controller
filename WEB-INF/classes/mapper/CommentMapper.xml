@@ -10,6 +10,8 @@
         <result column="CommentContent" property="commentContent"/>
         <result column="commentPicture" property="commentPicture"/>
         <result column="commentDate" property="commentDate"/>
+        <result column="userHead" property="userHead"/>
+        <result column="strickie" property="strickie"/>
         <collection property="replyEntityList" ofType="com.qcacg.entity.ReplyEntity" resultMap="RelyResultMap"/>
     </resultMap>
 
@@ -17,6 +19,7 @@
         <id column="replyId" property="replyId"/>
         <result column="send_userId" property="userId"/>
         <result column="send_userName" property="userName"/>
+        <result column="send_userHead" property="userHead"/>
         <result column="reply_commentId" property="commentId"/>
         <result column="ReplyContent" property="replyContent"/>
         <result column="replyPicture" property="replyPicture"/>
@@ -27,7 +30,7 @@
 
     <select id="findCommentAndReplyByBookId" resultMap="CommentResultMap" parameterType="java.lang.Long">
     SELECT
-  inf_comment.CommentId AS commentId,
+    inf_comment.CommentId AS commentId,
 	inf_comment.UserId AS userId,
 	sys_user.UserName AS userName,
 	inf_comment.BookId AS bookId,
@@ -50,35 +53,85 @@
   LEFT JOIN sys_user u2 ON inf_reply.ReplyUserId = u2.UserId
 	LEFT JOIN sys_user ON sys_user.UserId = inf_comment.UserId
     WHERE
-	inf_comment.BookId = 1
+	inf_comment.BookId = #{bookId}
 	ORDER BY
     inf_comment.CommentDate
     </select>
-
-    <select id="findReplyByContentId" parameterType="com.qcacg.entity.comment.CommentReceive"
-            resultMap="RelyResultMap">
-    SELECT
-	inf_reply.ReplyId AS replyId,
-	inf_reply.UserId AS send_userId,
-	u1.UserName AS send_userName,
-	inf_reply.CommentId AS commentId,
-	inf_reply.ReplyContent AS replyContent,
-	inf_reply.ReplyPicture AS replyPicture,
-	inf_reply.ReplyDate AS replyDate,
-	inf_reply.ReplyUserId AS replyUserId,
-	u2.UserName AS replyUserName
+    
+    <select id="findCommentByBookId" parameterType="com.qcacg.entity.comment.CommentReceive"
+            resultMap="CommentResultMap">
+        SELECT
+    inf_comment.CommentId AS commentId,
+	inf_comment.UserId AS userId,
+	sys_user.UserName AS userName,
+	sys_user.UserHead AS userHead,
+	inf_comment.BookId AS bookId,
+	inf_comment.Strickie AS strickie,
+	inf_comment.CommentContent AS commentContent,
+	inf_comment.CommentPicture AS commentPicture,
+	inf_comment.CommentDate AS commentDate
     FROM
-  sys_user u1,
-	inf_reply,
-  sys_user u2
+	inf_comment
+	LEFT JOIN sys_user ON sys_user.UserId = inf_comment.UserId
     WHERE
-    inf_reply.UserId = u1.UserId
-    AND
-    inf_reply.ReplyUserId = u2.UserId
-    AND inf_reply.CommentId = #{commentId}
-    ORDER BY
-    inf_reply.ReplyDate
+	inf_comment.BookId = #{bookId}
+	ORDER BY
+    ${orderStr}
     limit #{startRow}, #{pageSize}
+    </select>
+
+    <select id="commentCount" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        count(inf_comment.CommentId)
+        FROM
+        inf_comment
+        WHERE
+        inf_comment.BookId = #{bookId}
+    </select>
+
+    <select id="findBookIdByCommentId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+        inf_comment.BookId
+        FROM
+        inf_comment
+        WHERE
+        inf_comment.CommentId = #{commentId}
+    </select>
+
+    <select id="fingReplyByCommentId" parameterType="com.qcacg.entity.comment.CommentReceive"
+            resultMap="RelyResultMap">
+        SELECT
+        inf_reply.ReplyId AS replyId,
+        inf_reply.UserId AS send_userId,
+        u1.UserName AS send_userName,
+        u1.UserHead AS send_userHead,
+        inf_reply.CommentId AS commentId,
+        inf_reply.ReplyContent AS replyContent,
+        inf_reply.ReplyPicture AS replyPicture,
+        inf_reply.ReplyDate AS replyDate,
+        inf_reply.ReplyUserId AS replyUserId,
+        u2.UserName AS replyUserName
+        FROM
+        sys_user u1,
+        inf_reply,
+        sys_user u2
+        WHERE
+        inf_reply.UserId = u1.UserId
+        AND
+        inf_reply.ReplyUserId = u2.UserId
+        AND inf_reply.CommentId = #{commentId}
+        ORDER BY
+        inf_reply.ReplyDate
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <select id="replyCount" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        count(inf_reply.ReplyId)
+        FROM
+        inf_reply
+        WHERE
+        inf_reply.CommentId = #{commentId}
     </select>
 
     <insert id="insertComment" parameterType="com.qcacg.entity.CommentEntity" useGeneratedKeys="true" keyProperty="commentId">
@@ -98,4 +151,14 @@
         WHERE
         inf_comment.CommentId = #{inf_comment.CommentId}
     </delete>
+
+    <update id="updateStrickie" parameterType="java.lang.Long">
+        UPDATE inf_comment SET inf_comment.Strickie = '0'
+        WHERE inf_comment.Strickie = '1' AND inf_comment.BookId = #{bookId}
+    </update>
+    
+    <update id="createStrickie" parameterType="com.qcacg.entity.CommentEntity">
+        UPDATE inf_comment SET inf_comment.Strickie = '1'
+        WHERE inf_comment.CommentId = #{commentId} AND inf_comment.BookId = #{bookId}
+    </update>
 </mapper>
