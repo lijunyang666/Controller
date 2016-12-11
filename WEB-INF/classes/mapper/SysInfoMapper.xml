@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.SysInfoMapper">
+
+    <resultMap id="infoResult" type="com.qcacg.entity.SysInfoEntity">
+        <result column="systemInformationId" property="systemInformationId"/>
+        <result column="systemInformationTitle" property="systemInformationTitle"/>
+        <result column="systemInformationContent" property="systemInformationContent"/>
+        <result column="systemInformationDate" property="systemInformationDate"/>
+        <result column="sendDate" property="sendDate"/>
+    </resultMap>
+
+    <!-- 作品相关 -->
+    <select id="queryBookNoti" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
+        SELECT
+        inf_systeminformation.SystemInformationId AS systemInformationId,
+        inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
+        inf_systeminformation.SystemInformationContent AS systemInformationContent,
+        inf_user_message.MessageSendDate AS sendDate
+        FROM
+        inf_systeminformation, inf_user_message
+        WHERE
+        inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
+        AND inf_user_message.BookType = '0'
+        AND inf_user_message.UserId = #{userId}
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <!-- 系统消息 -->
+    <select id="querySysInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
+
+    </select>
+
+    <insert id="insertSysInfo" parameterType="com.qcacg.entity.SysInfoEntity">
+        <selectKey keyProperty="systemInformationId" resultType="java.lang.Long" order="AFTER">
+            SELECT LAST_INSERT_ID() as systemInformationId
+        </selectKey>
+        INSERT INTO inf_systeminformation (systemInformationId, systemInformationTitle, systemInformationContent, systemInformationPicture, systemInformationStatus)
+        VALUES (#{systemInformationId}, #{systemInformationTitle}, #{systemInformationContent}, #{systemInformationPicture}, #{systemInformationStatus})
+    </insert>
+
+    <delete id="deleteSysInfo" parameterType="java.lang.Long">
+        DELETE FROM
+        inf_systeminformation
+        WHERE
+        SystemInformationId = #{systemInformationId}
+    </delete>
+
+    <insert id="insertMessage" parameterType="com.qcacg.entity.MessageEntity">
+        <selectKey keyProperty="messageId" resultType="java.lang.Long" order="AFTER">
+            SELECT LAST_INSERT_ID() as messageId
+        </selectKey>
+        INSERT INTO inf_user_message(messageId, systemInformationId, userId, messageType)
+        VALUES (#{messageId}, #{infoNum}, #{userId}, #{messageType})
+    </insert>
+
+    <delete id="deleteMessage" parameterType="java.lang.Long">
+        DELETE FROM
+        inf_user_message
+        WHERE
+        MessageId = #{messageId}
+    </delete>
+</mapper>
