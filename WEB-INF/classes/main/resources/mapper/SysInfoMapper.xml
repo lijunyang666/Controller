@@ -9,6 +9,7 @@
         <result column="systemInformationContent" property="systemInformationContent"/>
         <result column="systemInformationDate" property="systemInformationDate"/>
         <result column="sendDate" property="sendDate"/>
+        <result column="messageId" property="messageId"/>
     </resultMap>
 
     <!-- 作品相关 -->
@@ -17,19 +18,89 @@
         inf_systeminformation.SystemInformationId AS systemInformationId,
         inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
         inf_systeminformation.SystemInformationContent AS systemInformationContent,
-        inf_user_message.MessageSendDate AS sendDate
+        inf_user_message.MessageSendDate AS sendDate,
+        inf_user_message.MessageId AS messageId
         FROM
         inf_systeminformation, inf_user_message
         WHERE
         inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
-        AND inf_user_message.BookType = '0'
+        AND inf_user_message.MessageType = '0'
+        AND inf_systeminformation.SystemInformationStatus = '0'
         AND inf_user_message.UserId = #{userId}
+        ORDER BY inf_user_message.MessageSendDate DESC
         limit #{startRow}, #{pageSize}
+    </select>
+
+    <select id="countBookNoti" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        count(inf_systeminformation.SystemInformationId)
+        FROM
+        inf_systeminformation, inf_user_message
+        WHERE
+        inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
+        AND inf_user_message.MessageType = '0'
+        AND inf_systeminformation.SystemInformationStatus = '0'
+        AND inf_user_message.UserId = #{userId}
     </select>
 
     <!-- 系统消息 -->
     <select id="querySysInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
+        SELECT
+        inf_systeminformation.SystemInformationId AS systemInformationId,
+        inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
+        inf_systeminformation.SystemInformationContent AS systemInformationContent,
+        inf_user_message.MessageSendDate AS sendDate,
+        inf_systeminformation.SystemInformationDate AS systemInformationDate,
+        inf_user_message.MessageId AS messageId
+        FROM
+        inf_systeminformation LEFT JOIN inf_user_message
+        ON inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
+        WHERE
+        inf_systeminformation.SystemInformationStatus = '1'
+        OR
+        inf_user_message.MessageType = '1'
+        AND inf_systeminformation.SystemInformationStatus = '0'
+        AND inf_user_message.UserId = #{userId}
+        ORDER BY inf_user_message.MessageSendDate DESC, inf_systeminformation.SystemInformationDate DESC
+        limit #{startRow}, #{pageSize}
+    </select>
 
+    <select id="countSysInfo" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        count(inf_systeminformation.SystemInformationId)
+        FROM
+        inf_systeminformation LEFT JOIN inf_user_message
+        ON inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
+        WHERE
+        inf_systeminformation.SystemInformationStatus = '1'
+        OR
+        inf_user_message.MessageType = '1'
+        AND inf_systeminformation.SystemInformationStatus = '0'
+        AND inf_user_message.UserId = #{userId}
+    </select>
+
+    <!-- 官方公告 -->
+    <select id="queryOfficialInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
+        SELECT
+        inf_systeminformation.SystemInformationId AS systemInformationId,
+        inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
+        inf_systeminformation.SystemInformationContent AS systemInformationContent,
+        inf_systeminformation.SystemInformationDate AS systemInformationDate
+        FROM
+        inf_systeminformation
+        WHERE
+        inf_systeminformation.SystemInformationStatus = '2'
+        ORDER BY inf_systeminformation.SystemInformationDate DESC
+        limit #{startRow}, #{pageSize}
+    </select>
+
+    <select id="countOfficialInfo" resultType="java.lang.Integer">
+        SELECT
+        count(inf_systeminformation.SystemInformationId)
+        FROM
+        inf_systeminformation
+        WHERE
+        inf_systeminformation.SystemInformationStatus = '2'
     </select>
 
     <insert id="insertSysInfo" parameterType="com.qcacg.entity.SysInfoEntity">
