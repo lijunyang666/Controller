@@ -26,6 +26,7 @@
         <result column="replyDate" property="replyDate"/>
         <result column="replyUserId" property="replyUserId"/>
         <result column="replyUserName" property="replyUserName"/>
+        <result column="replyStatus" property="replyStatus"/>
     </resultMap>
 
     <select id="findCommentAndReplyByBookId" resultMap="CommentResultMap" parameterType="java.lang.Long">
@@ -110,6 +111,7 @@
         inf_reply.ReplyPicture AS replyPicture,
         inf_reply.ReplyDate AS replyDate,
         inf_reply.ReplyUserId AS replyUserId,
+        inf_reply.ReplyStatus AS replyStatus,
         u2.UserName AS replyUserName
         FROM
         sys_user u1,

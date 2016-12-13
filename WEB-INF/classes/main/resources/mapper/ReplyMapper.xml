@@ -17,6 +17,7 @@
         <id column="replyId" property="replyId"/>
         <result column="send_userId" property="userId"/>
         <result column="send_userName" property="userName"/>
+        <result column="send_userHead" property="userHead"/>
         <result column="commentId" property="commentId"/>
         <result column="replyContent" property="replyContent"/>
         <result column="replyPicture" property="replyPicture"/>
@@ -27,36 +28,23 @@
 
     <select id="findCommentAndReplyByReplyUserId" resultMap="CommentResultMap" parameterType="java.lang.Long">
 SELECT
-    inf_comment.CommentId AS commentId,
-	inf_comment.UserId AS userId,
-	sys_user.UserName AS userName,
 	inf_comment.BookId AS bookId,
 	inf_comment.CommentContent AS commentContent,
 	inf_comment.CommentPicture AS commentPicture,
-	inf_comment.CommentDate AS commentDate,
-	inf_reply.ReplyId AS replyId,
 	inf_reply.UserId AS send_userId,
 	u1.UserName AS send_userName,
-	inf_reply.CommentId AS commentId,
+	u1.UserHead AS send_userHead,
 	inf_reply.ReplyContent AS replyContent,
 	inf_reply.ReplyPicture AS replyPicture,
-	inf_reply.ReplyDate AS replyDate,
-	inf_reply.ReplyUserId AS replyUserId,
-	u2.UserName AS replyUserName
+	inf_reply.ReplyDate AS replyDate
     FROM
-  sys_user u1,
+    sys_user u1,
 	inf_reply,
-  sys_user u2,
-	inf_comment,
-  sys_user
+	inf_comment
     WHERE
     inf_reply.CommentId = inf_comment.CommentId
-		AND
-    inf_comment.UserId = sys_user.UserId
     AND
     inf_reply.UserId = u1.UserId
-    AND
-    inf_reply.ReplyUserId = u2.UserId
     AND inf_reply.ReplyUserId = #{inf_reply.ReplyUserId}
     ORDER BY
     inf_reply.ReplyDate DESC
@@ -66,8 +54,8 @@ SELECT
         <selectKey keyProperty="replyId" resultType="java.lang.Long" order="AFTER">
             SELECT LAST_INSERT_ID() as replyId
         </selectKey>
-        INSERT INTO inf_reply (replyId,userId,userName,commentId,replyContent,replyPicture,replyUserId,replyUserName)
-        VALUES( #{replyId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},#{commentId,jdbcType=BIGINT},#{replyContent,jdbcType=VARCHAR},#{replyPicture,jdbcType=VARCHAR},#{replyUserId,jdbcType=BIGINT},#{replyUserName,jdbcType=VARCHAR})
+        INSERT INTO inf_reply (replyId,userId,userName,commentId,replyContent,replyPicture,replyUserId,replyUserName, replyStatus)
+        VALUES( #{replyId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},#{commentId,jdbcType=BIGINT},#{replyContent,jdbcType=VARCHAR},#{replyPicture,jdbcType=VARCHAR},#{replyUserId,jdbcType=BIGINT},#{replyUserName,jdbcType=VARCHAR}, #{replyStatus, jdbcType=VARCHAR})
     </insert>
 
     <delete id="deleteReply" parameterType="java.lang.Long">

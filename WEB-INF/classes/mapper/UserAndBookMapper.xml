@@ -310,7 +310,7 @@ WHERE
         </foreach>
     </select>
 
-
+<!-- 查看小说目录 -->
     <select id="queryBook" resultType="com.qcacg.entity.book.Catalog" parameterType="java.lang.Long">
 SELECT
 	wor_volume.BookId,
@@ -322,7 +322,12 @@ FROM
 	wor_content
 INNER JOIN wor_volume
 ON wor_content.VolumeId = wor_volume.VolumeId
-WHERE wor_volume.BookId = #{bookId}
+WHERE
+wor_content.ContentStatus = '0'
+AND
+wor_volume.VolumeStatus = 0
+AND
+wor_volume.BookId = #{bookId}
 ORDER BY wor_volume.VolumeId, wor_content.ContentId
     </select>
 
