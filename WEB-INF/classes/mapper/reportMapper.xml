@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.ReportMapper">
+
+    <select id="queryReportType" resultType="com.qcacg.entity.ReportTypeEntity">
+        SELECT
+        inf_reporttype.ReportTypeId AS reportTypeId,
+        inf_reporttype.ReportTypeName AS reportTypeName
+        FROM
+        inf_reporttype
+    </select>
+
+    <insert id="insertReportTypeBatch" useGeneratedKeys="true" parameterType="java.util.List">
+        INSERT INTO inf_reporttype (ReportTypeName, ReportTypeDescription)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.reportTypeName}, #{item.descri})
+        </foreach>
+    </insert>
+
+    <insert id="insertReport" parameterType="com.qcacg.entity.ReportEntity">
+        <selectKey keyProperty="reportId" resultType="java.lang.Long" order="AFTER">
+            SELECT LAST_INSERT_ID() as reportId
+        </selectKey>
+        INSERT INTO inf_report (reportTypeId, reportContent, reporterId, replyId, commentId)
+        VALUES (#{reportTypeId}, #{reportContent}, #{reporterId}, #{replyId}, #{commentId})
+    </insert>
+
+</mapper>
