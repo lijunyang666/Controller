@@ -120,6 +120,7 @@
 				/account/** = anon
 				/info/** = anon
 				/report/** = anon
+				/pay/** = anon
 			</value>
 		</property>
 	</bean>

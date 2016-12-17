@@ -3,104 +3,116 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.SysInfoMapper">
 
-    <resultMap id="infoResult" type="com.qcacg.entity.SysInfoEntity">
-        <result column="systemInformationId" property="systemInformationId"/>
-        <result column="systemInformationTitle" property="systemInformationTitle"/>
-        <result column="systemInformationContent" property="systemInformationContent"/>
-        <result column="systemInformationDate" property="systemInformationDate"/>
-        <result column="sendDate" property="sendDate"/>
+    <resultMap id="infoResult" type="com.qcacg.entity.MessageEntity">
         <result column="messageId" property="messageId"/>
+        <result column="messageTitle" property="messageTitle"/>
+        <result column="message" property="message"/>
+        <result column="messageCreateDate" property="messageCreateDate"/>
+        <result column="messageStatus" property="messageStatus"/>
     </resultMap>
 
     <!-- 作品相关 -->
     <select id="queryBookNoti" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
-        SELECT
-        inf_systeminformation.SystemInformationId AS systemInformationId,
-        inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
-        inf_systeminformation.SystemInformationContent AS systemInformationContent,
-        inf_user_message.MessageSendDate AS sendDate,
-        inf_user_message.MessageId AS messageId
-        FROM
-        inf_systeminformation, inf_user_message
-        WHERE
-        inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
-        AND inf_user_message.MessageType = '0'
-        AND inf_systeminformation.SystemInformationStatus = '0'
-        AND inf_user_message.UserId = #{userId}
-        ORDER BY inf_user_message.MessageSendDate DESC
-        limit #{startRow}, #{pageSize}
+      SELECT
+      inf_user_message.MessageId AS messageId,
+      inf_user_message.MessageTitle AS messageTitle,
+      inf_user_message.Message AS message,
+      inf_user_message.MessageCreateDate AS messageCreateDate,
+      inf_user_message.MessageStatus AS messageStatus
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.UserId = #{userId}
+      AND
+      inf_user_message.MessageType = '0'
+      ORDER BY inf_user_message.MessageStatus, inf_user_message.MessageCreateDate DESC
+      limit #{startRow}, #{pageSize}
     </select>
 
     <select id="countBookNoti" resultType="java.lang.Integer" parameterType="java.lang.Long">
-        SELECT
-        count(inf_systeminformation.SystemInformationId)
-        FROM
-        inf_systeminformation, inf_user_message
-        WHERE
-        inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
-        AND inf_user_message.MessageType = '0'
-        AND inf_systeminformation.SystemInformationStatus = '0'
-        AND inf_user_message.UserId = #{userId}
+      SELECT
+      count(inf_user_message.MessageId)
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.UserId = #{userId}
+      AND
+      inf_user_message.MessageType = '0'
+    </select>
+
+    <!-- 统计作品相关的未读消息数量 -->
+    <select id="countNoti" resultType="java.lang.Integer" parameterType="java.lang.Long">
+      SELECT
+      count(inf_user_message.MessageId)
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.UserId = #{userId}
+      AND
+      inf_user_message.MessageType = '0'
+      AND
+      inf_user_message.MessageStatus = '0'
     </select>
 
     <!-- 系统消息 -->
     <select id="querySysInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
-        SELECT
-        inf_systeminformation.SystemInformationId AS systemInformationId,
-        inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
-        inf_systeminformation.SystemInformationContent AS systemInformationContent,
-        inf_user_message.MessageSendDate AS sendDate,
-        inf_systeminformation.SystemInformationDate AS systemInformationDate,
-        inf_user_message.MessageId AS messageId
-        FROM
-        inf_systeminformation LEFT JOIN inf_user_message
-        ON inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
-        WHERE
-        inf_systeminformation.SystemInformationStatus = '1'
-        OR
-        inf_user_message.MessageType = '1'
-        AND inf_systeminformation.SystemInformationStatus = '0'
-        AND inf_user_message.UserId = #{userId}
-        ORDER BY inf_user_message.MessageSendDate DESC, inf_systeminformation.SystemInformationDate DESC
-        limit #{startRow}, #{pageSize}
+      SELECT
+      inf_user_message.MessageId AS messageId,
+      inf_user_message.MessageTitle AS messageTitle,
+      inf_user_message.Message AS message,
+      inf_user_message.MessageCreateDate AS messageCreateDate,
+      inf_user_message.MessageStatus AS messageStatus
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.MessageType = '1'
+      AND
+      inf_user_message.UserId IS NULL
+      OR
+      inf_user_message.MessageType = '1'
+      AND inf_user_message.UserId = #{userId}
+      ORDER BY inf_user_message.MessageStatus, inf_user_message.MessageCreateDate DESC
+      limit #{startRow}, #{pageSize}
     </select>
 
     <select id="countSysInfo" resultType="java.lang.Integer" parameterType="java.lang.Long">
-        SELECT
-        count(inf_systeminformation.SystemInformationId)
-        FROM
-        inf_systeminformation LEFT JOIN inf_user_message
-        ON inf_systeminformation.SystemInformationId = inf_user_message.SystemInformationId
-        WHERE
-        inf_systeminformation.SystemInformationStatus = '1'
-        OR
-        inf_user_message.MessageType = '1'
-        AND inf_systeminformation.SystemInformationStatus = '0'
-        AND inf_user_message.UserId = #{userId}
+      SELECT
+      count(inf_user_message.MessageId)
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.MessageType = '1'
+      AND
+      inf_user_message.UserId IS NULL
+      OR
+      inf_user_message.MessageType = '1'
+      AND inf_user_message.UserId = #{userId}
     </select>
+
 
     <!-- 官方公告 -->
     <select id="queryOfficialInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
-        SELECT
-        inf_systeminformation.SystemInformationId AS systemInformationId,
-        inf_systeminformation.SystemInformationTitle AS systemInformationTitle,
-        inf_systeminformation.SystemInformationContent AS systemInformationContent,
-        inf_systeminformation.SystemInformationDate AS systemInformationDate
-        FROM
-        inf_systeminformation
-        WHERE
-        inf_systeminformation.SystemInformationStatus = '2'
-        ORDER BY inf_systeminformation.SystemInformationDate DESC
-        limit #{startRow}, #{pageSize}
+      SELECT
+      inf_user_message.MessageId AS messageId,
+      inf_user_message.MessageTitle AS messageTitle,
+      inf_user_message.Message AS message,
+      inf_user_message.MessageCreateDate AS messageCreateDate,
+      inf_user_message.MessageStatus AS messageStatus
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.MessageType = '2'
+      ORDER BY inf_user_message.MessageStatus, inf_user_message.MessageCreateDate DESC
+      limit #{startRow}, #{pageSize}
     </select>
 
     <select id="countOfficialInfo" resultType="java.lang.Integer">
-        SELECT
-        count(inf_systeminformation.SystemInformationId)
-        FROM
-        inf_systeminformation
-        WHERE
-        inf_systeminformation.SystemInformationStatus = '2'
+      SELECT
+      count(inf_user_message.MessageId)
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.MessageType = '2'
     </select>
 
     <insert id="insertSysInfo" parameterType="com.qcacg.entity.SysInfoEntity">
@@ -118,12 +130,17 @@
         SystemInformationId = #{systemInformationId}
     </delete>
 
-    <insert id="insertMessage" parameterType="com.qcacg.entity.MessageEntity">
-        <selectKey keyProperty="messageId" resultType="java.lang.Long" order="AFTER">
-            SELECT LAST_INSERT_ID() as messageId
-        </selectKey>
-        INSERT INTO inf_user_message(messageId, systemInformationId, userId, messageType)
-        VALUES (#{messageId}, #{infoNum}, #{userId}, #{messageType})
+    <insert id="insertMessage" useGeneratedKeys="true" parameterType="java.util.Map">
+        INSERT INTO inf_user_message(userId, messageTitle, message, messageType)
+        VALUES
+        <if test="userId != null">
+            <foreach collection="userId" item="item" index="index" separator=",">
+                (#{item}, #{messageTitle}, #{message}, #{messageType})
+            </foreach>
+        </if>
+        <if test="userId == null">
+            (#{userId}, #{messageTitle}, #{message}, #{messageType})
+        </if>
     </insert>
 
     <delete id="deleteMessage" parameterType="java.lang.Long">
