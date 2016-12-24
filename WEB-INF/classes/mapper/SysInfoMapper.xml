@@ -9,6 +9,8 @@
         <result column="message" property="message"/>
         <result column="messageCreateDate" property="messageCreateDate"/>
         <result column="messageStatus" property="messageStatus"/>
+        <result column="cycleId" property="messageType"/>
+        <result column="userId" property="identification"/>
     </resultMap>
 
     <!-- 作品相关 -->
@@ -29,6 +31,7 @@
       limit #{startRow}, #{pageSize}
     </select>
 
+    <!-- 统计作品相关所有消息条数 -->
     <select id="countBookNoti" resultType="java.lang.Integer" parameterType="java.lang.Long">
       SELECT
       count(inf_user_message.MessageId)
@@ -61,9 +64,11 @@
       inf_user_message.MessageTitle AS messageTitle,
       inf_user_message.Message AS message,
       inf_user_message.MessageCreateDate AS messageCreateDate,
-      inf_user_message.MessageStatus AS messageStatus
+      inf_user_message.MessageStatus AS messageStatus,
+      inf_user_message.UserId AS userId,
+      msg.RecycleId AS cycleId
       FROM
-      inf_user_message
+      inf_user_message LEFT JOIN (SELECT RecycleId, MessageId FROM inf_message_recycle WHERE UserId = #{userId}) AS msg ON inf_user_message.MessageId = msg.MessageId
       WHERE
       inf_user_message.MessageType = '1'
       AND
@@ -71,10 +76,11 @@
       OR
       inf_user_message.MessageType = '1'
       AND inf_user_message.UserId = #{userId}
-      ORDER BY inf_user_message.MessageStatus, inf_user_message.MessageCreateDate DESC
+      ORDER BY inf_user_message.MessageCreateDate DESC
       limit #{startRow}, #{pageSize}
     </select>
 
+    <!-- 统计系统消息条数 -->
     <select id="countSysInfo" resultType="java.lang.Integer" parameterType="java.lang.Long">
       SELECT
       count(inf_user_message.MessageId)
@@ -89,6 +95,41 @@
       AND inf_user_message.UserId = #{userId}
     </select>
 
+    <!-- 系统消息未读条数 -->
+    <select id="countSys" parameterType="java.lang.Long" resultType="java.lang.Integer">
+      SELECT
+(SELECT
+      count(inf_user_message.MessageId)
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.MessageType = '1'
+      AND
+      inf_user_message.UserId IS NULL
+      OR
+      inf_user_message.MessageType = '1'
+      AND inf_user_message.UserId = #{userId})
+-
+(SELECT
+	COUNT(inf_user_message.MessageId)
+FROM
+	inf_user_message LEFT JOIN inf_message_recycle ON inf_user_message.MessageId = inf_message_recycle.MessageId
+WHERE
+	inf_user_message.MessageStatus = '1'
+AND
+	inf_user_message.MessageType = '1'
+AND
+	inf_user_message.UserId = #{userId}
+OR
+	inf_user_message.MessageType = '1'
+AND
+	inf_user_message.UserId IS NULL
+AND
+	inf_message_recycle.UserId = #{userId})
+AS del
+FROM DUAL
+    </select>
+
 
     <!-- 官方公告 -->
     <select id="queryOfficialInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
@@ -97,15 +138,17 @@
       inf_user_message.MessageTitle AS messageTitle,
       inf_user_message.Message AS message,
       inf_user_message.MessageCreateDate AS messageCreateDate,
-      inf_user_message.MessageStatus AS messageStatus
+      inf_user_message.MessageStatus AS messageStatus,
+      msg.RecycleId AS cycleId
       FROM
-      inf_user_message
+      inf_user_message LEFT JOIN (SELECT RecycleId, MessageId FROM inf_message_recycle WHERE UserId = #{userId}) AS msg ON inf_user_message.MessageId = msg.MessageId
       WHERE
       inf_user_message.MessageType = '2'
-      ORDER BY inf_user_message.MessageStatus, inf_user_message.MessageCreateDate DESC
+      ORDER BY inf_user_message.MessageCreateDate DESC
       limit #{startRow}, #{pageSize}
     </select>
 
+    <!-- 官方公告总条数 -->
     <select id="countOfficialInfo" resultType="java.lang.Integer">
       SELECT
       count(inf_user_message.MessageId)
@@ -113,6 +156,38 @@
       inf_user_message
       WHERE
       inf_user_message.MessageType = '2'
+    </select>
+
+    <!-- 官方公告未读条数 -->
+    <select id="countOfficial" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+	(SELECT
+      count(inf_user_message.MessageId)
+      FROM
+      inf_user_message
+      WHERE
+      inf_user_message.MessageType = '2')
+-
+	(SELECT count(inf_user_message.MessageId)
+		FROM inf_user_message, inf_message_recycle
+		WHERE inf_user_message.MessageId = inf_message_recycle.MessageId
+		AND inf_message_recycle.UserId = #{userId}
+		AND inf_user_message.MessageType = '2')
+AS del
+FROM DUAL
+    </select>
+
+    <!-- 统计未读回复 -->
+    <select id="countReply" parameterType="java.lang.Long" resultType="java.lang.Integer">
+        SELECT
+        count(inf_reply.ReplyId)
+        FROM
+        inf_reply,
+        inf_comment
+        WHERE
+        inf_reply.CommentId = inf_comment.CommentId
+        AND inf_reply.ReplyType = '0'
+        AND inf_reply.ReplyUserId = #{inf_reply.ReplyUserId}
     </select>
 
     <insert id="insertSysInfo" parameterType="com.qcacg.entity.SysInfoEntity">
@@ -143,10 +218,29 @@
         </if>
     </insert>
 
+    <insert id="insertCycle" useGeneratedKeys="true" parameterType="java.util.List">
+        INSERT INTO inf_message_recycle (userId, messageId)
+        VALUES
+        <foreach collection="list" item="item" index="index" separator=",">
+            (#{item.identification}, #{item.messageId})
+        </foreach>
+    </insert>
+
     <delete id="deleteMessage" parameterType="java.lang.Long">
         DELETE FROM
         inf_user_message
         WHERE
         MessageId = #{messageId}
     </delete>
+
+    <update id="updateMessageStatus" parameterType="java.util.List">
+        UPDATE inf_user_message
+        SET inf_user_message.MessageStatus = '1'
+        WHERE
+        inf_user_message.MessageId
+        IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item.messageId}
+        </foreach>
+    </update>
 </mapper>

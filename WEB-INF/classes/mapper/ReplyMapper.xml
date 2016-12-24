@@ -24,9 +24,10 @@
         <result column="replyDate" property="replyDate"/>
         <result column="replyUserId" property="replyUserId"/>
         <result column="replyUserName" property="replyUserName"/>
+        <result column="replyType" property="replyType"/>
     </resultMap>
 
-    <select id="findCommentAndReplyByReplyUserId" resultMap="CommentResultMap" parameterType="java.lang.Long">
+    <select id="findCommentAndReplyByReplyUserId" resultMap="CommentResultMap" parameterType="com.qcacg.entity.message.MessageReceive">
 SELECT
 	inf_comment.BookId AS bookId,
 	inf_comment.CommentContent AS commentContent,
@@ -36,7 +37,9 @@ SELECT
 	u1.UserHead AS send_userHead,
 	inf_reply.ReplyContent AS replyContent,
 	inf_reply.ReplyPicture AS replyPicture,
-	inf_reply.ReplyDate AS replyDate
+	inf_reply.ReplyDate AS replyDate,
+	inf_reply.ReplyType AS replyType,
+	inf_reply.ReplyId AS replyId
     FROM
     sys_user u1,
 	inf_reply,
@@ -45,9 +48,10 @@ SELECT
     inf_reply.CommentId = inf_comment.CommentId
     AND
     inf_reply.UserId = u1.UserId
-    AND inf_reply.ReplyUserId = #{inf_reply.ReplyUserId}
+    AND inf_reply.ReplyUserId = #{userId}
     ORDER BY
-    inf_reply.ReplyDate DESC
+    inf_reply.ReplyType, inf_reply.ReplyDate DESC
+    limit #{startRow}, #{pageSize}
     </select>
 
     <insert id="insertReply" parameterType="com.qcacg.entity.ReplyEntity" useGeneratedKeys="true" keyProperty="replyId">
@@ -64,4 +68,15 @@ SELECT
         WHERE
         inf_reply.ReplyId = #{inf_reply.ReplyId}
     </delete>
+
+    <update id="updateType" parameterType="java.util.List">
+        UPDATE inf_reply
+        SET inf_reply.ReplyType = '1'
+        WHERE
+        inf_reply.ReplyId
+        IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item.replyId}
+        </foreach>
+    </update>
 </mapper>
