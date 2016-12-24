@@ -27,7 +27,7 @@
       inf_user_message.UserId = #{userId}
       AND
       inf_user_message.MessageType = '0'
-      ORDER BY inf_user_message.MessageStatus, inf_user_message.MessageCreateDate DESC
+      ORDER BY inf_user_message.MessageCreateDate DESC
       limit #{startRow}, #{pageSize}
     </select>
 
