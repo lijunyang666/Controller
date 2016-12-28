@@ -69,7 +69,6 @@
 	inf_comment.BookId AS bookId,
 	inf_comment.Strickie AS strickie,
 	inf_comment.CommentContent AS commentContent,
-	inf_comment.CommentPicture AS commentPicture,
 	inf_comment.CommentDate AS commentDate
     FROM
 	inf_comment
@@ -108,7 +107,6 @@
         u1.UserHead AS send_userHead,
         inf_reply.CommentId AS commentId,
         inf_reply.ReplyContent AS replyContent,
-        inf_reply.ReplyPicture AS replyPicture,
         inf_reply.ReplyDate AS replyDate,
         inf_reply.ReplyUserId AS replyUserId,
         inf_reply.ReplyStatus AS replyStatus,

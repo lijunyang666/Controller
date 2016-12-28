@@ -31,7 +31,6 @@
 SELECT
 	inf_comment.BookId AS bookId,
 	inf_comment.CommentContent AS commentContent,
-	inf_comment.CommentPicture AS commentPicture,
 	inf_reply.UserId AS send_userId,
 	u1.UserName AS send_userName,
 	u1.UserHead AS send_userHead,

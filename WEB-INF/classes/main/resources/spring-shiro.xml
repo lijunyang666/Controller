@@ -85,16 +85,15 @@
 				/treegrid/** = anon
 				/denied.shtml = anon
 				/login.shtml = anon
+				/logout.shtml = anon
 				/getStatus.shtml = anon
 				/register.shtml = anon
-				/toRegister.shtml = anon
 				/type.shtml = anon
 				/book/queryBook/**.shtml = anon
 				/ranking.shtml = anon
 				/catalog.shtml = anon
 				/updatePasswordTelephoneCode.shtml = anon
 				/registerTelephoneCode.shtml = anon
-				/toUpdatePassword.shtml = anon
 				/updatePassword.shtml = anon
 				/404.jsp = anon
 				/error.jsp = anon
