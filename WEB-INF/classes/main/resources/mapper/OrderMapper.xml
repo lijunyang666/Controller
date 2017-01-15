@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.AccountMapper">
+
+    <sql id="orderField">
+        o.OrderId AS orderId,
+        o.CommodityName AS commodityName,
+        o.UserId AS userId,
+        o.BookId AS bookId,
+        o.VolumeId AS volumeId,
+        o.ContentId AS contentId,
+        o.OrderAmount AS orderAmount,
+        o.OrderContent AS orderContent,
+        o.OrderType AS orderType,
+        o.OrderStatus AS orderStatus,
+        o.OrderCreateTime AS orderCreateTime,
+        o.OrderUpdateTime AS orderUpdateTime
+    </sql>
+
+    <insert id="insertOrder" parameterType="com.qcacg.entity.OrderEntity">
+        INSERT INTO sys_order AS o (
+          <include refid="orderField"></include>
+        )
+        VALUES
+        (
+            #{order.orderId},
+            #{order.commodityName},
+            #{order.userId},
+            #{order.bookId},
+            #{order.volumeId},
+            #{order.contentId},
+            #{order.orderAmount},
+            #{order.orderContent},
+            #{order.orderType},
+            #{order.orderStatus},
+            #{order.orderCreateTime},
+            #{order.orderUpdateTime}
+        )
+
+    </insert>
+
+    <update id="updateOrder" parameterType="com.qcacg.entity.OrderEntity">
+        UPDATE sys_order AS o
+        SET o.orderStatus = #{order.orderStatus}
+        WHERE
+          o.orderId = #{order.orderId}
+    </update>
+
+    <select id="findOrderByOrderId" parameterType="java.lang.String" resultType="com.qcacg.dto.OrderDTO">
+        SELECT
+          <include refid="orderField"></include>
+        ,
+        b.BookName AS bookName,
+        c.ContentTitle AS contentTitle
+        FROM
+        sys_order AS o
+        LEFT JOIN wor_book AS b ON o.BookId = b.BookId
+        LEFT JOIN wor_content AS c ON o.ContentId = c.ContentId
+        WHERE
+        o.orderId = #{orderId}
+    </select>
+
+    <select id="findOrderByUserId" parameterType="java.lang.Long" resultType="com.qcacg.dto.OrderDTO">
+        SELECT
+          <include refid="orderField"></include>
+        ,
+        b.BookName AS bookName,
+        c.ContentTitle AS contentTitle
+        FROM
+        sys_order AS o
+        LEFT JOIN wor_book AS b ON o.BookId = b.BookId
+        LEFT JOIN wor_content AS c ON o.ContentId = c.ContentId
+        WHERE
+        o.UserId = #{userId}
+    </select>
+
+</mapper>
