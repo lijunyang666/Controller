@@ -76,7 +76,7 @@
     WHERE
 	inf_comment.BookId = #{bookId}
 	ORDER BY
-    #{orderStr}
+    ${orderStr}
     limit #{startRow}, #{pageSize}
     </select>
 

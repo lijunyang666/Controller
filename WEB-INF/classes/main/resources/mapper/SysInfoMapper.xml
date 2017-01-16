@@ -302,4 +302,10 @@ FROM DUAL
             #{item.messageId}
         </foreach>
     </update>
+    <update id="readedSystemToUserByUserId" parameterType="java.lang.Long">
+        UPDATE inf_user_message
+        SET inf_user_message.MessageStatus = '1'
+        WHERE
+        inf_user_message.UserId = #{userId}
+    </update>
 </mapper>

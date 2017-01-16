@@ -83,4 +83,10 @@
 		</mvc:interceptor>
 	</mvc:interceptors>
 	-->
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/book/adminUpdateChangeUpdateCycleApply.shtml"/>
+			<bean class="com.qcacg.interceptor.AdminInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 </beans>
