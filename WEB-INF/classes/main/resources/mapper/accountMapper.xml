@@ -8,27 +8,4 @@
         WHERE sys_user.UserId = #{userId}
     </update>
 
-    <update id="updateCopper" parameterType="com.qcacg.entity.AccountEntity">
-        UPDATE fin_account SET CopperAccount = CopperAccount + #{copperAccount}
-        WHERE UserId = #{userId}
-    </update>
-
-    <insert id="insertAccount" parameterType="com.qcacg.entity.AccountEntity">
-        INSERT INTO fin_account (UserId)
-        VALUES (#{userId})
-    </insert>
-
-    <insert id="insertRecharge" parameterType="com.qcacg.entity.RechargeEntity">
-        INSERT INTO inf_recharge (OutTradeNo, TradeNo, TradeStatus, UserId, TotalFee)
-        VALUES (#{out_trade_no}, #{trade_no}, #{trade_status}, #{userId}, #{total_fee})
-    </insert>
-
-    <select id="findAccount" parameterType="java.lang.Long" resultType="com.qcacg.entity.AccountEntity">
-        SELECT
-        UserId AS userId
-        FROM
-        fin_account
-        WHERE
-        UserId = #{userId}
-    </select>
 </mapper>

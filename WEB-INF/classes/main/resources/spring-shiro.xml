@@ -77,6 +77,7 @@
 		<property name="filterChainDefinitions">
 			<!-- anon：比如/admins/**=anon 没有参数，表示可以匿名使用。 -->
 			<value>
+				/VerifyLoginServlet.shtml = anon
 				/index.jsp = anon
 				/index.shtml = anon
 				/common/** = anon

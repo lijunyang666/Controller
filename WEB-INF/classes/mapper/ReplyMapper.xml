@@ -26,6 +26,37 @@
         <result column="replyUserName" property="replyUserName"/>
         <result column="replyType" property="replyType"/>
     </resultMap>
+    <!--2017年1月8日13:36:01 修改获得的字段
+        2017年1月10日10:18:39 添加bookId-->
+    <select id="findReplyByUserId" resultType="com.qcacg.dto.ReplyDTO" parameterType="com.qcacg.entity.message.MessageReceive">
+        SELECT
+            r1.ReplyId AS  replyId,
+            r1.ReplyDate AS replyDate,
+            r1.CommentId AS commentId,
+            r1.ReplyContent AS replyContent,
+            r1.ReplyPicture AS replyPicture,
+            r1.ReplyUserId AS replyUserId,
+            r1.ReplyStatus AS replyStatus,
+            r1.ReplyType AS replyType,
+            r1.RepliedId AS repliedId,
+            r1.UserId AS userId,
+            u.UserName AS userName,
+            u.UserHead AS userHead,
+            r2.ReplyContent AS repliedContent,
+            c.CommentContent AS commentContent,
+            c.BookId AS bookId
+        FROM
+            inf_reply AS r1
+        LEFT JOIN sys_user AS u ON r1.UserId = u.UserId
+        LEFT JOIN inf_reply AS r2 ON r2.ReplyId = r1.RepliedId
+        LEFT JOIN inf_comment AS c ON c.CommentId = r1.CommentId
+        WHERE
+        r1.ReplyUserId = #{userId}
+        AND r1.UserId != #{userId}
+        ORDER BY
+        r1.ReplyDate DESC
+        limit #{startRow}, #{pageSize}
+    </select>
 
     <select id="findCommentAndReplyByReplyUserId" resultMap="CommentResultMap" parameterType="com.qcacg.entity.message.MessageReceive">
 SELECT
@@ -52,13 +83,13 @@ SELECT
     inf_reply.ReplyType, inf_reply.ReplyDate DESC
     limit #{startRow}, #{pageSize}
     </select>
-
+    <!--2017年1月8日13:36:46 添加插入repliedId字段-->
     <insert id="insertReply" parameterType="com.qcacg.entity.ReplyEntity" useGeneratedKeys="true" keyProperty="replyId">
         <selectKey keyProperty="replyId" resultType="java.lang.Long" order="AFTER">
             SELECT LAST_INSERT_ID() as replyId
         </selectKey>
-        INSERT INTO inf_reply (replyId,userId,userName,commentId,replyContent,replyPicture,replyUserId,replyUserName, replyStatus)
-        VALUES( #{replyId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},#{commentId,jdbcType=BIGINT},#{replyContent,jdbcType=VARCHAR},#{replyPicture,jdbcType=VARCHAR},#{replyUserId,jdbcType=BIGINT},#{replyUserName,jdbcType=VARCHAR}, #{replyStatus, jdbcType=VARCHAR})
+        INSERT INTO inf_reply (repliedId,replyId,userId,userName,commentId,replyContent,replyPicture,replyUserId,replyUserName, replyStatus)
+        VALUES( #{repliedId,jdbcType=BIGINT},#{replyId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{userName,jdbcType=VARCHAR},#{commentId,jdbcType=BIGINT},#{replyContent,jdbcType=VARCHAR},#{replyPicture,jdbcType=VARCHAR},#{replyUserId,jdbcType=BIGINT},#{replyUserName,jdbcType=VARCHAR}, #{replyStatus, jdbcType=VARCHAR})
     </insert>
 
     <delete id="deleteReply" parameterType="java.lang.Long">
@@ -78,4 +109,42 @@ SELECT
             #{item.replyId}
         </foreach>
     </update>
+    <!--2017年1月10日11:04:31 添加新的设置未读为已读的方法-->
+    <update id="setReaded" parameterType="java.util.List">
+        UPDATE inf_reply
+        SET inf_reply.ReplyType = '1'
+        WHERE
+        inf_reply.ReplyId
+        IN
+        <foreach collection="list" item="item" index="index" open="(" close=")" separator=",">
+            #{item.replyId}
+        </foreach>
+    </update>
+    <!--2017年1月15日11:19:33 添加新的设置未读为已读的方法-->
+    <update id="setReadedByUserId" parameterType="java.lang.Long">
+        UPDATE inf_reply
+        SET inf_reply.ReplyType = '1'
+        WHERE
+        inf_reply.ReplyUserId = #{userId}
+    </update>
+    <!--2017年1月10日13:13:16 添加根据id获取回复总数-->
+    <select id="findTotalCount" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        COUNT(r.ReplyId)
+        FROM
+            inf_reply AS r
+        WHERE
+            r.ReplyUserId = #{userId}
+        AND r.UserId != #{userId}
+    </select>
+    <!--2017年1月12日16:54:57 根据bookId获取回复总数-->
+    <select id="findTotalCountByBookId" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+            COUNT(r.ReplyId)
+        FROM
+            inf_reply AS r
+        LEFT JOIN inf_comment AS c ON r.CommentId = c.CommentId
+        WHERE
+            c.BookId = #{bookId}
+    </select>
 </mapper>

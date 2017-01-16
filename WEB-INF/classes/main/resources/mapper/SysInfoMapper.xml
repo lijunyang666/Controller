@@ -60,23 +60,42 @@
     <!-- 系统消息 -->
     <select id="querySysInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
       SELECT
-      inf_user_message.MessageId AS messageId,
-      inf_user_message.MessageTitle AS messageTitle,
-      inf_user_message.Message AS message,
-      inf_user_message.MessageCreateDate AS messageCreateDate,
-      inf_user_message.MessageStatus AS messageStatus,
-      inf_user_message.UserId AS userId,
-      msg.RecycleId AS cycleId
-      FROM
-      inf_user_message LEFT JOIN (SELECT RecycleId, MessageId FROM inf_message_recycle WHERE UserId = #{userId}) AS msg ON inf_user_message.MessageId = msg.MessageId
-      WHERE
-      inf_user_message.MessageType = '1'
-      AND
-      inf_user_message.UserId IS NULL
-      OR
-      inf_user_message.MessageType = '1'
-      AND inf_user_message.UserId = #{userId}
-      ORDER BY inf_user_message.MessageCreateDate DESC
+        message.MessageId AS messageId,
+        message.MessageTitle AS messageTitle,
+        message.Message AS message,
+        message.MessageCreateDate AS messageCreateDate,
+        message.MessageStatus AS messageStatus,
+        msg.RecycleId AS cycleId
+        FROM
+        (
+        SELECT
+        inf_user_message.MessageId AS messageId,
+        inf_user_message.MessageTitle AS messageTitle,
+        inf_user_message.Message AS message,
+        inf_user_message.MessageCreateDate AS messageCreateDate,
+        inf_user_message.MessageStatus AS messageStatus,
+        inf_user_message.MessageType AS messageType
+        FROM
+        inf_user_message,
+        sys_user
+        WHERE
+        sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+                              AND sys_user.UserId = #{userId}
+                              AND (inf_user_message.UserId = #{userId} OR inf_user_message.UserId IS NULL)
+        ) AS message
+        LEFT JOIN (
+        SELECT
+        RecycleId,
+        MessageId
+        FROM
+        inf_message_recycle
+        WHERE
+        UserId = #{userId}
+        ) AS msg ON message.MessageId = msg.MessageId
+        WHERE
+        message.MessageType = '1'
+        ORDER BY
+        message.MessageCreateDate DESC
       limit #{startRow}, #{pageSize}
     </select>
 
@@ -97,54 +116,86 @@
 
     <!-- 系统消息未读条数 -->
     <select id="countSys" parameterType="java.lang.Long" resultType="java.lang.Integer">
-      SELECT
-(SELECT
-      count(inf_user_message.MessageId)
-      FROM
-      inf_user_message
-      WHERE
-      inf_user_message.MessageType = '1'
-      AND
-      inf_user_message.UserId IS NULL
-      OR
-      inf_user_message.MessageType = '1'
-      AND inf_user_message.UserId = #{userId})
--
-(SELECT
-	COUNT(inf_user_message.MessageId)
-FROM
-	inf_user_message LEFT JOIN inf_message_recycle ON inf_user_message.MessageId = inf_message_recycle.MessageId
-WHERE
-	inf_user_message.MessageStatus = '1'
-AND
-	inf_user_message.MessageType = '1'
-AND
-	inf_user_message.UserId = #{userId}
-OR
-	inf_user_message.MessageType = '1'
-AND
-	inf_user_message.UserId IS NULL
-AND
-	inf_message_recycle.UserId = #{userId})
-AS del
-FROM DUAL
+        SELECT
+        (
+        SELECT
+        COUNT(inf_user_message.MessageId)
+        FROM
+        inf_user_message,
+        sys_user
+        WHERE
+        sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+                              AND sys_user.UserId = #{userId}
+        AND inf_user_message.MessageType = '1'
+        AND (
+        inf_user_message.UserId IS NULL
+        OR inf_user_message.UserId = #{userId}
+        )
+        ) - (
+        SELECT
+        COUNT(inf_user_message.MessageId)
+        FROM
+        inf_user_message
+        LEFT JOIN inf_message_recycle ON inf_user_message.MessageId = inf_message_recycle.MessageId,
+        sys_user
+        WHERE
+        sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+                              AND sys_user.UserId = #{userId}
+        AND inf_user_message.MessageType = '1'
+        AND (
+        (
+        inf_user_message.MessageStatus = '1'
+        AND inf_user_message.UserId = #{userId}
+        )
+        OR (
+        inf_user_message.UserId IS NULL
+        AND inf_message_recycle.UserId = #{userId}
+        )
+        )
+        ) AS del
+        FROM
+        DUAL
     </select>
 
 
     <!-- 官方公告 -->
     <select id="queryOfficialInfo" resultMap="infoResult" parameterType="com.qcacg.entity.message.MessageReceive">
-      SELECT
-      inf_user_message.MessageId AS messageId,
-      inf_user_message.MessageTitle AS messageTitle,
-      inf_user_message.Message AS message,
-      inf_user_message.MessageCreateDate AS messageCreateDate,
-      inf_user_message.MessageStatus AS messageStatus,
-      msg.RecycleId AS cycleId
-      FROM
-      inf_user_message LEFT JOIN (SELECT RecycleId, MessageId FROM inf_message_recycle WHERE UserId = #{userId}) AS msg ON inf_user_message.MessageId = msg.MessageId
-      WHERE
-      inf_user_message.MessageType = '2'
-      ORDER BY inf_user_message.MessageCreateDate DESC
+        SELECT
+        message.MessageId AS messageId,
+        message.MessageTitle AS messageTitle,
+        message.Message AS message,
+        message.MessageCreateDate AS messageCreateDate,
+        message.MessageStatus AS messageStatus,
+        msg.RecycleId AS cycleId
+        FROM
+        (
+        SELECT
+        inf_user_message.MessageId AS messageId,
+        inf_user_message.MessageTitle AS messageTitle,
+        inf_user_message.Message AS message,
+        inf_user_message.MessageCreateDate AS messageCreateDate,
+        inf_user_message.MessageStatus AS messageStatus,
+        inf_user_message.MessageType AS messageType
+        FROM
+        inf_user_message,
+        sys_user
+        WHERE
+        sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+                              AND sys_user.UserId = #{userId}
+        ) AS message
+        LEFT JOIN (
+        SELECT
+        RecycleId,
+        MessageId
+        FROM
+        inf_message_recycle
+        WHERE
+        UserId = #{userId}
+        ) AS msg ON message.MessageId = msg.MessageId
+        WHERE
+        message.MessageType = '2'
+        ORDER BY
+        message.MessageCreateDate DESC
       limit #{startRow}, #{pageSize}
     </select>
 
@@ -164,13 +215,20 @@ FROM DUAL
 	(SELECT
       count(inf_user_message.MessageId)
       FROM
-      inf_user_message
+      inf_user_message,
+        sys_user
       WHERE
-      inf_user_message.MessageType = '2')
+        sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+      AND sys_user.UserId = #{userId}
+      AND inf_user_message.MessageType = '2')
 -
 	(SELECT count(inf_user_message.MessageId)
-		FROM inf_user_message, inf_message_recycle
-		WHERE inf_user_message.MessageId = inf_message_recycle.MessageId
+		FROM inf_user_message, inf_message_recycle,
+        sys_user
+		WHERE
+        sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+        AND sys_user.UserId = #{userId}
+		AND inf_user_message.MessageId = inf_message_recycle.MessageId
 		AND inf_message_recycle.UserId = #{userId}
 		AND inf_user_message.MessageType = '2')
 AS del
@@ -188,6 +246,7 @@ FROM DUAL
         inf_reply.CommentId = inf_comment.CommentId
         AND inf_reply.ReplyType = '0'
         AND inf_reply.ReplyUserId = #{inf_reply.ReplyUserId}
+        AND inf_reply.UserId != #{inf_reply.ReplyUserId}
     </select>
 
     <insert id="insertSysInfo" parameterType="com.qcacg.entity.SysInfoEntity">

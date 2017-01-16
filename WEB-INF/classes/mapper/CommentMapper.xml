@@ -101,6 +101,30 @@
     <select id="fingReplyByCommentId" parameterType="com.qcacg.entity.comment.CommentReceive"
             resultMap="RelyResultMap">
         SELECT
+            inf_reply.ReplyId AS replyId,
+            inf_reply.UserId AS send_userId,
+            u1.UserName AS send_userName,
+            u1.UserHead AS send_userHead,
+            inf_reply.CommentId AS commentId,
+            inf_reply.ReplyContent AS replyContent,
+            inf_reply.ReplyDate AS replyDate,
+            inf_reply.ReplyUserId AS replyUserId,
+            inf_reply.ReplyStatus AS replyStatus,
+            u2.UserName AS replyUserName
+        FROM
+            inf_reply
+            LEFT JOIN sys_user u1 ON inf_reply.UserId = u1.UserId
+            LEFT JOIN sys_user u2 ON inf_reply.ReplyUserId = u2.UserId
+        WHERE
+            inf_reply.CommentId = #{commentId}
+        ORDER BY
+        inf_reply.ReplyDate
+        limit #{startRow}, #{pageSize}
+    </select>
+    <!-- 2017年1月7日13:26:55 旧findRepayByCommentId -->
+    <select id="fingReplyByCommentId_1" parameterType="com.qcacg.entity.comment.CommentReceive"
+            resultMap="RelyResultMap">
+        SELECT
         inf_reply.ReplyId AS replyId,
         inf_reply.UserId AS send_userId,
         u1.UserName AS send_userName,

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.BookMapper">
-
+    <!--2017年1月11日10:29:07 添加更新周期字段-->
     <resultMap id="BookResultMap" type="com.qcacg.entity.book.BookCustom">
         <id column="bookId" property="bookId"/>
         <result column="userId" property="userId"/>
@@ -15,6 +15,7 @@
         <result column="bookHit" property="bookHit"/>
         <result column="bookCollect" property="bookCollect"/>
         <result column="bookCopperCoins" property="bookCopperCoins"/>
+        <result column="updateCycle" property="updateCycle"/>
         <association property="userEntity" javaType="com.qcacg.entity.UserEntity">
             <id column="userId" property="userId"/>
             <result column="userName" property="userName"/>
@@ -39,6 +40,7 @@ SELECT
 	wor_book.BookCollect AS bookCollect,
 	wor_book.BookCopperCoins AS bookCopperCoins,
 	wor_book.BookSilverCoins AS bookSilverCoins,
+	wor_book.UpdateCycle AS updateCycle,
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
 	sys_user.Information AS information,
@@ -52,7 +54,7 @@ WHERE
     wor_book.BookStatus = '0'
     </select>
 
-    <!-- 查找被推荐的书，并且在主页显示 -->
+    <!-- 查找被推荐的书，并且在主页显示-->
     <select id="findBookByIsRecom" resultMap="BookResultMap">
 SELECT
 	wor_book.BookId AS bookId,
@@ -68,6 +70,7 @@ SELECT
 	wor_book.BookCollect AS bookCollect,
 	wor_book.BookCopperCoins AS bookCopperCoins,
 	wor_book.BookSilverCoins AS bookSilverCoins,
+	wor_book.UpdateCycle AS updateCycle,
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
 	sys_user.Information AS information,
@@ -84,35 +87,36 @@ WHERE
     limit 0, 6
     </select>
 
-    <!-- 查找90天内创建的新书，并且未被推荐 -->
+    <!-- 查找90天内创建的新书，并且未被推荐-->
     <select id="findBookByCreateTime" resultMap="BookResultMap">
-SELECT
-    wor_book.BookId AS bookId,
-	wor_book.UserId AS userId,
-	wor_book.BookName AS bookName,
-	wor_book.Sort AS sort,
-	wor_book.BookIntroduction AS bookIntroduction,
-	wor_book.BookUpdate AS bookUpdate,
-	wor_book.BookCoverImage AS bookCoverImage,
-	wor_book.BookWordCount AS bookWordCount,
-	wor_book.BookStatus AS bookStatus,
-	wor_book.BookHit AS bookHit,
-	wor_book.BookCollect AS bookCollect,
-	wor_book.BookCopperCoins AS bookCopperCoins,
-	wor_book.BookSilverCoins AS bookSilverCoins,
-	sys_user.UserId AS userId,
-	sys_user.UserName AS userName,
-	sys_user.Information AS information,
-	sys_user.UserHead AS userHead
-FROM
-	wor_book
-LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
-WHERE
-    wor_book.BookStatus = '0'
-AND
-    wor_book.IsRecommended = '0'
-AND
-    DATEDIFF(SYSDATE(),wor_book.BookCreateTime) BETWEEN 0 AND 90
+    SELECT
+        wor_book.BookId AS bookId,
+        wor_book.UserId AS userId,
+        wor_book.BookName AS bookName,
+        wor_book.Sort AS sort,
+        wor_book.BookIntroduction AS bookIntroduction,
+        wor_book.BookUpdate AS bookUpdate,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookStatus AS bookStatus,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookSilverCoins AS bookSilverCoins,
+        wor_book.UpdateCycle AS updateCycle,
+        sys_user.UserId AS userId,
+        sys_user.UserName AS userName,
+        sys_user.Information AS information,
+        sys_user.UserHead AS userHead
+    FROM
+        wor_book
+    LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
+    WHERE
+        wor_book.BookStatus = '0'
+    AND
+        wor_book.IsRecommended = '0'
+    AND
+        DATEDIFF(SYSDATE(),wor_book.BookCreateTime) BETWEEN 0 AND 90
 
 <!-- DATEDIFF(SYSDATE(),wor_book.BookCreateTime) -->
     </select>
@@ -133,27 +137,29 @@ AND
     </select>
 
     <select id="findBookByUserId" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
-SELECT
-wor_book.BookId,
-wor_book.UserId,
-wor_book.BookName,
-wor_book.BookCoverImage,
-wor_book.UserId,
-wor_book.Sort,
-wor_book.BookIntroduction,
-wor_book.BookUpdate,
-wor_book.BookWordCount,
-wor_book.BookStatus,
-wor_book.BookHit,
-wor_book.BookCollect,
-wor_book.BookCopperCoins,
-wor_book.BookSilverCoins
-FROM
-wor_book
-WHERE
-wor_book.UserId = #{wor_book.UserId}
-ORDER BY
-wor_book.BookUpdate DESC
+    SELECT
+        wor_book.BookId,
+        wor_book.UserId,
+        wor_book.BookName,
+        wor_book.BookCoverImage,
+        wor_book.UserId,
+        wor_book.Sort,
+        wor_book.BookIntroduction,
+        wor_book.BookUpdate,
+        wor_book.BookWordCount,
+        wor_book.BookStatus,
+        wor_book.BookHit,
+        wor_book.BookCollect,
+        wor_book.BookCopperCoins,
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle,
+        wor_book.BookReviewStatus
+    FROM
+        wor_book
+    WHERE
+        wor_book.UserId = #{wor_book.UserId}
+    ORDER BY
+        wor_book.BookUpdate DESC
 
     </select>
 
@@ -193,6 +199,7 @@ wor_book.BookHit AS bookHit,
 wor_book.BookCollect AS bookCollect,
 wor_book.BookCopperCoins AS bookCopperCoins,
 wor_book.BookSilverCoins AS bookSilverCoins,
+wor_book.UpdateCycle AS updateCycle,
 sys_user.UserId AS userId,
 sys_user.UserName AS userName,
 sys_user.Information AS information,
@@ -226,7 +233,8 @@ wor_book.BookStatus,
 wor_book.BookHit,
 wor_book.BookCollect,
 wor_book.BookCopperCoins,
-wor_book.BookSilverCoins
+wor_book.BookSilverCoins,
+wor_book.UpdateCycle
         FROM
         wor_book
         WHERE
@@ -249,7 +257,8 @@ wor_book.BookSilverCoins
         wor_book.BookHit,
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
-        wor_book.BookSilverCoins
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle
         FROM
         wor_book
         WHERE
@@ -272,7 +281,8 @@ wor_book.BookSilverCoins
         wor_book.BookHit,
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
-        wor_book.BookSilverCoins
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle
         FROM
         wor_book
         WHERE
@@ -295,7 +305,8 @@ wor_book.BookSilverCoins
         wor_book.BookHit,
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
-        wor_book.BookSilverCoins
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle
         FROM
         wor_book
         WHERE
@@ -319,7 +330,8 @@ wor_book.BookSilverCoins
     wor_book.BookHit,
     wor_book.BookCollect,
     wor_book.BookCopperCoins,
-    wor_book.BookSilverCoins
+    wor_book.BookSilverCoins,
+    wor_book.UpdateCycle
     FROM
     wor_book
     WHERE
@@ -342,7 +354,8 @@ wor_book.BookSilverCoins
         wor_book.BookHit,
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
-        wor_book.BookSilverCoins
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle AS updateCycle
         FROM
         wor_book
         WHERE
@@ -365,7 +378,8 @@ wor_book.BookSilverCoins
         wor_book.BookHit,
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
-        wor_book.BookSilverCoins
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle
         FROM
         wor_book
         WHERE
@@ -388,7 +402,8 @@ wor_book.BookSilverCoins
     wor_book.BookHit,
     wor_book.BookCollect,
     wor_book.BookCopperCoins,
-    wor_book.BookSilverCoins
+    wor_book.BookSilverCoins,
+    wor_book.UpdateCycle
     FROM
     wor_book
     WHERE
@@ -411,7 +426,8 @@ wor_book.BookSilverCoins
         wor_book.BookHit,
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
-        wor_book.BookSilverCoins
+        wor_book.BookSilverCoins,
+        wor_book.UpdateCycle
         FROM
         wor_book
         WHERE
@@ -434,7 +450,8 @@ wor_book.BookStatus,
 wor_book.BookHit,
 wor_book.BookCollect,
 wor_book.BookCopperCoins,
-wor_book.BookSilverCoins
+wor_book.BookSilverCoins,
+wor_book.UpdateCycle
 FROM
 wor_book
 WHERE
@@ -443,6 +460,254 @@ ORDER BY
 wor_book.BookUpdate ASC
 
     </select>
+
+    <!--                 开始Sign                                      -->
+    <update id="updateBookSignByParam" parameterType="map">
+        update inf_sign
+        set Status=#{status}
+        where BookId=#{bookId}
+    </update>
+
+    <update id="updateBookByParam" parameterType="map">
+        update wor_book
+        set BookIsSign=#{status},
+        set UpdateCycle=#{update}
+        where BookId=#{bookId}
+    </update>
+
+    <select id="findAllBookSign" parameterType="map" resultType="com.qcacg.entity.SignEntity">
+        SELECT
+        SignId as signId,
+        BookId as bookId,
+        'Name' as name,
+        SignName as signName,
+        Many as many,
+        LastTime as lastTime,
+        'Update' as update,
+        Status as status,
+        QQ as qq,
+        Email as email,
+        Phone as phone,
+        Address as address,
+        Message as message
+        FROM inf_sign
+        ORDER BY
+        SignId
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+
+    <select id="findBookSignByBookId" parameterType="long" resultType="com.qcacg.entity.SignEntity">
+        SELECT
+        SignId as signId,
+        BookId as bookId,
+        'Name' as name,
+        SignName as signName,
+        Many as many,
+        LastTime as lastTime,
+        'Update' as update,
+        Status as status,
+        QQ as qq,
+        Email as email,
+        Phone as phone,
+        Address as address,
+        Message as message
+        FROM inf_sign
+        WHERE BookId=#{bookId}
+    </select>
+
+    <insert id="saveBookSign" parameterType="com.qcacg.entity.SignEntity">
+        insert into inf_sign(
+        SignId,
+        BookId,
+        'Name',
+        SignName,
+        Many,
+        LastTime,
+        'Update',
+        Status,
+        QQ,
+        Email,
+        Phone,
+        Address,
+        Message
+        ) values (
+        null,
+        #{bookId},
+        #{name},
+        #{signName},
+        #{many},
+        #{lastTime},
+        #{update},
+        #{status},
+        #{qq},
+        #{email},
+        #{phone},
+        #{address},
+        #{message}
+        )
+    </insert>
+
+    <select id="findReviewStatusByBookId" parameterType="long" resultType="string">
+        SELECT Status as status
+        FROM inf_review
+        WHERE BookId=#{bookId}
+    </select>
+
+    <select id="findBookNameByBookId" parameterType="long" resultType="string">
+        SELECT ReviewName
+        FROM inf_review
+        WHERE BookId=#{bookId}
+    </select>
+    <!--                 结束Sign                                      -->
+
+    <!--                 开始review                                      -->
+    <select id="findReplyByReviewMSGId" parameterType="int" resultType="string">
+        select Reply
+        from inf_reviewMSG
+        where ReviewMSGId=#{reviewMSGId}
+    </select>
+
+    <select id="findLastReviewMSGIdByReviewId" parameterType="int" resultType="int">
+        select ReviewMSGId
+        from inf_reviewMSG
+        where ReviewId=#{reviewId}
+        order by ReviewMSGId DESC
+        limit 1
+    </select>
+
+    <update id="updateReviewMSGByReviewId" parameterType="int">
+        update inf_reviewMSG
+        set Reply=#{reply}
+        where ReviewMSGId=#{reviewMSGId}
+    </update>
+
+    <update id="updateReviewStatusByParam" parameterType="map">
+        update inf_review
+        set Status=#{status}
+        where BookId=#{bookId}
+    </update>
+
+    <insert id="insertMessageByParam" parameterType="map">
+        insert into inf_reviewMSG(ReviewId,Message,Index)
+        values(#{reviewId},#{message},#{index})
+    </insert>
+
+    <update id="updateReviewByParam" parameterType="map">
+        update inf_review
+        set Status=#{status},Many=#{many},LastTime=#{lastTime}
+        where BookId=#{bookId}
+    </update>
+
+    <resultMap id="ReviewByBook" type="com.qcacg.entity.ReviewEntity">
+        <id column="reviewId" property="reviewId"/>
+        <result column="bookId" property="bookId"/>
+        <result column="reviewName" property="reviewName"/>
+        <result column="many" property="many"/>
+        <result column="lastTime" property="lastTime"/>
+        <result column="status" property="status"/>
+        <!-- 映射集合 -->
+        <collection property="reviewMSG" select="findReviewMSGsByReviewId" column="reviewId"/>
+    </resultMap>
+    <select id="findReviewByBookId" parameterType="long" resultMap="ReviewByBook">
+        select
+        ReviewId as reviewId,
+        BookId as bookId,
+        ReviewName as reviewName,
+        Many as many,
+        LastTime as lastTime,
+        Status as status
+        from
+        inf_review
+        where
+        inf_review.BookId=#{bookId}
+    </select>
+
+    <insert id="saveReview" parameterType="map" useGeneratedKeys="true" keyProperty="reviewId">
+        <selectKey keyProperty="reviewId" resultType="java.lang.Long" order="AFTER">
+            SELECT LAST_INSERT_ID() as reviewId
+        </selectKey>
+        insert into inf_review (ReviewId,BookId,ReviewName,Many,LastTime,Status)
+        values(null,#{bookId},#{reviewName},#{many},#{lastTime},#{status})
+    </insert>
+
+    <insert id="saveReviewMSG" parameterType="map" useGeneratedKeys="true" keyProperty="reviewMSGId">
+        insert into inf_reviewMSG (ReviewId,Index,Message)
+        values(#{reviewId},#{index},#{message})
+    </insert>
+
+    <resultMap id="ReviewMap" type="com.qcacg.entity.ReviewEntity">
+        <id column="reviewId" property="reviewId"/>
+        <result column="bookId" property="bookId"/>
+        <result column="reviewName" property="reviewName"/>
+        <result column="many" property="many"/>
+        <result column="lastTime" property="lastTime"/>
+        <result column="status" property="status"/>
+        <!-- 映射集合 -->
+        <collection property="reviewMSG" select="findReviewMSGsByReviewId" column="reviewId"/>
+    </resultMap>
+    <select id="findReviewsByParam" parameterType="map" resultMap="ReviewMap">
+        select
+        ReviewId as reviewId,
+        BookId as bookId,
+        ReviewName as reviewName,
+        Many as many,
+        LastTime as lastTime,
+        Status as status
+        from
+        inf_review
+        <where>
+            <if test="status != null or status!= 0">
+                Status=#{status}
+            </if>
+        </where>
+        ORDER BY
+        inf_review.ReviewId
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+    <select id="findReviewMSGsByReviewId" resultType="com.qcacg.entity.ReviewMSGEntity">
+        select
+        inf_reviewMSG.reviewMSGId,
+        inf_reviewMSG.reviewId,
+        inf_reviewMSG.index,
+        inf_reviewMSG.message,
+        inf_reviewMSG.reply
+        from
+        inf_reviewMSG
+        where
+        reviewId=#{reviewId}
+    </select>
+
+    <update id="updateBookReviewStatusSHZByBooId" parameterType="long">
+        UPDATE wor_book
+        SET BookReviewStatus= '审核中'
+        WHERE BookId=#{bookId}
+    </update>
+
+    <update id="updateBookReviewStatusYSHByBooId" parameterType="long">
+        UPDATE wor_book
+        SET BookReviewStatus= '已审核'
+        WHERE BookId=#{bookId}
+    </update>
+
+    <update id="updateBookReviewStatusSHSBByBooId" parameterType="long">
+        UPDATE wor_book
+        SET BookReviewStatus= '审核失败'
+        WHERE BookId=#{bookId}
+    </update>
+
+    <insert id="insertMessage" useGeneratedKeys="true" parameterType="java.util.Map">
+        INSERT INTO inf_user_message(userId, messageTitle, message, messageType)
+        VALUES (#{userId}, #{messageTitle}, #{message}, #{messageType})
+    </insert>
+
+    <!--                 结束review                                      -->
+
 
     <select id="SearchBookByKeyWord" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.String">
     SELECT
@@ -470,7 +735,8 @@ wor_book.BookUpdate ASC
     wor_book.EveryWeekCopperCoins,
     wor_book.EveryMonthWordCount,
     wor_book.EveryMonthHit,
-    wor_book.EveryMonthCopperCoins
+    wor_book.EveryMonthCopperCoins,
+    wor_book.UpdateCycle
     FROM
     wor_book,
     sys_user
@@ -487,12 +753,12 @@ wor_book.BookUpdate ASC
         <selectKey keyProperty="bookId" resultType="java.lang.Long" order="AFTER">
             SELECT LAST_INSERT_ID() as bookId
         </selectKey>
-        INSERT INTO wor_book (bookId,userId,bookName,sort,bookIntroduction,bookCoverImage, wor_book.BookCreateTime)
-        VALUES( #{bookId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{bookName,jdbcType=VARCHAR},#{sort,jdbcType=VARCHAR},#{bookIntroduction,jdbcType=VARCHAR},#{bookCoverImage,jdbcType=VARCHAR}, #{bookCreateTime} )
+        INSERT INTO wor_book (updateCycle,bookId,userId,bookName,sort,bookIntroduction,bookCoverImage, wor_book.BookCreateTime)
+        VALUES( #{updateCycle,jdbcType=INTEGER},#{bookId,jdbcType=BIGINT},#{userId,jdbcType=BIGINT},#{bookName,jdbcType=VARCHAR},#{sort,jdbcType=VARCHAR},#{bookIntroduction,jdbcType=VARCHAR},#{bookCoverImage,jdbcType=VARCHAR}, #{bookCreateTime} )
     </insert>
 
     <update id="updateBook" parameterType="com.qcacg.entity.BookEntity">
-        UPDATE wor_book SET bookName=#{bookName},sort=#{sort},bookIntroduction=#{bookIntroduction},bookCoverImage=#{bookCoverImage} WHERE bookId=#{bookId}
+        UPDATE wor_book SET bookName=#{bookName},sort=#{sort},bookIntroduction=#{bookIntroduction},bookCoverImage=#{bookCoverImage},updateCycle=#{updateCycle} WHERE bookId=#{bookId}
     </update>
 
     <update id="userUpdateBookStatus" parameterType="java.lang.Long">
@@ -552,4 +818,66 @@ wor_book.BookUpdate ASC
             wor_book.BookId = #{item}
         </foreach>
     </delete>
+
+    <update id="updateNextUpdateCycle" parameterType="com.qcacg.entity.BookEntity">
+        UPDATE wor_book AS b
+        SET b.ChangeUpdateCycleTime = #{book.changeUpdateCycleTime},b.NextUpdateCycle = #{book.nextUpdateCycle}
+        WHERE b.BookId = #{book.bookId}
+    </update>
+    <update id="updateUpdateCycle" parameterType="com.qcacg.entity.BookEntity">
+        UPDATE wor_book AS b
+        SET b.UpdateCycle = #{book.nextUpdateCycle},b.NextUpdateCycle = 0 ,b.ChangeUpdateCycleTime = NULL
+        WHERE b.BookId = #{book.bookId}
+    </update>
+    <select id="findBookByBookIdForChangeUpdateCycle" resultType="com.qcacg.entity.BookEntity" parameterType="java.lang.Long">
+        SELECT
+            b.BookId AS bookId,
+            b.UpdateCycle AS updateCycle,
+            b.NextUpdateCycle AS nextUpdateCycle,
+            b.ChangeUpdateCycleTime AS changeUpdateCycleTime
+        FROM
+            wor_book AS b
+        WHERE
+            b.ChangeUpdateCycleTime IS NULL
+        AND b.BookId = #{bookId}
+    </select>
+    <select id="findAllBooksForChangeUpdateCycle" resultType="com.qcacg.entity.BookEntity">
+        SELECT
+            b.BookId AS bookId,
+            b.UpdateCycle AS updateCycle,
+            b.NextUpdateCycle AS nextUpdateCycle,
+            b.ChangeUpdateCycleTime AS changeUpdateCycleTime
+        FROM
+            wor_book AS b
+        WHERE
+            b.ChangeUpdateCycleTime IS NOT NULL
+        AND
+            b.NextUpdateCycle != 0
+        AND
+            b.NextUpdateCycle IS NOT NULL
+    </select>
+    <select id="findBookByBookId" parameterType="java.lang.Long" resultType="com.qcacg.entity.BookEntity">
+        SELECT
+        wor_book.BookId AS bookId,
+        wor_book.UserId AS userId,
+        wor_book.BookName AS bookName,
+        wor_book.Sort AS sort,
+        wor_book.BookIntroduction AS bookIntroduction,
+        wor_book.BookUpdate AS bookUpdate,
+        wor_book.BookCoverImage AS bookCoverImage,
+        wor_book.BookWordCount AS bookWordCount,
+        wor_book.BookStatus AS bookStatus,
+        wor_book.BookHit AS bookHit,
+        wor_book.BookCollect AS bookCollect,
+        wor_book.BookCopperCoins AS bookCopperCoins,
+        wor_book.BookSilverCoins AS bookSilverCoins,
+        wor_book.UpdateCycle AS updateCycle,
+        wor_book.NextUpdateCycle AS nextUpdateCycle,
+        wor_book.ChangeUpdateCycleTime AS changeUpdateCycleTime,
+        wor_book.BookIsSign AS bookIsSign
+        FROM
+        wor_book
+        WHERE
+        wor_book.bookId = #{bookId}
+    </select>
 </mapper>

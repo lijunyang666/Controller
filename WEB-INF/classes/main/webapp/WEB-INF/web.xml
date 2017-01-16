@@ -5,6 +5,7 @@
 <display-name>qcacg</display-name>
 
 	<!--跨域过滤器00-->
+
 	<filter>
 		<filter-name>originFilter</filter-name>
 		<filter-class>com.qcacg.shiro.filter.OriginControlFilter</filter-class>
@@ -155,20 +156,10 @@
 		<description></description>
 		<servlet-class>com.qcacg.util.geetest.StartCaptchaServlet</servlet-class>
 	</servlet>
-	<servlet>
-		<servlet-name>VerifyLoginServlet</servlet-name>
-		<display-name>VerifyLoginServlet</display-name>
-		<description></description>
-		<servlet-class>com.qcacg.util.geetest.VerifyLoginServlet</servlet-class>
-	</servlet>
-
-	<servlet-mapping>
-		<servlet-name>VerifyLoginServlet</servlet-name>
-		<url-pattern>/VerifyLoginServlet</url-pattern>
-	</servlet-mapping>
 	<servlet-mapping>
 		<servlet-name>StartCaptchaServlet</servlet-name>
 		<url-pattern>/StartCaptchaServlet</url-pattern>
 	</servlet-mapping>
+
 
 </web-app>

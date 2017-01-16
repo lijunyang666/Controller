@@ -39,6 +39,7 @@
         <result column="bookHit" property="bookHit"/>
         <result column="bookCollect" property="bookCollect"/>
         <result column="bookCopperCoins" property="bookCopperCoins"/>
+        <result column="updateCycle" property="updateCycle"/>
         <association property="userEntity" javaType="com.qcacg.entity.UserEntity">
             <id column="userId" property="userId"/>
             <result column="userName" property="userName"/>
@@ -65,6 +66,7 @@
 	wor_book.BookCollect AS bookCollect,
 	wor_book.BookCopperCoins AS bookCopperCoins,
 	wor_book.BookSilverCoins AS bookSilverCoins,
+	wor_book.UpdateCycle AS updateCycle,
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
 	sys_user.Information AS information,
