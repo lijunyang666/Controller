@@ -564,13 +564,19 @@ wor_book.BookUpdate ASC
     <!--                 结束Sign                                      -->
 
     <!--                 开始review                                      -->
+    <select id="findUserIdByBookId" parameterType="long" resultType="string">
+        select UserId as userId
+        from wor_book
+        where BookId=#{bookId}
+    </select>
+
     <select id="findReplyByReviewMSGId" parameterType="int" resultType="string">
         select Reply
         from inf_reviewMSG
         where ReviewMSGId=#{reviewMSGId}
     </select>
 
-    <select id="findLastReviewMSGIdByReviewId" parameterType="int" resultType="int">
+    <select id="findLastReviewMSGIdByReviewId" parameterType="int" resultType="string">
         select ReviewMSGId
         from inf_reviewMSG
         where ReviewId=#{reviewId}
@@ -578,7 +584,7 @@ wor_book.BookUpdate ASC
         limit 1
     </select>
 
-    <update id="updateReviewMSGByReviewId" parameterType="int">
+    <update id="updateReviewMSGReplyByReviewMSGId" parameterType="int">
         update inf_reviewMSG
         set Reply=#{reply}
         where ReviewMSGId=#{reviewMSGId}
@@ -589,11 +595,6 @@ wor_book.BookUpdate ASC
         set Status=#{status}
         where BookId=#{bookId}
     </update>
-
-    <insert id="insertMessageByParam" parameterType="map">
-        insert into inf_reviewMSG(ReviewId,Message,Index)
-        values(#{reviewId},#{message},#{index})
-    </insert>
 
     <update id="updateReviewByParam" parameterType="map">
         update inf_review
@@ -626,16 +627,16 @@ wor_book.BookUpdate ASC
     </select>
 
     <insert id="saveReview" parameterType="map" useGeneratedKeys="true" keyProperty="reviewId">
-        <selectKey keyProperty="reviewId" resultType="java.lang.Long" order="AFTER">
-            SELECT LAST_INSERT_ID() as reviewId
+        <selectKey keyProperty="reviewId" resultType="int" order="AFTER">
+            SELECT LAST_INSERT_ID() as ID
         </selectKey>
         insert into inf_review (ReviewId,BookId,ReviewName,Many,LastTime,Status)
         values(null,#{bookId},#{reviewName},#{many},#{lastTime},#{status})
     </insert>
 
-    <insert id="saveReviewMSG" parameterType="map" useGeneratedKeys="true" keyProperty="reviewMSGId">
-        insert into inf_reviewMSG (ReviewId,Index,Message)
-        values(#{reviewId},#{index},#{message})
+    <insert id="saveReviewMSG" parameterType="com.qcacg.entity.ReviewMSGEntity">
+        insert into inf_reviewMSG (ReviewMSGId,ReviewId,Sort,Message,Reply)
+        values (null,#{reviewId},#{sort},#{message},#{reply})
     </insert>
 
     <resultMap id="ReviewMap" type="com.qcacg.entity.ReviewEntity">
@@ -658,11 +659,6 @@ wor_book.BookUpdate ASC
         Status as status
         from
         inf_review
-        <where>
-            <if test="status != null or status!= 0">
-                Status=#{status}
-            </if>
-        </where>
         ORDER BY
         inf_review.ReviewId
         <if test="start != null">
@@ -670,17 +666,18 @@ wor_book.BookUpdate ASC
             #{start}, #{rows}
         </if>
     </select>
+
     <select id="findReviewMSGsByReviewId" resultType="com.qcacg.entity.ReviewMSGEntity">
         select
-        inf_reviewMSG.reviewMSGId,
-        inf_reviewMSG.reviewId,
-        inf_reviewMSG.index,
-        inf_reviewMSG.message,
-        inf_reviewMSG.reply
+        inf_reviewMSG.ReviewMSGId as reviewMSGId,
+        inf_reviewMSG.ReviewId as reviewId,
+        inf_reviewMSG.Sort as sort,
+        inf_reviewMSG.Message as message,
+        inf_reviewMSG.Reply as reply
         from
         inf_reviewMSG
         where
-        reviewId=#{reviewId}
+        inf_reviewMSG.ReviewId=#{reviewId}
     </select>
 
     <update id="updateBookReviewStatusSHZByBooId" parameterType="long">
