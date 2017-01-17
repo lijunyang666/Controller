@@ -86,6 +86,11 @@
 	<mvc:interceptors>
 		<mvc:interceptor>
 			<mvc:mapping path="/book/adminUpdateChangeUpdateCycleApply.shtml"/>
+			<mvc:mapping path="/book/adminUpdateBookStatus.shtml"/>
+			<mvc:mapping path="/book/queryBookForCheck.shtml"/>
+			<mvc:mapping path="/book/adminQueryBookSign.shtml"/>
+			<mvc:mapping path="/info/saveInfo.shtml"/>
+			<mvc:mapping path="/info/cancelSend.shtml"/>
 			<bean class="com.qcacg.interceptor.AdminInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
