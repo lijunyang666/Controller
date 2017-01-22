@@ -121,6 +121,9 @@
 				/info/** = anon
 				/report/** = anon
 				/pay/** = anon
+				/book/queryBookForCheck.shtml = anon
+				/book/adminQueryBookSign.shtml = anon
+				/info/saveInfo.shtml = anon
 			</value>
 		</property>
 	</bean>

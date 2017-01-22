@@ -461,17 +461,26 @@ wor_book.BookUpdate ASC
 
     </select>
 
+    <!--                 开始recom                                      -->
+    <update id="updateBookRecomByBookId" parameterType="map">
+        update wor_book
+        set IsRecommended=#{isRecommended}
+        where BookId=#{bookId}
+    </update>
+    <!--                 结束recom                                      -->
+
     <!--                 开始Sign                                      -->
-    <update id="updateBookSignByParam" parameterType="map">
+    <update id="updateLastBookSignByParam" parameterType="map">
         update inf_sign
         set Status=#{status}
         where BookId=#{bookId}
+        order by SignId desc
+        limit 1
     </update>
 
-    <update id="updateBookByParam" parameterType="map">
+    <update id="updateBookSignCycleByParam" parameterType="map">
         update wor_book
-        set BookIsSign=#{status},
-        set UpdateCycle=#{update}
+        set BookIsSign=#{bookIsSign},UpdateCycle=#{updateCycle}
         where BookId=#{bookId}
     </update>
 
@@ -479,11 +488,11 @@ wor_book.BookUpdate ASC
         SELECT
         SignId as signId,
         BookId as bookId,
-        'Name' as name,
+        Uname as uname,
         SignName as signName,
         Many as many,
         LastTime as lastTime,
-        'Update' as update,
+        UpdateType as updateType,
         Status as status,
         QQ as qq,
         Email as email,
@@ -499,15 +508,15 @@ wor_book.BookUpdate ASC
         </if>
     </select>
 
-    <select id="findBookSignByBookId" parameterType="long" resultType="com.qcacg.entity.SignEntity">
+    <select id="findLastBookSignByBookId" parameterType="long" resultType="com.qcacg.entity.SignEntity">
         SELECT
         SignId as signId,
         BookId as bookId,
-        'Name' as name,
+        Uname as uname,
         SignName as signName,
         Many as many,
         LastTime as lastTime,
-        'Update' as update,
+        UpdateType as updateType,
         Status as status,
         QQ as qq,
         Email as email,
@@ -516,17 +525,19 @@ wor_book.BookUpdate ASC
         Message as message
         FROM inf_sign
         WHERE BookId=#{bookId}
+        order by SignId desc
+        limit 1
     </select>
 
     <insert id="saveBookSign" parameterType="com.qcacg.entity.SignEntity">
         insert into inf_sign(
         SignId,
         BookId,
-        'Name',
+        Uname,
         SignName,
         Many,
         LastTime,
-        'Update',
+        UpdateType,
         Status,
         QQ,
         Email,
@@ -536,11 +547,11 @@ wor_book.BookUpdate ASC
         ) values (
         null,
         #{bookId},
-        #{name},
+        #{uname},
         #{signName},
         #{many},
         #{lastTime},
-        #{update},
+        #{updateType},
         #{status},
         #{qq},
         #{email},
@@ -584,7 +595,7 @@ wor_book.BookUpdate ASC
         limit 1
     </select>
 
-    <update id="updateReviewMSGReplyByReviewMSGId" parameterType="int">
+    <update id="updateReviewMSGReplyByReviewMSGId" parameterType="map">
         update inf_reviewMSG
         set Reply=#{reply}
         where ReviewMSGId=#{reviewMSGId}
