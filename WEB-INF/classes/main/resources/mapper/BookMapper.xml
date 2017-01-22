@@ -670,8 +670,7 @@ wor_book.BookUpdate ASC
         Status as status
         from
         inf_review
-        ORDER BY
-        inf_review.ReviewId
+        ORDER BY FIELD(inf_review.Status, 1, 4, 2, 3)
         <if test="start != null">
             limit
             #{start}, #{rows}
