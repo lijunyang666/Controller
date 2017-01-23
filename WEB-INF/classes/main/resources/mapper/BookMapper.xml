@@ -765,7 +765,7 @@ wor_book.BookUpdate ASC
     </insert>
 
     <update id="updateBook" parameterType="com.qcacg.entity.BookEntity">
-        UPDATE wor_book SET bookName=#{bookName},sort=#{sort},bookIntroduction=#{bookIntroduction},bookCoverImage=#{bookCoverImage},updateCycle=#{updateCycle} WHERE bookId=#{bookId}
+        UPDATE wor_book SET bookName=#{bookName},sort=#{sort},bookIntroduction=#{bookIntroduction},bookCoverImage=#{bookCoverImage},nextUpdateCycle=#{nextUpdateCycle}, changeUpdateCycleTime=#{changeUpdateCycleTime} WHERE bookId=#{bookId}
     </update>
 
     <update id="userUpdateBookStatus" parameterType="java.lang.Long">
