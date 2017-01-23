@@ -49,6 +49,7 @@
         ON wor_book.BookId = booktype.BookId
         WHERE
         wor_book.BookStatus = '0'
+        AND wor_book.BookReviewStatus = '已审核'
         <include refid="selectByTime"/>
         ORDER BY ${column} DESC
         limit #{page.startRow}, #{page.pageSize}
@@ -71,6 +72,7 @@
         ON wor_book.BookId = booktype.BookId
         WHERE
         wor_book.BookStatus = '0'
+        AND wor_book.BookReviewStatus = '已审核'
         <include refid="selectByTime"/>
     </select>
 

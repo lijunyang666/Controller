@@ -94,6 +94,7 @@ WHERE
         wor_book.BookStatus = '0'
         AND
         wor_book.IsRecommended = '1'
+        AND wor_book.BookReviewStatus = '已审核'
         ORDER BY
         wor_book.BookOnIndex DESC
         limit #{startRow}, #{pageSize}
@@ -120,6 +121,7 @@ WHERE
         wor_book.IsRecommended = '0'
         AND
         wor_book.BookStatus = '0'
+        AND wor_book.BookReviewStatus = '已审核'
     </select>
 
 
@@ -146,6 +148,7 @@ WHERE
         wor_book.IsRecommended = '0'
         AND
         DATEDIFF(SYSDATE(),wor_book.BookCreateTime) BETWEEN 0 AND 90
+        AND wor_book.BookReviewStatus = '已审核'
     </select>
 
     <!-- bad sql -->
@@ -223,6 +226,7 @@ WHERE
                         INNER JOIN wor_book ON wor_volume.BookId = wor_book.BookId
                         GROUP BY wor_book.BookId
             )
+        AND wor_book.BookReviewStatus = '已审核'
         ORDER BY
             wor_content.ContentUpdate DESC
         limit #{startRow}, #{pageSize}
