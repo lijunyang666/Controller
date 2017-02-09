@@ -55,4 +55,23 @@
             sca.User_Id = u.UserId
     </select>
 
+    <update id="updateDrawWelfareClean">
+        UPDATE sys_cash_account
+        SET Welfare_Cash_Amount =0
+    </update>
+
+    <update id="updateDrawWelfareByUserId" parameterType="map">
+        UPDATE sys_cash_account
+        SET Welfare_Cash_Amount = Welfare_Cash_Amount + #{drawWelfare}
+        WHERE
+        User_Id = #{userId}
+    </update>
+
+    <update id="addExchangeableCashByUserId" parameterType="map">
+        UPDATE sys_cash_account
+        SET Exchangeable_Cash_Amount = Exchangeable_Cash_Amount + #{fullWelfare}
+        WHERE
+        User_Id = #{userId}
+    </update>
+
 </mapper>

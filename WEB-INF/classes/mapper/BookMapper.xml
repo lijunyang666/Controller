@@ -488,6 +488,32 @@ wor_book.BookUpdate ASC
     <!--                 结束recom                                      -->
 
     <!--                 开始Sign                                      -->
+    <select id="findFullWelfareByLevel" parameterType="int" resultType="string">
+        SELECT
+        FullWelfare as fullWelfare,
+        FROM inf_sign_level
+        WHERE
+        SignLevel=#{signLevel}
+    </select>
+
+    <select id="findDrawWelfareByLevel" parameterType="int" resultType="string">
+        SELECT
+        DrawWelfare as drawWelfare,
+        FROM inf_sign_level
+        WHERE
+        SignLevel=#{signLevel}
+    </select>
+
+    <select id="findAllSimpleBookSign" resultType="map">
+        SELECT
+        SignId as signId,
+        BookId as bookId,
+        SignLevel as signLevel
+        FROM inf_sign
+        WHERE
+        Status=2
+    </select>
+
     <update id="updateLastBookSignByParam" parameterType="map">
         update inf_sign
         set Status=#{status},Reply=#{reply}
@@ -512,6 +538,7 @@ wor_book.BookUpdate ASC
         LastTime as lastTime,
         UpdateType as updateType,
         Status as status,
+        SignLevel as signLevel,
         QQ as qq,
         Email as email,
         Phone as phone,
@@ -520,7 +547,7 @@ wor_book.BookUpdate ASC
         Reply as reply
         FROM inf_sign
         WHERE
-        Status in(0,1,2);
+        Status in(0,1,2)
         ORDER BY
         SignId
         <if test="start != null">
@@ -539,6 +566,7 @@ wor_book.BookUpdate ASC
         LastTime as lastTime,
         UpdateType as updateType,
         Status as status,
+        SignLevel as signLevel,
         QQ as qq,
         Email as email,
         Phone as phone,
@@ -560,6 +588,7 @@ wor_book.BookUpdate ASC
         LastTime,
         UpdateType,
         Status,
+        SignLevel,
         QQ,
         Email,
         Phone,
@@ -574,6 +603,7 @@ wor_book.BookUpdate ASC
         #{lastTime},
         #{updateType},
         #{status},
+        #{signLevel},
         #{qq},
         #{email},
         #{phone},
