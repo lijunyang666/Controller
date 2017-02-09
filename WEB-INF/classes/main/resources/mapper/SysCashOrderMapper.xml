@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.SysCashOrderMapper">
+
+   <insert id="insertSysCashOrder" parameterType="com.qcacg.entity.SysCashOrder">
+        INSERT INTO sys_cash_order (
+            Cash_Order_Id,
+            Pay_User_Id,
+            Paied_User_Id,
+       <if test="sysCashOrder.tradeNo!=null">
+            Trade_No,
+       </if>
+       <if test="sysCashOrder.exchangeableCashAmount!=null">
+            Exchangeable_Cash_Amount,
+       </if>
+       <if test="sysCashOrder.unExchangeableCashAmount!=null">
+            Un_Exchangeable_Cash_Amount,
+       </if>
+       <if test="sysCashOrder.welfareCashAmount!=null">
+            Welfare_Cash_Amount,
+       </if>
+            Create_Time,
+            Order_Type,
+            Order_Status,
+            Ip
+        )
+        VALUES
+            (
+                #{sysCashOrder.cashOrderId},
+                #{sysCashOrder.payUserId},
+                #{sysCashOrder.paiedUserId},
+       <if test="sysCashOrder.tradeNo!=null">
+                #{sysCashOrder.tradeNo},
+       </if>
+       <if test="sysCashOrder.exchangeableCashAmount!=null">
+                #{sysCashOrder.exchangeableCashAmount},
+       </if>
+       <if test="sysCashOrder.unExchangeableCashAmount!=null">
+                #{sysCashOrder.unExchangeableCashAmount},
+       </if>
+       <if test="sysCashOrder.welfareCashAmount!=null">
+                #{sysCashOrder.welfareCashAmount},
+       </if>
+                #{sysCashOrder.createTime},
+                #{sysCashOrder.orderType},
+                #{sysCashOrder.orderStatus},
+                #{sysCashOrder.ip}
+            )
+   </insert>
+
+    <update id="updateSysCashOrder" parameterType="com.qcacg.entity.SysCashOrder">
+        UPDATE sys_cash_order
+        SET Order_Status = #{sysCashOrder.orderStatus},
+        Trade_No = #{sysCashOrder.tradeNo}
+        WHERE
+            Cash_Order_Id = #{sysCashOrder.cashOrderId}
+    </update>
+
+    <select id="findSysCashOrderByCashOrderId" parameterType="java.lang.Long" resultType="com.qcacg.dto.SysCashOrderDTO">
+        SELECT
+            sco.Cash_Order_Id AS cashOrderId,
+            sco.Pay_User_Id AS payUserId,
+            sco.Paied_User_Id AS paiedUserId,
+            sco.Trade_No AS tradeNo,
+            sco.Exchangeable_Cash_Amount AS exchangeableCashAmount,
+            sco.Un_Exchangeable_Cash_Amount AS unExchangeableCashAmount,
+            sco.Welfare_Cash_Amount AS welfareCashAmount,
+            sco.Create_Time AS createTime,
+            sco.Order_Type AS orderType,
+            sco.Order_Status AS orderStatus,
+            sco.Ip AS ip,
+            sco.Update_Time AS updateTime,
+            u1.UserName AS payUserName,
+            u2.UserName AS paiedUserName
+        FROM
+            sys_cash_order AS sco,
+            sys_user AS u1,
+            sys_user AS u2
+        WHERE
+            sco.Cash_Order_Id = #{cashOrderId}
+        AND sco.Pay_User_Id = u1.UserId
+        AND sco.Paied_User_Id = u2.UserId
+    </select>
+
+    <select id="findAllSysCashOrderByUserId" parameterType="java.lang.Long" resultType="com.qcacg.dto.SysCashOrderDTO">
+        SELECT
+            sco.Cash_Order_Id AS cashOrderId,
+            sco.Pay_User_Id AS payUserId,
+            sco.Paied_User_Id AS paiedUserId,
+            sco.Trade_No AS tradeNo,
+            sco.Exchangeable_Cash_Amount AS exchangeableCashAmount,
+            sco.Un_Exchangeable_Cash_Amount AS unExchangeableCashAmount,
+            sco.Welfare_Cash_Amount AS welfareCashAmount,
+            sco.Create_Time AS createTime,
+            sco.Order_Type AS orderType,
+            sco.Order_Status AS orderStatus,
+            sco.Ip AS ip,
+            sco.Update_Time AS updateTime,
+            u1.UserName AS payUserName,
+            u2.UserName AS paiedUserName
+       FROM
+            sys_cash_order AS sco,
+            sys_user AS u1,
+            sys_user AS u2
+        WHERE
+            (
+                sco.Paied_User_Id = #{userId}
+                OR sco.Pay_User_Id = #{userId}
+            )
+        AND sco.Pay_User_Id = u1.UserId
+        AND sco.Paied_User_Id = u2.UserId
+        ORDER BY
+            sco.Create_Time DESC
+    </select>
+
+</mapper>

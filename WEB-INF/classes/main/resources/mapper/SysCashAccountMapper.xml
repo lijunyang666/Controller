@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.SysCashAccountMapper">
+
+    <insert id="insertSysCashAccountByUserId" parameterType="java.lang.Long">
+        INSERT IGNORE INTO sys_cash_account (User_Id)
+        VALUES
+            (#{userId});
+    </insert>
+    
+    <update id="updateSysCashAccount" parameterType="com.qcacg.entity.SysCashAccount">
+        UPDATE sys_cash_account
+        <set>
+            <if test="sysCashAccount.exchangeableCashAmount!=null">
+             Exchangeable_Cash_Amount = Exchangeable_Cash_Amount + #{sysCashAccount.exchangeableCashAmount},
+            </if>
+            <if test="sysCashAccount.unexchangeableCashAmount!=null">
+             UnExchangeable_Cash_Amount = UnExchangeable_Cash_Amount + #{sysCashAccount.unexchangeableCashAmount},
+            </if>
+            <if test="sysCashAccount.welfareCashAmount!=null">
+             Welfare_Cash_Amount = Welfare_Cash_Amount + #{sysCashAccount.welfareCashAmount}
+            </if>
+        </set>
+        WHERE
+            User_Id = #{sysCashAccount.userId}
+    </update>
+
+    <select id="findSysCashAccountByUserId" parameterType="java.lang.Long" resultType="com.qcacg.dto.SysCashAccountDTO">
+        SELECT
+            sca.User_Id AS userId,
+            sca.Exchangeable_Cash_Amount AS exchangeableCashAmount,
+            sca.UnExchangeable_Cash_Amount AS unexchangeableCashAmount,
+            sca.Welfare_Cash_Amount AS welfareCashAmount,
+            u.UserName AS userName
+        FROM
+            sys_cash_account AS sca,
+            sys_user AS u
+        WHERE
+            sca.User_Id = #{userId}
+        AND sca.User_Id = u.UserId
+    </select>
+
+    <select id="findAllSysCashAccount" resultType="com.qcacg.dto.SysCashAccountDTO">
+        SELECT
+            sca.User_Id AS userId,
+            sca.Exchangeable_Cash_Amount AS exchangeableCashAmount,
+            sca.UnExchangeable_Cash_Amount AS unexchangeableCashAmount,
+            sca.Welfare_Cash_Amount AS welfareCashAmount,
+            u.UserName AS userName
+        FROM
+            sys_cash_account AS sca,
+            sys_user AS u
+        WHERE
+            sca.User_Id = u.UserId
+    </select>
+
+</mapper>

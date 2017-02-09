@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.SysCardOrderMapper">
+
+    <insert id="insertSysCardOrder" parameterType="com.qcacg.entity.SysCardOrder">
+        INSERT INTO sys_card_order (
+            Card_Order_Id,
+            Cash_Order_Id,
+            Pay_User_Id,
+            Paied_User_Id,
+        <if test="sysCardOrder.bookId!=null">
+            Book_Id,
+        </if>
+        <if test="sysCardOrder.payCardAmount!=null">
+            Pay_Card_Amount,
+        </if>
+        <if test="sysCardOrder.welfareCardAmount!=null">
+            Welfare_Card_Amount,
+        </if>
+            Create_Time,
+            Order_Type,
+            Order_Status,
+            Ip
+        )
+        VALUES
+            (
+                #{sysCardOrder.cardOrderId},
+                #{sysCardOrder.cashOrderId},
+                #{sysCardOrder.payUserId},
+                #{sysCardOrder.paiedUserId},
+        <if test="sysCardOrder.bookId!=null">
+                #{sysCardOrder.bookId},
+        </if>
+        <if test="sysCardOrder.payCardAmount!=null">
+                #{sysCardOrder.payCardAmount},
+        </if>
+        <if test="sysCardOrder.welfareCardAmount!=null">
+                #{sysCardOrder.welfareCardAmount},
+        </if>
+                #{sysCardOrder.createTime},
+                #{sysCardOrder.orderType},
+                #{sysCardOrder.orderStatus},
+                #{sysCardOrder.ip}
+            );
+    </insert>
+
+    <update id="updateSysCardOrder" parameterType="com.qcacg.entity.SysCardOrder">
+        UPDATE sys_card_order
+        SET Order_Status = #{sysCardOrder.orderStatus}
+        WHERE
+            Card_Order_Id = #{sysCardOrder.cashOrderId}
+    </update>
+
+    <select id="findSysCardOrderByCardOrderId" parameterType="java.lang.Long" resultType="com.qcacg.dto.SysCardOrderDTO">
+        SELECT
+            sco.Card_Order_Id AS cardOrderId,
+            sco.Cash_Order_Id AS cashOrderId,
+            sco.Pay_User_Id AS payUserId,
+            sco.Paied_User_Id AS paiedUserId,
+            sco.Pay_Card_Amount AS payCardAmount,
+            sco.Welfare_Card_Amount AS welfareCardAmount,
+            sco.Create_Time AS createTime,
+            sco.Order_Type AS orderType,
+            sco.Order_Status AS orderStatus,
+            sco.Ip AS ip,
+            sco.Update_Time AS updateTime,
+            b.BookName AS bookName,
+            u1.UserName AS payUserName,
+	        u2.UserName AS paiedUserName
+        FROM
+            sys_card_order AS sco,
+            wor_book AS b,
+            sys_user AS u1,
+	        sys_user AS u2,
+        WHERE
+            sco.Card_Order_Id = #{cardOrderId}
+        AND (
+            sco.Book_Id = b.BookId
+            OR sco.Book_Id IS NULL
+            )
+        AND sco.Pay_User_Id = u1.UserId
+        AND sco.Paied_User_Id = u2.UserId
+    </select>
+
+    <select id="findAllSysCardOrderByUserId" resultType="com.qcacg.dto.SysCardOrderDTO" parameterType="java.lang.Long">
+        SELECT
+            sco.Card_Order_Id AS cardOrderId,
+            sco.Cash_Order_Id AS cashOrderId,
+            sco.Pay_User_Id AS payUserId,
+            sco.Paied_User_Id AS paiedUserId,
+            sco.Pay_Card_Amount AS payCardAmount,
+            sco.Welfare_Card_Amount AS welfareCardAmount,
+            sco.Create_Time AS createTime,
+            sco.Order_Type AS orderType,
+            sco.Order_Status AS orderStatus,
+            sco.Ip AS ip,
+            sco.Update_Time AS updateTime,
+            b.BookName AS bookName,
+            u1.UserName AS payUserName,
+            u2.UserName AS paiedUserName
+        FROM
+            sys_card_order AS sco
+        LEFT JOIN wor_book AS b ON sco.Book_Id = b.BookId,
+         sys_user AS u1,
+         sys_user AS u2
+        WHERE
+            (
+                sco.Paied_User_Id = #{userId}
+                OR sco.Pay_User_Id = #{userId}
+            )
+        AND sco.Pay_User_Id = u1.UserId
+        AND sco.Paied_User_Id = u2.UserId
+        ORDER BY
+            sco.Create_Time DESC
+    </select>
+
+</mapper>

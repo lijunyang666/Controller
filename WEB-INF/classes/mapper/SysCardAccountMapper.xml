@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.qcacg.mapper.SysCardAccountMapper">
+
+    <insert id="insertSysCardAccountByUserId" parameterType="java.lang.Long">
+        INSERT IGNORE INTO sys_card_account (User_Id)
+        VALUES
+            (#{userId});
+    </insert>
+    
+    <update id="updateSysCardAccount" parameterType="com.qcacg.entity.SysCardAccount">
+        UPDATE sys_card_account AS sca
+        <set>
+            <if test="sysCardAccount.payCardAmount!=null">
+             sca.Pay_Card_Amount = sca.Pay_Card_Amount + #{sysCardAccount.payCardAmount},
+            </if>
+            <if test="sysCardAccount.welfareCardAmount!=null">
+             sca.Welfare_Card_Amount = sca.Welfare_Card_Amount + #{sysCardAccount.welfareCardAmount}
+            </if>
+        </set>
+        WHERE
+            sca.User_Id = #{sysCardAccount.userId}
+    </update>
+
+    <select id="findSysCardAccountByUserId" parameterType="java.lang.Long" resultType="com.qcacg.dto.SysCardAccountDTO">
+        SELECT
+            sca.User_Id AS userId,
+            sca.Pay_Card_Amount AS payCardAmount,
+            sca.Welfare_Card_Amount AS welfareCardAmount,
+            u.UserName AS userName
+        FROM
+            sys_card_account AS sca,
+            sys_user AS u
+        WHERE
+            sca.User_Id = #{userId}
+        AND sca.User_Id = u.UserId
+    </select>
+
+    <select id="findAllSysCardAccount" resultType="com.qcacg.dto.SysCardAccountDTO">
+        SELECT
+            sca.User_Id AS userId,
+            sca.Pay_Card_Amount AS payCardAmount,
+            sca.Welfare_Card_Amount AS welfareCardAmount,
+            u.UserName AS userName
+        FROM
+            sys_card_account AS sca,
+            sys_user AS u
+        WHERE
+            sca.User_Id = u.UserId
+    </select>
+
+</mapper>

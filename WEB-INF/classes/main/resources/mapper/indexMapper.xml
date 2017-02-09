@@ -17,6 +17,8 @@
         <result column="bookHit" property="bookHit"/>
         <result column="bookCollect" property="bookCollect"/>
         <result column="bookCopperCoins" property="bookCopperCoins"/>
+        <result column="updateCycle" property="updateCycle"/>
+        <result column="cardAmount" property="cardAmount"/>
         <association property="userEntity" javaType="com.qcacg.entity.UserEntity">
             <id column="userId" property="userId"/>
             <result column="userName" property="userName"/>
@@ -43,7 +45,8 @@ SELECT
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
 	sys_user.Information AS information,
-	sys_user.UserHead AS userHead
+	sys_user.UserHead AS userHead,
+        wor_book.CardAmount AS cardAmount
 FROM
 	wor_book
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -73,6 +76,7 @@ WHERE
         <result column="contentId" property="contentId"/>
         <result column="contentTitle" property="contentTitle"/>
         <result column="contentUrl" property="contentUrl"/>
+        <result column="cardAmount" property="cardAmount"/>
     </resultMap>
 
     <select id="findRecomBook" resultMap="indexResult" parameterType="com.qcacg.entity.book.Pagination">
@@ -87,7 +91,8 @@ WHERE
         wor_book.BookIsSign AS bookIsSign,
         wor_book.BookUpdate AS bookUpdate,
         sys_user.UserName AS userName,
-        sys_user.UserHead AS userHead
+        sys_user.UserHead AS userHead,
+        wor_book.CardAmount AS cardAmount
         FROM wor_book
         LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
         WHERE
@@ -113,7 +118,8 @@ WHERE
         wor_book.BookIsSign AS bookIsSign,
         wor_book.BookUpdate AS bookUpdate,
         sys_user.UserName AS userName,
-        sys_user.UserHead AS userHead
+        sys_user.UserHead AS userHead,
+        wor_book.CardAmount AS cardAmount
         FROM
         wor_book
         INNER JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -138,7 +144,8 @@ WHERE
         wor_book.BookIsSign AS bookIsSign,
         wor_book.BookUpdate AS bookUpdate,
         sys_user.UserName AS userName,
-        sys_user.UserHead AS userHead
+        sys_user.UserHead AS userHead,
+        wor_book.CardAmount AS cardAmount
         FROM
         wor_book
         LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -186,7 +193,8 @@ WHERE
             wor_book.BookIsSign,
             wor_content.ContentId,
             wor_content.ContentTitle,
-            wor_content.ContentUpdate AS bookUpdate
+            wor_content.ContentUpdate AS bookUpdate,
+        wor_book.CardAmount AS cardAmount
         FROM
             wor_content
         INNER JOIN

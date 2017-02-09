@@ -2,12 +2,13 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.ReportMapper">
 
-    <select id="queryReportType" resultType="com.qcacg.entity.ReportTypeEntity">
+    <select id="findReportTypeNameByReportTypeId" parameterType="long" resultType="string">
         SELECT
-        inf_reporttype.ReportTypeId AS reportTypeId,
         inf_reporttype.ReportTypeName AS reportTypeName
         FROM
         inf_reporttype
+        WHERE
+        ReportTypeId=#{reportTypeId}
     </select>
 
     <insert id="insertReportTypeBatch" useGeneratedKeys="true" parameterType="java.util.List">
@@ -25,5 +26,80 @@
         INSERT INTO inf_report (reportTypeId, reportContent, reporterId, replyId, commentId)
         VALUES (#{reportTypeId}, #{reportContent}, #{reporterId}, #{replyId}, #{commentId})
     </insert>
+
+    <select id="findAllReport" parameterType="map" resultType="com.qcacg.entity.ReportEntity">
+        SELECT
+            ReportId AS reportId,
+            ReportTypeId AS reportTypeId,
+            ReportContent AS reportContent,
+            ReporterId AS reporterId,
+            ReportDate AS reportDate,
+            CommentId AS commentId,
+            ReplyId AS replyId,
+            ReportStatus AS reportStatus
+        FROM
+          inf_report
+        WHERE
+          ReportStatus='0'
+        ORDER BY
+        ReportDate
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+
+    <select id="findCommentContentByCommentId" parameterType="long" resultType="string">
+      SELECT
+        CommentContent as commentContent
+      FROM
+        inf_comment
+      WHERE
+        CommentId=#{commentId}
+    </select>
+
+    <select id="findReplyContentByReplyId" parameterType="long" resultType="string">
+        SELECT
+        ReplyContent as replyContent
+        FROM
+        inf_reply
+        WHERE
+        ReplyId=#{replyId}
+    </select>
+
+    <update id="updateReportStatusByReportId" parameterType="long">
+        update inf_report
+        set ReportStatus='1'
+        where ReportId=#{reportId}
+    </update>
+
+    <select id="findCommentIdAndReplyIdByReportId" parameterType="long" resultType="map">
+        SELECT
+          CommentId as commentId,
+          ReplyId as replyId
+        FROM inf_report
+        WHERE
+          ReportId=#{reportId}
+    </select>
+
+    <update id="updateCommentContentByCommentId" parameterType="long">
+        update inf_comment
+        set CommentContent='您的内容中存在违规信息!'
+        where CommentId=#{commentId}
+    </update>
+
+    <update id="updateReplyContentByReplyId" parameterType="long">
+        update inf_reply
+        set ReplyContent='您的内容中存在违规信息!'
+        where ReplyId=#{replyId}
+    </update>
+
+    <select id="findReportStatusByReportId" parameterType="long" resultType="string">
+        SELECT
+          ReportStatus as reportStatus
+        FROM inf_report
+        WHERE
+          ReportId=#{reportId}
+    </select>
 
 </mapper>

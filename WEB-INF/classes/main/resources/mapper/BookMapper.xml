@@ -16,6 +16,7 @@
         <result column="bookCollect" property="bookCollect"/>
         <result column="bookCopperCoins" property="bookCopperCoins"/>
         <result column="updateCycle" property="updateCycle"/>
+        <result column="cardAmount" property="cardAmount"/>
         <association property="userEntity" javaType="com.qcacg.entity.UserEntity">
             <id column="userId" property="userId"/>
             <result column="userName" property="userName"/>
@@ -44,7 +45,8 @@ SELECT
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
 	sys_user.Information AS information,
-	sys_user.UserHead AS userHead
+	sys_user.UserHead AS userHead,
+        wor_book.CardAmount
 FROM
 	wor_book
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -74,7 +76,8 @@ SELECT
 	sys_user.UserId AS userId,
 	sys_user.UserName AS userName,
 	sys_user.Information AS information,
-	sys_user.UserHead AS userHead
+	sys_user.UserHead AS userHead,
+        wor_book.CardAmount
 FROM
 	wor_book
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -107,7 +110,8 @@ WHERE
         sys_user.UserId AS userId,
         sys_user.UserName AS userName,
         sys_user.Information AS information,
-        sys_user.UserHead AS userHead
+        sys_user.UserHead AS userHead,
+        wor_book.CardAmount
     FROM
         wor_book
     LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -153,7 +157,8 @@ WHERE
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
         wor_book.UpdateCycle,
-        wor_book.BookReviewStatus
+        wor_book.BookReviewStatus,
+        wor_book.CardAmount
     FROM
         wor_book
     WHERE
@@ -178,6 +183,8 @@ WHERE
         <result column="bookCopperCoins" property="bookCopperCoins"/>
         <result column="userName" property="author"/>
         <result column="userHead" property="userHeadImg"/>
+        <result column="updateCycle" property="updateCycle"/>
+        <result column="cardAmount" property="cardAmount"/>
         <association property="volumeEntity" javaType="com.qcacg.entity.VolumeEntity">
             <id column="volumeId" property="volumeId"/>
             <result column="volumeName" property="volumeName"/>
@@ -205,7 +212,8 @@ sys_user.UserName AS userName,
 sys_user.Information AS information,
 sys_user.UserHead AS userHead,
 volumeView.id AS volumeId,
-volumeView.VolumeName AS volumeName
+volumeView.VolumeName AS volumeName,
+        wor_book.CardAmount
     FROM
     wor_book
     LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
@@ -234,7 +242,8 @@ wor_book.BookHit,
 wor_book.BookCollect,
 wor_book.BookCopperCoins,
 wor_book.BookSilverCoins,
-wor_book.UpdateCycle
+wor_book.UpdateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -258,7 +267,8 @@ wor_book.UpdateCycle
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
-        wor_book.UpdateCycle
+        wor_book.UpdateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -282,7 +292,8 @@ wor_book.UpdateCycle
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
-        wor_book.UpdateCycle
+        wor_book.UpdateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -306,7 +317,8 @@ wor_book.UpdateCycle
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
-        wor_book.UpdateCycle
+        wor_book.UpdateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -331,7 +343,8 @@ wor_book.UpdateCycle
     wor_book.BookCollect,
     wor_book.BookCopperCoins,
     wor_book.BookSilverCoins,
-    wor_book.UpdateCycle
+    wor_book.UpdateCycle,
+        wor_book.CardAmount
     FROM
     wor_book
     WHERE
@@ -355,7 +368,8 @@ wor_book.UpdateCycle
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
-        wor_book.UpdateCycle AS updateCycle
+        wor_book.UpdateCycle AS updateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -379,7 +393,8 @@ wor_book.UpdateCycle
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
-        wor_book.UpdateCycle
+        wor_book.UpdateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -403,7 +418,8 @@ wor_book.UpdateCycle
     wor_book.BookCollect,
     wor_book.BookCopperCoins,
     wor_book.BookSilverCoins,
-    wor_book.UpdateCycle
+    wor_book.UpdateCycle,
+        wor_book.CardAmount
     FROM
     wor_book
     WHERE
@@ -427,7 +443,8 @@ wor_book.UpdateCycle
         wor_book.BookCollect,
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
-        wor_book.UpdateCycle
+        wor_book.UpdateCycle,
+        wor_book.CardAmount
         FROM
         wor_book
         WHERE
@@ -451,7 +468,8 @@ wor_book.BookHit,
 wor_book.BookCollect,
 wor_book.BookCopperCoins,
 wor_book.BookSilverCoins,
-wor_book.UpdateCycle
+wor_book.UpdateCycle,
+        wor_book.CardAmount
 FROM
 wor_book
 WHERE
@@ -472,7 +490,7 @@ wor_book.BookUpdate ASC
     <!--                 开始Sign                                      -->
     <update id="updateLastBookSignByParam" parameterType="map">
         update inf_sign
-        set Status=#{status}
+        set Status=#{status},Reply=#{reply}
         where BookId=#{bookId}
         order by SignId desc
         limit 1
@@ -498,8 +516,11 @@ wor_book.BookUpdate ASC
         Email as email,
         Phone as phone,
         Address as address,
-        Message as message
+        Message as message,
+        Reply as reply
         FROM inf_sign
+        WHERE
+        Status in(0,1,2);
         ORDER BY
         SignId
         <if test="start != null">
@@ -575,7 +596,7 @@ wor_book.BookUpdate ASC
     <!--                 结束Sign                                      -->
 
     <!--                 开始review                                      -->
-    <select id="findUserIdByBookId" parameterType="long" resultType="string">
+    <select id="findUserIdByBookId" parameterType="long" resultType="long">
         select UserId as userId
         from wor_book
         where BookId=#{bookId}
@@ -743,7 +764,8 @@ wor_book.BookUpdate ASC
     wor_book.EveryMonthWordCount,
     wor_book.EveryMonthHit,
     wor_book.EveryMonthCopperCoins,
-    wor_book.UpdateCycle
+    wor_book.UpdateCycle,
+        wor_book.CardAmount
     FROM
     wor_book,
     sys_user
@@ -881,10 +903,19 @@ wor_book.BookUpdate ASC
         wor_book.UpdateCycle AS updateCycle,
         wor_book.NextUpdateCycle AS nextUpdateCycle,
         wor_book.ChangeUpdateCycleTime AS changeUpdateCycleTime,
-        wor_book.BookIsSign AS bookIsSign
+        wor_book.BookIsSign AS bookIsSign,
+        wor_book.CardAmount AS cardAmount
         FROM
         wor_book
         WHERE
         wor_book.bookId = #{bookId}
     </select>
+
+    <update id="updateBookCardAmount">
+        UPDATE wor_book
+        SET
+        wor_book.CardAmount = wor_book.CardAmount+#{cardAmount}
+        WHERE
+        wor_book.BookId = #{bookId}
+    </update>
 </mapper>

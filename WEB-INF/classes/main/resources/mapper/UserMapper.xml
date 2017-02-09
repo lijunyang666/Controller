@@ -19,5 +19,11 @@
           sys_user.UserId NOT IN (#{userId})
     </select>
 
+    <update id="updateUserSignStatus">
+        UPDATE sys_user
+        SET sys_user.SignStatus = '0'
+        WHERE
+            sys_user.SignStatus = '1'
+    </update>
 
 </mapper>
