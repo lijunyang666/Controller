@@ -16,7 +16,13 @@
              sca.Pay_Card_Amount = sca.Pay_Card_Amount + #{sysCardAccount.payCardAmount},
             </if>
             <if test="sysCardAccount.welfareCardAmount!=null">
-             sca.Welfare_Card_Amount = sca.Welfare_Card_Amount + #{sysCardAccount.welfareCardAmount}
+             sca.Welfare_Card_Amount = sca.Welfare_Card_Amount + #{sysCardAccount.welfareCardAmount},
+            </if>
+            <if test="sysCardAccount.givenPayCardAmount!=null">
+                sca.Given_Pay_Card_Amount = sca.Given_Pay_Card_Amount + #{sysCardAccount.givenPayCardAmount},
+            </if>
+            <if test="sysCardAccount.givenWelfareCardAmount!=null">
+                sca.Given_Welfare_Card_Amount = sca.Given_Welfare_Card_Amount + #{sysCardAccount.givenWelfareCardAmount}
             </if>
         </set>
         WHERE
@@ -28,6 +34,8 @@
             sca.User_Id AS userId,
             sca.Pay_Card_Amount AS payCardAmount,
             sca.Welfare_Card_Amount AS welfareCardAmount,
+            sca.Given_Pay_Card_Amount AS givenPayCardAmount,
+            sca.Given_Welfare_Card_Amount AS givenWelfareCardAmount,
             u.UserName AS userName
         FROM
             sys_card_account AS sca,
@@ -42,6 +50,8 @@
             sca.User_Id AS userId,
             sca.Pay_Card_Amount AS payCardAmount,
             sca.Welfare_Card_Amount AS welfareCardAmount,
+            sca.Given_Pay_Card_Amount AS givenPayCardAmount,
+            sca.Given_Welfare_Card_Amount AS givenWelfareCardAmount,
             u.UserName AS userName
         FROM
             sys_card_account AS sca,

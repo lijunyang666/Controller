@@ -11,6 +11,9 @@
        <if test="sysCashOrder.tradeNo!=null">
             Trade_No,
        </if>
+       <if test="sysCashOrder.payUrl!=null">
+            Pay_Url,
+       </if>
        <if test="sysCashOrder.exchangeableCashAmount!=null">
             Exchangeable_Cash_Amount,
        </if>
@@ -32,6 +35,9 @@
                 #{sysCashOrder.paiedUserId},
        <if test="sysCashOrder.tradeNo!=null">
                 #{sysCashOrder.tradeNo},
+       </if>
+       <if test="sysCashOrder.payUrl!=null">
+                #{sysCashOrder.payUrl},
        </if>
        <if test="sysCashOrder.exchangeableCashAmount!=null">
                 #{sysCashOrder.exchangeableCashAmount},
@@ -63,6 +69,7 @@
             sco.Pay_User_Id AS payUserId,
             sco.Paied_User_Id AS paiedUserId,
             sco.Trade_No AS tradeNo,
+            sco.Pay_Url AS payUrl,
             sco.Exchangeable_Cash_Amount AS exchangeableCashAmount,
             sco.Un_Exchangeable_Cash_Amount AS unExchangeableCashAmount,
             sco.Welfare_Cash_Amount AS welfareCashAmount,
@@ -89,6 +96,7 @@
             sco.Pay_User_Id AS payUserId,
             sco.Paied_User_Id AS paiedUserId,
             sco.Trade_No AS tradeNo,
+            sco.Pay_Url AS payUrl,
             sco.Exchangeable_Cash_Amount AS exchangeableCashAmount,
             sco.Un_Exchangeable_Cash_Amount AS unExchangeableCashAmount,
             sco.Welfare_Cash_Amount AS welfareCashAmount,
