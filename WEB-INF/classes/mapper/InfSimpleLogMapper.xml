@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qcacg.mapper.InfSimpleLogMapper" >
+    <select id="findAll" parameterType="com.qcacg.dto.InfSimpleLogDTO" resultType="com.qcacg.entity.InfSimpleLog">
+        SELECT
+            l.log_id AS logId,
+            l.create_time AS createTime,
+            l.type_description AS typeDescription,
+            l.log_first_type AS logFirstType,
+            l.log_second_type AS logSecondType
+        FROM
+            inf_simple_log AS l
+        <where>
+            <if test="infSimpleLogDTO.logFirstType">
+                AND l.log_first_type = #{infSimpleLogDTO.logFirstType}
+            </if>
+            <if test="infSimpleLogDTO.logSecondType">
+                AND l.log_second_type = #{infSimpleLogDTO.logSecondType}
+            </if>
+            <if test="infSimpleLogDTO.typeDescription">
+                AND l.type_description = #{infSimpleLogDTO.typeDescription}
+            </if>
+            <if test="infSimpleLogDTO.beginTime!=null">
+                AND l.create_time &gt;= #{infSimpleLogDTO.beginTime}
+            </if>
+            <if test="infSimpleLogDTO.endTime!=null">
+                AND l.create_time &lt;= #{infSimpleLogDTO.endTime}
+            </if>
+        </where>
+        ORDER BY
+            l.create_time DESC
+    </select>
+</mapper>

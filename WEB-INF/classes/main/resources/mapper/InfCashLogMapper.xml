@@ -48,4 +48,29 @@
         ORDER BY
             cl.create_time DESC
     </select>
+    <select id="findOneByLogId" parameterType="java.lang.String" resultType="com.qcacg.dto.InfCashLogDTO">
+        SELECT
+            u1.UserName AS payUserName,
+            u2.UserName AS paiedUserName,
+            icl.log_id AS logId,
+            icl.create_time AS createTime,
+            icl.type_description AS typeDescription,
+            icl.order_status AS orderStatus,
+            icl.ip AS ip,
+            icl.update_time AS updateTime,
+            icl.trade_no AS tradeNo,
+            icl.pay_url AS payUrl,
+            icl.exchangeable_cash_amount AS exchangeableCashAmount,
+            icl.unexchangeable_cash_amount AS unexchangeableCashAmount,
+            icl.welfare_cash_amount AS welfareCashAmount,
+            icl.inf_card_log_id AS infCardLogId
+        FROM
+            sys_user AS u1,
+            sys_user AS u2,
+            inf_cash_log AS icl
+        WHERE
+            u1.UserId = icl.pay_user_id
+        AND u2.UserId = icl.paied_user_id
+        AND icl.log_id = #{logId}
+    </select>
 </mapper>
