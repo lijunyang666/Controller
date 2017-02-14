@@ -26,6 +26,7 @@
         sys_user.UserId = wor_book.UserId
         AND
         wor_book.BookId != #{wor_book.BookId}
+        AND wor_book.BookReviewStatus = '已审核'
         AND
         wor_book.UserId = (SELECT wor_book.UserId FROM wor_book WHERE wor_book.BookId = #{wor_book.bookId})
         ORDER BY
@@ -94,6 +95,7 @@
         wor_book.BookId = wor_book_booktype.BookId
         AND
         wor_book_booktype.BookId != #{wor_book.bookId}
+        AND wor_book.BookReviewStatus = '已审核'
         AND
         wor_book.UserId = (SELECT UserId FROM wor_book WHERE wor_book.BookId = #{wor_book.bookId})
         ORDER BY

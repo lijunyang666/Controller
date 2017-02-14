@@ -65,20 +65,15 @@
             sco.Order_Status AS orderStatus,
             sco.Ip AS ip,
             sco.Update_Time AS updateTime,
-            b.BookName AS bookName,
+            sco.Book_Id AS bookId,
             u1.UserName AS payUserName,
-	        u2.UserName AS paiedUserName
+            u2.UserName AS paiedUserName
         FROM
             sys_card_order AS sco,
-            wor_book AS b,
             sys_user AS u1,
-	        sys_user AS u2,
+            sys_user AS u2
         WHERE
             sco.Card_Order_Id = #{cardOrderId}
-        AND (
-            sco.Book_Id = b.BookId
-            OR sco.Book_Id IS NULL
-            )
         AND sco.Pay_User_Id = u1.UserId
         AND sco.Paied_User_Id = u2.UserId
     </select>

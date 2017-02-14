@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qcacg.mapper.InfCashLogMapper" >
+    <update id="updateRecharge" parameterType="com.qcacg.entity.InfCashLog">
+        UPDATE inf_cash_log
+        <set>
+            <if test="infCashLog.orderStatus!=null">
+                inf_cash_log.order_status = #{infCashLog.orderStatus},
+            </if>
+            <if test="infCashLog.updateTime!=null">
+                inf_cash_log.update_time = #{infCashLog.updateTime},
+            </if>
+            <if test="infCashLog.tradeNo!=null">
+                inf_cash_log.trade_no = #{infCashLog.tradeNo},
+            </if>
+        </set>
+        WHERE
+            inf_cash_log.log_id = #{infCashLog.logId}
+    </update>
+
+    <select id="findAllByUserId" parameterType="java.lang.Long" resultType="com.qcacg.dto.InfCashLogDTO">
+        SELECT
+            cl.log_id AS logId,
+            cl.create_time AS createTime,
+            cl.type_description AS typeDescription,
+            cl.order_status AS orderStatus,
+            cl.ip AS Ip,
+            cl.update_time AS updateTime,
+            cl.trade_no AS tradeNo,
+            cl.pay_url AS payUrl,
+            cl.exchangeable_cash_amount AS exchangeableCashAmount,
+            cl.unexchangeable_cash_amount AS unexchangeableCashAmount,
+            cl.welfare_cash_amount AS welfareCashAmount,
+            cl.inf_card_log_id AS infCardLogId,
+            u1.UserName AS payUserName,
+            u2.UserName AS paiedUserName
+        FROM
+            inf_cash_log AS cl,
+            sys_user AS u1,
+            sys_user AS u2
+        WHERE
+            (
+                cl.pay_user_id = #{userId}
+                OR cl.paied_user_id = #{userId}
+            )
+        AND cl.pay_user_id = u1.UserId
+        AND cl.paied_user_id = u2.UserId
+        ORDER BY
+            cl.create_time DESC
+    </select>
+</mapper>

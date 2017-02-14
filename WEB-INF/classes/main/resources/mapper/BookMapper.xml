@@ -471,6 +471,35 @@ wor_book.BookUpdate ASC
     <!--                 结束recom                                      -->
 
     <!--                 开始Sign                                      -->
+    <update id="cleanAllSignLevelStatus">
+        UPDATE inf_sign
+        SET IsEntry = 0
+        WHERE IsEntry=1
+    </update>
+
+    <update id="updateLastSignLevelBySignId" parameterType="int">
+        UPDATE inf_sign
+        SET SignLevel = SignLevel+1
+        WHERE SignId=#{signId}
+    </update>
+
+    <update id="updateIsEntryBySignId" parameterType="map">
+        UPDATE inf_sign
+        SET IsEntry=#{isEntry}
+        WHERE SignId=#{signId}
+    </update>
+
+    <select id="findSignLevelAllByLevel" parameterType="int" resultType="map">
+        SELECT
+        SignLevel as signLevel,
+        DrawWelfare as drawWelfare,
+        FullWelfare as fullWelfare,
+        SignLevelDescription as signLevelDescription
+        FROM inf_sign_level
+        WHERE
+        SignLevel=#{signLevel}
+    </select>
+
     <select id="findFullWelfareByLevel" parameterType="int" resultType="string">
         SELECT
         FullWelfare as fullWelfare
@@ -491,6 +520,7 @@ wor_book.BookUpdate ASC
         SELECT
         SignId as signId,
         BookId as bookId,
+        UpdateType as updateType,
         SignLevel as signLevel
         FROM inf_sign
         WHERE
@@ -930,5 +960,19 @@ wor_book.BookUpdate ASC
         wor_book.EveryMonthCopperCoins = wor_book.EveryMonthCopperCoins+#{cardAmount}
         WHERE
         wor_book.BookId = #{bookId}
+    </update>
+
+    <update id="updateBookWeekCopperCoins">
+        UPDATE wor_book
+        SET
+        wor_book.WeekCopperCoins = wor_book.EveryWeekCopperCoins,
+        wor_book.EveryWeekCopperCoins = 0
+    </update>
+
+    <update id="updateBookMonthCopperCoins">
+        UPDATE wor_book
+        SET
+        wor_book.MonthCopperCoins = wor_book.EveryMonthCopperCoins,
+        wor_book.EveryMonthCopperCoins = 0
     </update>
 </mapper>

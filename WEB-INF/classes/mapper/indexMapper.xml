@@ -241,6 +241,7 @@ FROM
 LEFT JOIN sys_user ON wor_book.UserId = sys_user.UserId
 WHERE
         wor_book.BookStatus = '0'
+        AND wor_book.BookReviewStatus = '已审核'
         AND
         wor_book.IsRecommended = '1'
     </select>

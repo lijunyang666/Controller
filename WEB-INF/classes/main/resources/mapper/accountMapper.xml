@@ -8,4 +8,96 @@
         WHERE sys_user.UserId = #{userId}
     </update>
 
+    <select id="findBookAccountsList" parameterType="map" resultType="com.qcacg.entity.BookAccountsEntity">
+        SELECT
+        BookAccountsId as bookAccountsId,
+        BookId as bookId,
+        UserId as userId,
+        SignLevel as signLevel,
+        State as state,
+        DrawWelfare as drawWelfare,
+        FullWelfare as fullWelfare,
+        AccountsDate as accountsDate,
+        Status as status
+        FROM sys_book_accounts
+        ORDER BY
+        AccountsDate
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+
+    <insert id="insertBookAccounts" parameterType="com.qcacg.entity.BookAccountsEntity">
+        insert into sys_book_accounts(
+        BookAccountsId,
+        BookId,
+        UserId,
+        SignLevel,
+        State,
+        DrawWelfare,
+        FullWelfare,
+        AccountsDate,
+        Status
+        ) values (
+        null,
+        #{bookId},
+        #{userId},
+        #{signLevel},
+        #{state},
+        #{drawWelfare},
+        #{fullWelfare},
+        #{accountsDate},
+        #{status}
+        )
+    </insert>
+
+    <select id="findBookAccountsByBookAccountsId" parameterType="long" resultType="com.qcacg.entity.BookAccountsEntity">
+        SELECT
+        BookAccountsId as bookAccountsId,
+        BookId as bookId,
+        UserId as userId,
+        SignLevel as signLevel,
+        State as state,
+        DrawWelfare as drawWelfare,
+        FullWelfare as fullWelfare,
+        AccountsDate as accountsDate,
+        Status as status
+        FROM sys_book_accounts
+        WHERE BookAccountsId=#{bookAccountsId}
+    </select>
+
+    <update id="addWelfareAndCash" parameterType="map">
+        UPDATE sys_cash_account
+        SET
+        Welfare_Cash_Amount = Welfare_Cash_Amount + #{drawWelfare},
+        Exchangeable_Cash_Amount = Exchangeable_Cash_Amount + #{fullWelfare}
+        WHERE
+        User_Id = #{userId}
+    </update>
+
+    <update id="sureBookAccountsStatusByBookAccountsId" parameterType="long">
+        UPDATE sys_book_accounts
+        SET
+        Status=1
+        WHERE
+        BookAccountsId = #{bookAccountsId}
+    </update>
+
+    <select id="findAllBookAccountsListBystatus" resultType="com.qcacg.entity.BookAccountsEntity">
+        SELECT
+        BookAccountsId as bookAccountsId,
+        BookId as bookId,
+        UserId as userId,
+        SignLevel as signLevel,
+        State as state,
+        DrawWelfare as drawWelfare,
+        FullWelfare as fullWelfare,
+        AccountsDate as accountsDate,
+        Status as status
+        FROM sys_book_accounts
+        ORDER BY
+        AccountsDate
+    </select>
+
 </mapper>

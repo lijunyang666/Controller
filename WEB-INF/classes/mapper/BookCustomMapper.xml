@@ -35,6 +35,8 @@
         <result column="bookUpdate" property="bookUpdate"/>
         <result column="bookCoverImage" property="bookCoverImage"/>
         <result column="bookWordCount" property="bookWordCount"/>
+        <result column="bookReviewStatus" property="bookReviewStatus"/>
+        <result column="bookIsSign" property="bookIsSign"/>
         <result column="bookStatus" property="bookStatus"/>
         <result column="bookHit" property="bookHit"/>
         <result column="bookCollect" property="bookCollect"/>
@@ -61,6 +63,8 @@
 	wor_book.BookUpdate AS bookUpdate,
 	wor_book.BookCoverImage AS bookCoverImage,
 	wor_book.BookWordCount AS bookWordCount,
+	wor_book.BookReviewStatus AS bookReviewStatus,
+	wor_book.BookIsSign AS bookIsSign,
 	wor_book.BookStatus AS bookStatus,
 	wor_book.BookHit AS bookHit,
 	wor_book.BookCollect AS bookCollect,
