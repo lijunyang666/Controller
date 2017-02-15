@@ -7,7 +7,8 @@
             l.create_time AS createTime,
             l.type_description AS typeDescription,
             l.log_first_type AS logFirstType,
-            l.log_second_type AS logSecondType
+            l.log_second_type AS logSecondType,
+            l.log_explain AS logExplain
         FROM
             inf_simple_log AS l
         <where>

@@ -12,7 +12,7 @@
             cl.pay_card_amount AS payCardAmount,
             cl.welfare_card_amount AS welfareCardAmount,
             cl.book_id AS bookId,
-            cl.inf_log_cash_id,
+            cl.inf_cash_log_id,
             u1.UserName AS payUserName,
             u2.UserName AS paiedUserName
         FROM
@@ -43,7 +43,7 @@
             icl.pay_card_amount AS payCardAmount,
             icl.welfare_card_amount AS welfareCardAmount,
             icl.book_id AS bookId,
-            icl.inf_log_cash_id AS logCashId
+            icl.inf_cash_log_id AS infCashLogId
         FROM
             sys_user AS u1,
             sys_user AS u2,
