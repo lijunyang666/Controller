@@ -60,7 +60,7 @@
     </select>
     
     <select id="findCommentByBookId" parameterType="com.qcacg.entity.comment.CommentReceive"
-            resultMap="CommentResultMap">
+            resultType="com.qcacg.entity.CommentEntity">
         SELECT
     inf_comment.CommentId AS commentId,
 	inf_comment.UserId AS userId,
@@ -69,7 +69,8 @@
 	inf_comment.BookId AS bookId,
 	inf_comment.Strickie AS strickie,
 	inf_comment.CommentContent AS commentContent,
-	inf_comment.CommentDate AS commentDate
+	inf_comment.CommentDate AS commentDate,
+    sys_user.Sex AS sex
     FROM
 	inf_comment
 	LEFT JOIN sys_user ON sys_user.UserId = inf_comment.UserId
@@ -110,7 +111,8 @@
             inf_reply.ReplyDate AS replyDate,
             inf_reply.ReplyUserId AS replyUserId,
             inf_reply.ReplyStatus AS replyStatus,
-            u2.UserName AS replyUserName
+            u2.UserName AS replyUserName,
+            u1.sex AS sex
         FROM
             inf_reply
             LEFT JOIN sys_user u1 ON inf_reply.UserId = u1.UserId

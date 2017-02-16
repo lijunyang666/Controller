@@ -3,16 +3,16 @@
 <mapper namespace="com.qcacg.mapper.InfCardLogMapper" >
     <select id="findAllByUserId" parameterType="java.lang.Long" resultType="com.qcacg.dto.InfCardLogDTO">
         SELECT
-            cl.log_id AS logId,
+--             cl.log_id AS logId,
             cl.create_time AS createTime,
             cl.type_description AS typeDescription,
             cl.order_status AS orderStatus,
-            cl.ip AS Ip,
-            cl.update_time AS updateTime,
+--             cl.ip AS Ip,
+--             cl.update_time AS updateTime,
             cl.pay_card_amount AS payCardAmount,
             cl.welfare_card_amount AS welfareCardAmount,
-            cl.book_id AS bookId,
-            cl.inf_cash_log_id,
+--             cl.book_id AS bookId,
+--             cl.inf_cash_log_id,
             u1.UserName AS payUserName,
             u2.UserName AS paiedUserName
         FROM

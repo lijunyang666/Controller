@@ -2,48 +2,4 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.CountMapper">
 
-    <insert id="insertDaysUpdateCount" parameterType="com.qcacg.entity.DaysUpdateCountEntity">
-        INSERT INTO sys_days_update_count(
-          DaysUpdateCountId, UserId, BookId, BookName, SignLevel, FactDaysNum, SupplementNum, TotalWords, CountDay
-          ) values (null,#{userId}, #{bookId}, #{bookName},#{signLevel},#{factDaysNum}, #{supplementNum}, #{totalWords},#{countDay}
-            )
-    </insert>
-
-    <insert id="insetMouthUpdateCount" parameterType="com.qcacg.entity.MonthUpdateCountEntity">
-        INSERT INTO sys_month_update_count(
-          MouthUpdateCountId, UserId, BookId, BookName, SignLevel, TotalWords, CountDay
-          ) values (null,#{userId}, #{bookId}, #{bookName},#{signLevel}, #{totalWords},#{countDay}
-            )
-    </insert>
-
-    <select id="findAllDaysUpdateCount" resultType="com.qcacg.entity.DaysUpdateCountEntity">
-        SELECT
-        DaysUpdateCountId as daysUpdateCountId,
-        UserId as userId,
-        BookId as bookId,
-        BookName as bookName,
-        SignLevel as signLevel,
-        FactDaysNum as factDaysNum,
-        SupplementNum as supplementNum,
-        TotalWords as totalWords,
-        CountDay as countDay
-        FROM sys_days_update_count
-        ORDER BY
-        DaysUpdateCountId
-    </select>
-
-    <select id="findAllMonthUpdateCount" resultType="com.qcacg.entity.MonthUpdateCountEntity">
-        SELECT
-        MouthUpdateCountId as mouthUpdateCountId,
-        UserId as userId,
-        BookId as bookId,
-        BookName as bookName,
-        SignLevel as signLevel,
-        TotalWords as totalWords,
-        CountDay as countDay
-        FROM sys_month_update_count
-        ORDER BY
-        MouthUpdateCountId
-    </select>
-
 </mapper>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qcacg.mapper.InfSettlementLogMapper" >
+
+    <select id="findOneByLogId" parameterType="string" resultType="map">
+        SELECT
+        isl.log_id AS logId,
+        isl.create_time AS createTime,
+        isl.type_description AS typeDescription,
+        isl.pay_user_id AS pay_user_id,
+        isl.paied_user_id AS paied_user_id,
+        isl.book_id AS book_id,
+        isl.order_status AS order_status,
+        isl.ip AS ip,
+        isl.update_time AS update_time,
+        isl.exchangeable_cash_amount AS exchangeable_cash_amount,
+        isl.welfare_cash_amount AS welfare_cash_amount
+        FROM
+        inf_settlement_log AS isl
+        WHERE
+        isl.log_id = #{logId}
+    </select>
+
+</mapper>

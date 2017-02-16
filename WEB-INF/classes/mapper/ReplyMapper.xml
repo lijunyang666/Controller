@@ -42,6 +42,7 @@
             r1.UserId AS userId,
             u.UserName AS userName,
             u.UserHead AS userHead,
+            u.Sex AS sex,
             r2.ReplyContent AS repliedContent,
             c.CommentContent AS commentContent,
             c.BookId AS bookId

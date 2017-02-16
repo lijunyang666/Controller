@@ -3,6 +3,60 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.qcacg.mapper.AccountMapper">
 
+    <insert id="insertDaysUpdateCount" parameterType="com.qcacg.entity.DaysUpdateCountEntity">
+        INSERT INTO sys_days_update_count(
+        DaysUpdateCountId, UserId, BookId, BookName, SignLevel, FactDaysNum, SupplementNum, TotalWords, HideWords, CountDay
+        ) values (null,#{userId}, #{bookId}, #{bookName},#{signLevel},#{factDaysNum}, #{supplementNum}, #{totalWords}, #{hideWords}, #{countDay}
+        )
+    </insert>
+
+    <insert id="insetMouthUpdateCount" parameterType="com.qcacg.entity.MonthUpdateCountEntity">
+        INSERT INTO sys_month_update_count(
+        MouthUpdateCountId, UserId, BookId, BookName, SignLevel, TotalWords, HideWords, CountDay
+        ) values (null,#{userId}, #{bookId}, #{bookName},#{signLevel}, #{totalWords}, #{hideWords}, #{countDay}
+        )
+    </insert>
+
+    <select id="findAllDaysUpdateCount" parameterType="map" resultType="com.qcacg.entity.DaysUpdateCountEntity">
+        SELECT
+        DaysUpdateCountId as daysUpdateCountId,
+        UserId as userId,
+        BookId as bookId,
+        BookName as bookName,
+        SignLevel as signLevel,
+        FactDaysNum as factDaysNum,
+        SupplementNum as supplementNum,
+        TotalWords as totalWords,
+        HideWords as hideWords,
+        CountDay as countDay
+        FROM sys_days_update_count
+        ORDER BY
+        DaysUpdateCountId
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+
+    <select id="findAllMonthUpdateCount" parameterType="map" resultType="com.qcacg.entity.MonthUpdateCountEntity">
+        SELECT
+        MouthUpdateCountId as mouthUpdateCountId,
+        UserId as userId,
+        BookId as bookId,
+        BookName as bookName,
+        SignLevel as signLevel,
+        TotalWords as totalWords,
+        HideWords as hideWords,
+        CountDay as countDay
+        FROM sys_month_update_count
+        ORDER BY
+        MouthUpdateCountId
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+
     <update id="updateSignStatus" parameterType="java.lang.Long">
         UPDATE sys_user SET sys_user.SignStatus = '1', sys_user.SignDate = now()
         WHERE sys_user.UserId = #{userId}
@@ -20,6 +74,7 @@
         AccountsDate as accountsDate,
         Status as status
         FROM sys_book_accounts
+        where date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 0 month),'%Y-%m')
         ORDER BY
         AccountsDate
         <if test="start != null">
@@ -99,5 +154,109 @@
         ORDER BY
         AccountsDate
     </select>
+
+    <update id="updateSignSignLevelByBookId" parameterType="long">
+        UPDATE inf_sign
+        SET SignLevel = 0
+        WHERE
+        BookId = #{bookId}
+    </update>
+    <update id="updateDaysUpdateSignLevelByBookId" parameterType="long">
+        UPDATE sys_days_update_count
+        SET SignLevel = 0
+        WHERE
+        BookId = #{bookId}
+    </update>
+    <update id="updateMouthUpdateSignLevelByBookId" parameterType="long">
+        UPDATE sys_month_update_count
+        SET SignLevel = 0
+        WHERE
+        BookId = #{bookId}
+    </update>
+
+    <select id="findDaysUpdateCountBookIdByBookId" parameterType="long" resultType="string">
+        SELECT
+        BookId as bookId
+        FROM sys_days_update_count
+        WHERE BookId = #{bookId}
+    </select>
+
+    <select id="findMouthUpdateCountBookIdByBookId" parameterType="long" resultType="string">
+        SELECT
+        BookId as bookId
+        FROM sys_month_update_count
+        WHERE BookId = #{bookId}
+    </select>
+
+    <select id="findDaysUpdateCountByBookId" parameterType="long" resultType="com.qcacg.entity.DaysUpdateCountEntity">
+        SELECT
+        DaysUpdateCountId as daysUpdateCountId,
+        UserId as userId,
+        BookId as bookId,
+        BookName as bookName,
+        SignLevel as signLevel,
+        FactDaysNum as factDaysNum,
+        SupplementNum as supplementNum,
+        TotalWords as totalWords,
+        HideWords as hideWords,
+        TempWords as tempWords,
+        CountDay as countDay
+        FROM sys_days_update_count
+        WHERE BookId = #{bookId}
+    </select>
+
+    <select id="findMonthUpdateCountByBookId" parameterType="long" resultType="com.qcacg.entity.MonthUpdateCountEntity">
+        SELECT
+        MouthUpdateCountId as mouthUpdateCountId,
+        UserId as userId,
+        BookId as bookId,
+        BookName as bookName,
+        SignLevel as signLevel,
+        TotalWords as totalWords,
+        HideWords as hideWords,
+        CountDay as countDay
+        FROM sys_month_update_count
+        WHERE BookId = #{bookId}
+    </select>
+
+    <update id="updateDaysUpdateCountByBookId" parameterType="map">
+        UPDATE sys_days_update_count
+        SET
+        TotalWords = #{totalWords},
+        TempWords = #{tempWords},
+        FactDaysNum = FactDaysNum + #{factDaysNum}
+        WHERE
+        BookId = #{bookId}
+    </update>
+
+    <update id="updateMouthUpdateCountByBookId" parameterType="map">
+        UPDATE sys_month_update_count
+        SET TotalWords = #{totalWords}
+        WHERE
+        BookId = #{bookId}
+    </update>
+
+    <!--插入日志开始-->
+    <insert id="insertInfCashLog" parameterType="map">
+        INSERT INTO inf_cash_log(
+          log_id,create_time,type_description,pay_user_id,paied_user_id,order_status,ip,update_time,trade_no,pay_url,exchangeable_cash_amount,unexchangeable_cash_amount,welfare_cash_amount,inf_card_log_id
+        ) VALUES (#{log_id},#{create_time},#{type_description},#{pay_user_id},#{paied_user_id},#{order_status},#{ip},#{update_time},#{trade_no},#{pay_url},#{exchangeable_cash_amount},#{unexchangeable_cash_amount},#{welfare_cash_amount},#{inf_card_log_id}
+          )
+    </insert>
+
+    <insert id="insertInfSimpleLog" parameterType="map">
+      INSERT INTO inf_simple_log(
+        log_id,create_time,type_description,log_first_type,log_second_type,log_explain
+      ) VALUES (#{log_id},#{create_time},#{type_description},#{log_first_type},#{log_second_type},#{log_explain}
+        )
+    </insert>
+
+    <insert id="insertInfSettlementLog" parameterType="map">
+      INSERT INTO inf_settlement_log(
+        log_id,create_time,type_description,pay_user_id,paied_user_id,book_id,order_status,ip,update_time,exchangeable_cash_amount,welfare_cash_amount
+      ) VALUES (#{log_id},#{create_time},#{type_description},#{pay_user_id},#{paied_user_id},#{book_id},#{order_status},#{ip},#{update_time},#{exchangeable_cash_amount},#{welfare_cash_amount}
+        )
+    </insert>
+    <!--插入日志结束-->
 
 </mapper>

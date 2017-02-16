@@ -463,9 +463,37 @@ wor_book.BookUpdate ASC
     </select>
 
     <!--                 开始recom                                      -->
+    <select id="listBookRecomByReviewStatus" parameterType="map" resultType="map">
+        SELECT
+        UserId AS userId,
+        BookId AS bookId,
+        BookName AS bookName,
+        BookIsSign AS bookIsSign,
+        IsRecommended AS isRecommended,
+        BookOnIndex AS bookOnIndex
+        FROM wor_book
+        WHERE
+        BookReviewStatus = '已审核'
+        ORDER BY
+        BookIsSign DESC
+        <if test="start != null">
+            limit
+            #{start}, #{rows}
+        </if>
+    </select>
+
     <update id="updateBookRecomByBookId" parameterType="map">
         update wor_book
-        set IsRecommended=#{isRecommended}
+        <set>
+            <trim suffixOverrides=",">
+                <if test="isRecommended != null">
+                    IsRecommended = #{isRecommended},
+                </if>
+                <if test="bookOnIndex != null">
+                    BookOnIndex = #{bookOnIndex}
+                </if>
+            </trim>
+        </set>
         where BookId=#{bookId}
     </update>
     <!--                 结束recom                                      -->

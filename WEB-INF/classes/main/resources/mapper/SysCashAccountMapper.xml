@@ -60,4 +60,13 @@
         SET Welfare_Cash_Amount =0
     </update>
 
+    <select id="findAllSimpleUserIdAndBookIdWhereSignTrue" resultType="map">
+      SELECT
+      UserId AS userId,
+      BookId AS bookId
+      FROM
+      wor_book
+      WHERE
+      BookIsSign = "1"
+    </select>
 </mapper>
