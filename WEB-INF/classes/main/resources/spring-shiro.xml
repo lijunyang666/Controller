@@ -126,6 +126,8 @@
 				/info/saveInfo.shtml = anon
 				/card/** = anon
 				/log/** = anon
+				/updateAlipayTelphoneCode.shtml = anon
+				/updateAlipay.shtml = anon
 			</value>
 		</property>
 	</bean>

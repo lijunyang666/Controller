@@ -79,14 +79,16 @@
 
     <select id="findWithdrawalsLog" resultType="com.qcacg.dto.InfCashLogDTO">
         SELECT
-        cl.log_id,
-        cl.type_description,
-        cl.order_status,
-        cl.ip,
-        cl.exchangeable_cash_amount,
-        u.UserName,
-        u.Telephone,
-        u.Email
+        cl.log_id AS logId,
+        cl.type_description AS typeDescription,
+        cl.order_status AS orderStatus,
+        cl.ip AS ip,
+        cl.exchangeable_cash_amount AS exchangeableCashAmount,
+        cl.create_time AS createTime,
+        u.UserName AS username,
+        u.Telephone AS telphone,
+        u.Email AS email,
+        cl.pay_user_id AS payUserId
         FROM
         inf_cash_log AS cl ,
         sys_user AS u
@@ -98,4 +100,13 @@
         cl.order_status ASC,
         cl.create_time DESC
     </select>
+
+    <update id="updateWithdrawals" parameterType="com.qcacg.entity.InfCashLog">
+        UPDATE inf_cash_log
+        SET
+        update_time = #{infCashLog.updateTime},
+        order_status = #{infCashLog.orderStatus}
+        WHERE
+        log_id = #{infCashLog.logId}
+    </update>
 </mapper>

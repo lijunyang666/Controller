@@ -552,7 +552,7 @@ wor_book.BookUpdate ASC
         SignLevel as signLevel
         FROM inf_sign
         WHERE
-        Status=2
+        Status=2 AND SignLevel in(1,2,3,4,5)
     </select>
 
     <update id="updateLastBookSignByParam" parameterType="map">

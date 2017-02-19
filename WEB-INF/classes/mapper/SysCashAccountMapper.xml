@@ -19,7 +19,10 @@
              UnExchangeable_Cash_Amount = UnExchangeable_Cash_Amount + #{sysCashAccount.unexchangeableCashAmount},
             </if>
             <if test="sysCashAccount.welfareCashAmount!=null">
-             Welfare_Cash_Amount = Welfare_Cash_Amount + #{sysCashAccount.welfareCashAmount}
+            Welfare_Cash_Amount = Welfare_Cash_Amount + #{sysCashAccount.welfareCashAmount}
+            </if>
+            <if test="sysCashAccount.freezeCashAmount!=null">
+            Freeze_Cash_Amount = Freeze_Cash_Amount + #{sysCashAccount.freezeCashAmount}
             </if>
         </set>
         WHERE
@@ -32,6 +35,9 @@
             sca.Exchangeable_Cash_Amount AS exchangeableCashAmount,
             sca.UnExchangeable_Cash_Amount AS unexchangeableCashAmount,
             sca.Welfare_Cash_Amount AS welfareCashAmount,
+            sca.Alipay_Account AS alipayAccount,
+            sca.Freeze_Cash_Amount AS freezeCashAmount,
+            sca.Real_Name AS realName,
             u.UserName AS userName
         FROM
             sys_cash_account AS sca,
@@ -47,6 +53,7 @@
             sca.Exchangeable_Cash_Amount AS exchangeableCashAmount,
             sca.UnExchangeable_Cash_Amount AS unexchangeableCashAmount,
             sca.Welfare_Cash_Amount AS welfareCashAmount,
+            sca.Freeze_Cash_Amount AS freezeCashAmount
             u.UserName AS userName
         FROM
             sys_cash_account AS sca,
@@ -69,4 +76,13 @@
       WHERE
       BookIsSign = "1"
     </select>
+
+    <update id="updateAlipayAccountAndRealName" parameterType="com.qcacg.entity.SysCashAccount">
+        UPDATE sys_cash_account
+        SET
+        Alipay_Account = #{sysCashAccount.alipayAccount},
+        Real_Name = #{sysCashAccount.realName}
+        WHERE
+        User_Id = #{sysCashAccount.userId}
+    </update>
 </mapper>
