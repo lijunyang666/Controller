@@ -4,8 +4,17 @@
 		 id="WebApp_ID" version="3.0">
 <display-name>qcacg</display-name>
 
-	<!--跨域过滤器00-->
+	<!-- 分页传递过滤器 -->
+	<filter>
+		<filter-name>PageFilter</filter-name>
+		<filter-class>com.qcacg.util.filter.PageFilter</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>PageFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
 
+	<!--跨域过滤器00-->
 	<filter>
 		<filter-name>originFilter</filter-name>
 		<filter-class>com.qcacg.shiro.filter.OriginControlFilter</filter-class>

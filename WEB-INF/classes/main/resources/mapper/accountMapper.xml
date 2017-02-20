@@ -77,10 +77,6 @@
         where date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 0 month),'%Y-%m')
         ORDER BY
         AccountsDate
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <insert id="insertBookAccounts" parameterType="com.qcacg.entity.BookAccountsEntity">
