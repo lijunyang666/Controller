@@ -96,4 +96,19 @@
 		</mvc:interceptor>
 	</mvc:interceptors>
 	-->
+
+	<mvc:interceptors>
+		<mvc:interceptor>
+			<mvc:mapping path="/card/sign.shtml"/>
+			<mvc:mapping path="/card/give.shtml"/>
+			<mvc:mapping path="/card/list.shtml"/>
+			<mvc:mapping path="/card/amount.shtml"/>
+			<mvc:mapping path="/pay/recharge.shtml"/>
+			<mvc:mapping path="/pay/buyCard.shtml"/>
+			<mvc:mapping path="/pay/list.shtml"/>
+			<mvc:mapping path="/pay/amount.shtml"/>
+			<mvc:mapping path="/pay/withdrawals.shtml"/>
+			<bean class="com.qcacg.interceptor.UserInterceptor"></bean>
+		</mvc:interceptor>
+	</mvc:interceptors>
 </beans>

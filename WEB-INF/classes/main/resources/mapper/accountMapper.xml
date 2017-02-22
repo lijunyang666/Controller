@@ -17,7 +17,7 @@
         )
     </insert>
 
-    <select id="findAllDaysUpdateCount" parameterType="map" resultType="com.qcacg.entity.DaysUpdateCountEntity">
+    <select id="findAllDaysUpdateCount" resultType="com.qcacg.entity.DaysUpdateCountEntity">
         SELECT
         DaysUpdateCountId as daysUpdateCountId,
         UserId as userId,
@@ -32,13 +32,9 @@
         FROM sys_days_update_count
         ORDER BY
         DaysUpdateCountId
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
-    <select id="findAllMonthUpdateCount" parameterType="map" resultType="com.qcacg.entity.MonthUpdateCountEntity">
+    <select id="findAllMonthUpdateCount" resultType="com.qcacg.entity.MonthUpdateCountEntity">
         SELECT
         MouthUpdateCountId as mouthUpdateCountId,
         UserId as userId,
@@ -51,10 +47,6 @@
         FROM sys_month_update_count
         ORDER BY
         MouthUpdateCountId
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <update id="updateSignStatus" parameterType="java.lang.Long">

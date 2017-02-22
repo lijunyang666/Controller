@@ -463,7 +463,7 @@ wor_book.BookUpdate ASC
     </select>
 
     <!--                 开始recom                                      -->
-    <select id="listBookRecomByReviewStatus" parameterType="map" resultType="map">
+    <select id="listBookRecomByReviewStatus" resultType="map">
         SELECT
         UserId AS userId,
         BookId AS bookId,
@@ -476,10 +476,6 @@ wor_book.BookUpdate ASC
         BookReviewStatus = '已审核'
         ORDER BY
         BookIsSign DESC
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <update id="updateBookRecomByBookId" parameterType="map">
@@ -544,6 +540,16 @@ wor_book.BookUpdate ASC
         SignLevel=#{signLevel}
     </select>
 
+    <select id="findLastBookSignLevelByBookId" parameterType="long" resultType="map">
+        SELECT
+        SignId AS signId,
+        SignLevel as signLevel
+        FROM inf_sign
+        WHERE BookId=#{bookId}
+        order by SignId desc
+        limit 1
+    </select>
+
     <select id="findAllSimpleBookSign" resultType="map">
         SELECT
         SignId as signId,
@@ -569,7 +575,7 @@ wor_book.BookUpdate ASC
         where BookId=#{bookId}
     </update>
 
-    <select id="findAllBookSign" parameterType="map" resultType="com.qcacg.entity.SignEntity">
+    <select id="findAllBookSign" resultType="com.qcacg.entity.SignEntity">
         SELECT
         SignId as signId,
         BookId as bookId,
@@ -591,10 +597,6 @@ wor_book.BookUpdate ASC
         Status in(0,1,2)
         ORDER BY
         SignId
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <select id="findLastBookSignByBookId" parameterType="long" resultType="com.qcacg.entity.SignEntity">
@@ -763,10 +765,6 @@ wor_book.BookUpdate ASC
         from
         inf_review
         ORDER BY FIELD(inf_review.Status, 1, 4, 2, 3)
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <select id="findReviewMSGsByReviewId" resultType="com.qcacg.entity.ReviewMSGEntity">

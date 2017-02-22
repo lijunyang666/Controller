@@ -85,4 +85,16 @@
         WHERE
         User_Id = #{sysCashAccount.userId}
     </update>
+
+    <select id="findDrawWelfareByBookId" parameterType="long" resultType="double">
+        SELECT
+        DrawWelfare AS drawWelfare
+        FROM
+        sys_book_accounts
+        WHERE
+        BookId = #{bookId}
+        ORDER BY BookAccountsId DESC
+        limit 1
+    </select>
+
 </mapper>
