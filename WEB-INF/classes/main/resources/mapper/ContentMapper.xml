@@ -110,4 +110,16 @@ wor_book.BookId = #{wor_book.BookId}
           wor_book.EveryWeekHit = wor_book.EveryWeekHit + 1
         WHERE wor_book.BookId = #{bookId}
     </update>
+
+    <select id="findContentNameByVolumeId" parameterType="java.lang.Long" resultType="com.qcacg.entity.ContentEntity">
+        SELECT
+        ContentTitle AS contentTitle,
+        ContentId AS contentId
+        FROM
+        wor_content
+        WHERE
+        VolumeId = #{volumeId}
+        ORDER BY
+        ContentId ASC
+    </select>
 </mapper>
