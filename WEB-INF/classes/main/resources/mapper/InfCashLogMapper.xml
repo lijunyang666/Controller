@@ -111,4 +111,19 @@
         WHERE
         log_id = #{infCashLog.logId}
     </update>
+    <select id="findOneByLogIdAndUserId" resultType="com.qcacg.entity.InfCashLog" parameterType="com.qcacg.dto.InfCashLogDTO">
+        SELECT
+            icl.log_id AS logId,
+            icl.create_time AS createTime,
+            icl.order_status AS orderStatus,
+            icl.unexchangeable_cash_amount AS unexchangeableCashAmount
+        FROM
+            inf_cash_log AS icl
+        WHERE
+            icl.log_id = #{infCashLogDTO.logId}
+        AND (
+            icl.pay_user_id = #{infCashLogDTO.payUserId}
+            OR icl.paied_user_id = #{infCashLogDTO.payUserId}
+        )
+    </select>
 </mapper>

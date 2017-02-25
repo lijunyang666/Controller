@@ -108,6 +108,7 @@
 			<mvc:mapping path="/pay/list.shtml"/>
 			<mvc:mapping path="/pay/amount.shtml"/>
 			<mvc:mapping path="/pay/withdrawals.shtml"/>
+			<mvc:mapping path="/log/detailForCash.shtml"/>
 			<bean class="com.qcacg.interceptor.UserInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>

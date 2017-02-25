@@ -563,7 +563,7 @@ wor_book.BookUpdate ASC
 
     <update id="updateLastBookSignByParam" parameterType="map">
         update inf_sign
-        set Status=#{status},Reply=#{reply}
+        set Status=#{status},Reply=#{reply},SignLevel=#{signLevel}
         where BookId=#{bookId}
         order by SignId desc
         limit 1
