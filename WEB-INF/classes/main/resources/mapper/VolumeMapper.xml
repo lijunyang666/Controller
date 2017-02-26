@@ -50,4 +50,23 @@
     AND
     wor_volume.VolumeId = (SELECT MAX(VolumeId) FROM wor_volume WHERE BookId = #{bookId})
   </select>
+
+    <select id="findContentsByVolumeId" parameterType="long" resultType="com.qcacg.entity.ContentEntity">
+        SELECT
+        wor_content.ContentId,
+        wor_content.VolumeId,
+        wor_content.ContentTitle,
+        wor_content.Content,
+        wor_content.ContentWordCount,
+        wor_content.ContentUpdate,
+        wor_content.ContentStatus,
+        wor_content.ContentUrl
+        FROM
+        wor_content
+        WHERE
+        wor_content.contentStatus = '0'
+        AND
+        wor_content.VolumeId = #{wor_content.VolumeId}
+    </select>
+
 </mapper>

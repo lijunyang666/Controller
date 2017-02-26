@@ -66,7 +66,9 @@
             icl.exchangeable_cash_amount AS exchangeableCashAmount,
             icl.unexchangeable_cash_amount AS unexchangeableCashAmount,
             icl.welfare_cash_amount AS welfareCashAmount,
-            icl.inf_card_log_id AS infCardLogId
+            icl.inf_card_log_id AS infCardLogId,
+            icl.pay_user_id AS payUserId,
+            icl.paied_user_id AS paiedUserId
         FROM
             sys_user AS u1,
             sys_user AS u2,
@@ -79,14 +81,16 @@
 
     <select id="findWithdrawalsLog" resultType="com.qcacg.dto.InfCashLogDTO">
         SELECT
-        cl.log_id,
-        cl.type_description,
-        cl.order_status,
-        cl.ip,
-        cl.exchangeable_cash_amount,
-        u.UserName,
-        u.Telephone,
-        u.Email
+        cl.log_id AS logId,
+        cl.type_description AS typeDescription,
+        cl.order_status AS orderStatus,
+        cl.ip AS ip,
+        cl.exchangeable_cash_amount AS exchangeableCashAmount,
+        cl.create_time AS createTime,
+        u.UserName AS username,
+        u.Telephone AS telphone,
+        u.Email AS email,
+        cl.pay_user_id AS payUserId
         FROM
         inf_cash_log AS cl ,
         sys_user AS u
@@ -97,5 +101,29 @@
         ORDER BY
         cl.order_status ASC,
         cl.create_time DESC
+    </select>
+
+    <update id="updateWithdrawals" parameterType="com.qcacg.entity.InfCashLog">
+        UPDATE inf_cash_log
+        SET
+        update_time = #{infCashLog.updateTime},
+        order_status = #{infCashLog.orderStatus}
+        WHERE
+        log_id = #{infCashLog.logId}
+    </update>
+    <select id="findOneByLogIdAndUserId" resultType="com.qcacg.entity.InfCashLog" parameterType="com.qcacg.dto.InfCashLogDTO">
+        SELECT
+            icl.log_id AS logId,
+            icl.create_time AS createTime,
+            icl.order_status AS orderStatus,
+            icl.unexchangeable_cash_amount AS unexchangeableCashAmount
+        FROM
+            inf_cash_log AS icl
+        WHERE
+            icl.log_id = #{infCashLogDTO.logId}
+        AND (
+            icl.pay_user_id = #{infCashLogDTO.payUserId}
+            OR icl.paied_user_id = #{infCashLogDTO.payUserId}
+        )
     </select>
 </mapper>

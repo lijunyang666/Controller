@@ -472,14 +472,17 @@ wor_book.BookUpdate ASC
         IsRecommended AS isRecommended,
         BookOnIndex AS bookOnIndex
         FROM wor_book
-        WHERE
-        BookReviewStatus = '已审核'
+        <where>
+            BookReviewStatus = '已审核'
+            <if test="bookIsSign != null">
+               AND BookIsSign = #{bookIsSign}
+            </if>
+            <if test="isRecommended != null">
+                AND IsRecommended = #{isRecommended}
+            </if>
+        </where>
         ORDER BY
         BookIsSign DESC
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <update id="updateBookRecomByBookId" parameterType="map">
@@ -502,7 +505,7 @@ wor_book.BookUpdate ASC
     <update id="cleanAllSignLevelStatus">
         UPDATE inf_sign
         SET IsEntry = 0
-        WHERE IsEntry=1
+        WHERE IsEntry=2
     </update>
 
     <update id="updateLastSignLevelBySignId" parameterType="int">
@@ -544,6 +547,16 @@ wor_book.BookUpdate ASC
         SignLevel=#{signLevel}
     </select>
 
+    <select id="findLastBookSignLevelByBookId" parameterType="long" resultType="map">
+        SELECT
+        SignId AS signId,
+        SignLevel as signLevel
+        FROM inf_sign
+        WHERE BookId=#{bookId}
+        order by SignId desc
+        limit 1
+    </select>
+
     <select id="findAllSimpleBookSign" resultType="map">
         SELECT
         SignId as signId,
@@ -552,12 +565,42 @@ wor_book.BookUpdate ASC
         SignLevel as signLevel
         FROM inf_sign
         WHERE
-        Status=2
+        Status=2 AND SignLevel in(1,2,3,4,5)
     </select>
 
     <update id="updateLastBookSignByParam" parameterType="map">
         update inf_sign
-        set Status=#{status},Reply=#{reply}
+        set Status=#{status},Reply=#{reply},SignLevel=#{signLevel}
+        where BookId=#{bookId}
+        order by SignId desc
+        limit 1
+    </update>
+
+    <update id="updateSignStatusBySignId" parameterType="map">
+        update inf_sign
+        set Status=#{status}
+        where SignId=#{signId}
+    </update>
+
+    <update id="updateSignLevelBySignId" parameterType="int">
+        update inf_sign
+        set SignLevel= 0
+        where SignId=#{signId}
+    </update>
+
+    <update id="updateAllSignStatus">
+        update inf_sign
+        set Status = 4
+        where Status = 6
+    </update>
+
+    <delete id="deleteBookAccountsByBookId" parameterType="long">
+        DELETE FROM sys_book_accounts WHERE BookId = #{bookId}
+    </delete>
+
+    <update id="updateLastBookSignRegainOrRemoveByParam" parameterType="map">
+        update inf_sign
+        set Status=#{status},Many=#{many}
         where BookId=#{bookId}
         order by SignId desc
         limit 1
@@ -569,7 +612,48 @@ wor_book.BookUpdate ASC
         where BookId=#{bookId}
     </update>
 
-    <select id="findAllBookSign" parameterType="map" resultType="com.qcacg.entity.SignEntity">
+    <update id="regainSignBySignId" parameterType="map">
+        update inf_sign
+        set LastTime=#{lastTime},Status=#{status},SignLevel=#{signLevel}
+        where SignId=#{signId}
+    </update>
+
+    <update id="updateBookAccountsByBookId" parameterType="map">
+        update sys_book_accounts
+        set SignLevel=#{signLevel},State=#{state},DrawWelfare=#{drawWelfare},FullWelfare=#{fullWelfare}
+        where BookId=#{bookId}
+    </update>
+
+    <select id="findSignLevelBySignLevel" parameterType="int" resultType="map">
+        SELECT
+        SignLevel AS signLevel,
+        DrawWelfare AS drawWelfare,
+        FullWelfare AS fullWelfare,
+        SignLevelDescription AS signLevelDescription
+        FROM inf_sign_level
+        where SignLevel=#{signLevel}
+    </select>
+
+    <select id="findBookAccountsStatusByBookId" parameterType="long" resultType="string">
+        SELECT
+        Status AS status
+        FROM sys_book_accounts
+        where BookId=#{bookId}
+    </select>
+
+    <update id="downSignLevelBySignId" parameterType="int">
+        update inf_sign
+        set SignLevel = SignLevel - 1
+        where SignId=#{signId}
+    </update>
+
+    <update id="regainBookIsSignByBookId" parameterType="long">
+        update wor_book
+        set BookIsSign = '1'
+        where BookId=#{bookId}
+    </update>
+
+    <select id="findAllBookSign" resultType="com.qcacg.entity.SignEntity">
         SELECT
         SignId as signId,
         BookId as bookId,
@@ -580,6 +664,7 @@ wor_book.BookUpdate ASC
         UpdateType as updateType,
         Status as status,
         SignLevel as signLevel,
+        IsEntry as isEntry,
         QQ as qq,
         Email as email,
         Phone as phone,
@@ -588,13 +673,9 @@ wor_book.BookUpdate ASC
         Reply as reply
         FROM inf_sign
         WHERE
-        Status in(0,1,2)
+        Status in(0,1,2,4,5,6)
         ORDER BY
         SignId
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <select id="findLastBookSignByBookId" parameterType="long" resultType="com.qcacg.entity.SignEntity">
@@ -608,6 +689,7 @@ wor_book.BookUpdate ASC
         UpdateType as updateType,
         Status as status,
         SignLevel as signLevel,
+        IsEntry as isEntry,
         QQ as qq,
         Email as email,
         Phone as phone,
@@ -763,10 +845,6 @@ wor_book.BookUpdate ASC
         from
         inf_review
         ORDER BY FIELD(inf_review.Status, 1, 4, 2, 3)
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <select id="findReviewMSGsByReviewId" resultType="com.qcacg.entity.ReviewMSGEntity">

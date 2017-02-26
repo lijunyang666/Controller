@@ -17,7 +17,7 @@
         )
     </insert>
 
-    <select id="findAllDaysUpdateCount" parameterType="map" resultType="com.qcacg.entity.DaysUpdateCountEntity">
+    <select id="findAllDaysUpdateCount" resultType="com.qcacg.entity.DaysUpdateCountEntity">
         SELECT
         DaysUpdateCountId as daysUpdateCountId,
         UserId as userId,
@@ -32,13 +32,9 @@
         FROM sys_days_update_count
         ORDER BY
         DaysUpdateCountId
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
-    <select id="findAllMonthUpdateCount" parameterType="map" resultType="com.qcacg.entity.MonthUpdateCountEntity">
+    <select id="findAllMonthUpdateCount" resultType="com.qcacg.entity.MonthUpdateCountEntity">
         SELECT
         MouthUpdateCountId as mouthUpdateCountId,
         UserId as userId,
@@ -51,10 +47,6 @@
         FROM sys_month_update_count
         ORDER BY
         MouthUpdateCountId
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <update id="updateSignStatus" parameterType="java.lang.Long">
@@ -74,13 +66,16 @@
         AccountsDate as accountsDate,
         Status as status
         FROM sys_book_accounts
-        where date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 0 month),'%Y-%m')
+        <trim prefix="WHERE" prefixOverrides="AND|OR">
+            <if test="start ==null and end ==null">
+                date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 0 month),'%Y-%m')
+            </if>
+            <if test="start !=null and end !=null">
+                AND AccountsDate between #{start} AND #{end}
+            </if>
+        </trim>
         ORDER BY
         AccountsDate
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <insert id="insertBookAccounts" parameterType="com.qcacg.entity.BookAccountsEntity">

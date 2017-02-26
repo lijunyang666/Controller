@@ -27,7 +27,7 @@
         VALUES (#{reportTypeId}, #{reportContent}, #{reporterId}, #{replyId}, #{commentId})
     </insert>
 
-    <select id="findAllReport" parameterType="map" resultType="com.qcacg.entity.ReportEntity">
+    <select id="findAllReport" resultType="com.qcacg.entity.ReportEntity">
         SELECT
             ReportId AS reportId,
             ReportTypeId AS reportTypeId,
@@ -43,10 +43,6 @@
           ReportStatus='0'
         ORDER BY
         ReportDate
-        <if test="start != null">
-            limit
-            #{start}, #{rows}
-        </if>
     </select>
 
     <select id="findCommentContentByCommentId" parameterType="long" resultType="string">

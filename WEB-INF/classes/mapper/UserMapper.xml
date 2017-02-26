@@ -26,4 +26,11 @@
             sys_user.SignStatus = '1'
     </update>
 
+    <select id="findUserIdAndUserName" resultType="com.qcacg.entity.UserEntity">
+        SELECT
+          sys_user.UserName AS userName,
+          sys_user.UserId AS userId
+        FROM
+          sys_user
+    </select>
 </mapper>

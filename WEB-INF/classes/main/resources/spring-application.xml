@@ -17,6 +17,7 @@
 
 	<!-- 定时扫描 -->
 	<task:annotation-driven />
+	<task:scheduler id="schedulerPool" pool-size="20"/>
 	<tx:annotation-driven />
 	<context:component-scan base-package="com.qcacg.service" />
 	<!-- 定时任务所在的类 -->

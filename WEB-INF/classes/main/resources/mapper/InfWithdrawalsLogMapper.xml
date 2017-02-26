@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qcacg.mapper.InfWithdrawalsLogMapper" >
+    <select id="findAllInfWithdrawalsLog" resultType="com.qcacg.dto.InfWithdrawalsLogDTO">
+        SELECT
+        wl.log_id AS logId,
+        wl.create_time AS createTime,
+        wl.type_description AS typeDescription,
+        wl.order_status AS orderStatus,
+        wl.cash_amount AS cashAmount,
+        u.UserName AS username,
+        u.Telephone AS telphone,
+        u.Email AS email,
+        wl.user_id AS userId
+        FROM
+        inf_withdrawals_log AS wl ,
+        sys_user AS u
+        WHERE
+        wl.user_id = u.UserId
+        ORDER BY
+        orderStatus ASC,
+        createTime DESC
+    </select>
+
+    <update id="finishWithdrawals" parameterType="com.qcacg.entity.InfWithdrawalsLog">
+        UPDATE inf_withdrawals_log
+        SET
+        order_status = #{infWithdrawalsLog.orderStatus},
+        update_time = #{infWithdrawalsLog.updateTime}
+        WHERE
+        log_id = #{infWithdrawalsLog.logId}
+    </update>
+
+    <select id="findOneByLogId" resultType="com.qcacg.dto.InfWithdrawalsLogDTO" parameterType="java.lang.String">
+        SELECT
+        wl.log_id AS logId,
+        u.UserName AS username,
+        wl.cash_amount AS cashAmount,
+        wl.order_status AS orderStatus,
+        wl.create_time AS createTime,
+        wl.ip AS ip,
+        wl.type_description AS typeDescription,
+        wl.inf_cash_log_id AS infCashLogId,
+        wl.inf_card_log_id AS infCardLogId
+        FROM
+        inf_withdrawals_log AS wl ,
+        sys_user AS u
+        WHERE
+        wl.user_id = u.UserId AND
+        wl.log_id = #{logId}
+    </select>
+</mapper>
