@@ -463,7 +463,7 @@ wor_book.BookUpdate ASC
     </select>
 
     <!--                 开始recom                                      -->
-    <select id="listBookRecomByReviewStatus" resultType="map">
+    <select id="listBookRecomByReviewStatus" parameterType="map" resultType="map">
         SELECT
         UserId AS userId,
         BookId AS bookId,
@@ -601,8 +601,6 @@ wor_book.BookUpdate ASC
     <update id="updateLastBookSignRegainOrRemoveByParam" parameterType="map">
         update inf_sign
         set Status=#{status},Many=#{many}
-=======
->>>>>>> ba4da91e16ceb90f28d1fd2419fc304d486ac73c
         where BookId=#{bookId}
         order by SignId desc
         limit 1
@@ -655,8 +653,6 @@ wor_book.BookUpdate ASC
         where BookId=#{bookId}
     </update>
 
-=======
->>>>>>> ba4da91e16ceb90f28d1fd2419fc304d486ac73c
     <select id="findAllBookSign" resultType="com.qcacg.entity.SignEntity">
         SELECT
         SignId as signId,
