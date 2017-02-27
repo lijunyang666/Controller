@@ -877,7 +877,7 @@ wor_book.BookUpdate ASC
 
     <update id="updateBookReviewStatusSHSBByBooId" parameterType="long">
         UPDATE wor_book
-        SET BookReviewStatus= '审核失败'
+        SET BookReviewStatus= '未审核'
         WHERE BookId=#{bookId}
     </update>
 
