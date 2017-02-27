@@ -56,16 +56,18 @@
 
     <select id="findBookAccountsList" parameterType="map" resultType="com.qcacg.entity.BookAccountsEntity">
         SELECT
-        BookAccountsId as bookAccountsId,
-        BookId as bookId,
-        UserId as userId,
-        SignLevel as signLevel,
-        State as state,
-        DrawWelfare as drawWelfare,
-        FullWelfare as fullWelfare,
-        AccountsDate as accountsDate,
-        Status as status
-        FROM sys_book_accounts
+        a.BookAccountsId as bookAccountsId,
+        a.BookId as bookId,
+        a.UserId as userId,
+        a.SignLevel as signLevel,
+        l.SignLevelDescription as state,
+        l.DrawWelfare as drawWelfare,
+        l.FullWelfare as fullWelfare,
+        a.AccountsDate as accountsDate,
+        a.Status as status
+        FROM sys_book_accounts AS a
+        LEFT JOIN inf_sign_level AS l
+        ON a.SignLevel = l.SignLevel
         <trim prefix="WHERE" prefixOverrides="AND|OR">
             <if test="start ==null and end ==null">
                 date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 0 month),'%Y-%m')
@@ -84,9 +86,6 @@
         BookId,
         UserId,
         SignLevel,
-        State,
-        DrawWelfare,
-        FullWelfare,
         AccountsDate,
         Status
         ) values (
@@ -94,9 +93,6 @@
         #{bookId},
         #{userId},
         #{signLevel},
-        #{state},
-        #{drawWelfare},
-        #{fullWelfare},
         #{accountsDate},
         #{status}
         )
@@ -104,16 +100,18 @@
 
     <select id="findBookAccountsByBookAccountsId" parameterType="long" resultType="com.qcacg.entity.BookAccountsEntity">
         SELECT
-        BookAccountsId as bookAccountsId,
-        BookId as bookId,
-        UserId as userId,
-        SignLevel as signLevel,
-        State as state,
-        DrawWelfare as drawWelfare,
-        FullWelfare as fullWelfare,
-        AccountsDate as accountsDate,
-        Status as status
-        FROM sys_book_accounts
+        a.BookAccountsId as bookAccountsId,
+        a.BookId as bookId,
+        a.UserId as userId,
+        a.SignLevel as signLevel,
+        l.SignLevelDescription as state,
+        l.DrawWelfare as drawWelfare,
+        l.FullWelfare as fullWelfare,
+        a.AccountsDate as accountsDate,
+        a.Status as status
+        FROM sys_book_accounts AS a
+        LEFT JOIN inf_sign_level AS l
+        ON a.SignLevel = l.SignLevel
         WHERE BookAccountsId=#{bookAccountsId}
     </select>
 
@@ -133,22 +131,6 @@
         WHERE
         BookAccountsId = #{bookAccountsId}
     </update>
-
-    <select id="findAllBookAccountsListBystatus" resultType="com.qcacg.entity.BookAccountsEntity">
-        SELECT
-        BookAccountsId as bookAccountsId,
-        BookId as bookId,
-        UserId as userId,
-        SignLevel as signLevel,
-        State as state,
-        DrawWelfare as drawWelfare,
-        FullWelfare as fullWelfare,
-        AccountsDate as accountsDate,
-        Status as status
-        FROM sys_book_accounts
-        ORDER BY
-        AccountsDate
-    </select>
 
     <update id="updateSignSignLevelByBookId" parameterType="long">
         UPDATE inf_sign

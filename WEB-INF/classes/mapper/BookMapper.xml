@@ -153,7 +153,8 @@ WHERE
         wor_book.BookCopperCoins,
         wor_book.BookSilverCoins,
         wor_book.UpdateCycle,
-        wor_book.BookReviewStatus
+        wor_book.BookReviewStatus,
+        wor_book.BookIsSign
     FROM
         wor_book
     WHERE
@@ -576,6 +577,18 @@ wor_book.BookUpdate ASC
         limit 1
     </update>
 
+    <update id="updateWorBookIsSignTwoByBookId" parameterType="long">
+        update wor_book
+        set BookIsSign = '2'
+        where BookId=#{bookId}
+    </update>
+
+    <update id="updateWorBookIsSignOneByBookId" parameterType="long">
+        update wor_book
+        set BookIsSign = '1'
+        where BookId=#{bookId}
+    </update>
+
     <update id="updateSignStatusBySignId" parameterType="map">
         update inf_sign
         set Status=#{status}
@@ -601,7 +614,7 @@ wor_book.BookUpdate ASC
     <update id="updateLastBookSignRegainOrRemoveByParam" parameterType="map">
         update inf_sign
         set Status=#{status},Many=#{many}
-        where BookId=#{bookId}
+        where SignId=#{signId}
         order by SignId desc
         limit 1
     </update>
@@ -620,19 +633,9 @@ wor_book.BookUpdate ASC
 
     <update id="updateBookAccountsByBookId" parameterType="map">
         update sys_book_accounts
-        set SignLevel=#{signLevel},State=#{state},DrawWelfare=#{drawWelfare},FullWelfare=#{fullWelfare}
+        set SignLevel=#{signLevel}
         where BookId=#{bookId}
     </update>
-
-    <select id="findSignLevelBySignLevel" parameterType="int" resultType="map">
-        SELECT
-        SignLevel AS signLevel,
-        DrawWelfare AS drawWelfare,
-        FullWelfare AS fullWelfare,
-        SignLevelDescription AS signLevelDescription
-        FROM inf_sign_level
-        where SignLevel=#{signLevel}
-    </select>
 
     <select id="findBookAccountsStatusByBookId" parameterType="long" resultType="string">
         SELECT
