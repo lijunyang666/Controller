@@ -202,7 +202,23 @@
     </select>
 
     <!-- 官方公告总条数 -->
-    <select id="countOfficialInfo" resultType="java.lang.Integer">
+    <select id="countOfficialInfo" resultType="java.lang.Integer" parameterType="java.lang.Long">
+        SELECT
+        COUNT(inf_user_message.MessageId)
+        FROM
+        inf_user_message,
+        sys_user
+        where
+        (
+        inf_user_message.UserId = sys_user.UserId
+        OR inf_user_message.UserId IS NULL
+        )
+        AND inf_user_message.MessageType = '2'
+        AND sys_user.CreateDate &lt; inf_user_message.MessageCreateDate
+        AND sys_user.userId = #{userId}
+    </select>
+    <!-- 官方公告总条数 -->
+    <select id="countOfficialInfo_1" resultType="java.lang.Integer">
         SELECT
         COUNT(inf_user_message.MessageId)
         FROM

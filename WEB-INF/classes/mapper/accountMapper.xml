@@ -31,7 +31,7 @@
         CountDay as countDay
         FROM sys_days_update_count
         ORDER BY
-        DaysUpdateCountId
+        SignLevel DESC
     </select>
 
     <select id="findAllMonthUpdateCount" resultType="com.qcacg.entity.MonthUpdateCountEntity">
@@ -46,7 +46,7 @@
         CountDay as countDay
         FROM sys_month_update_count
         ORDER BY
-        MouthUpdateCountId
+        SignLevel DESC
     </select>
 
     <update id="updateSignStatus" parameterType="java.lang.Long">
@@ -77,7 +77,7 @@
             </if>
         </trim>
         ORDER BY
-        AccountsDate
+        Status
     </select>
 
     <insert id="insertBookAccounts" parameterType="com.qcacg.entity.BookAccountsEntity">

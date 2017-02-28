@@ -475,15 +475,16 @@ wor_book.BookUpdate ASC
         FROM wor_book
         <where>
             BookReviewStatus = '已审核'
-            <if test="bookIsSign != null">
+            <if test="bookIsSign != null and bookIsSign !=5">
                AND BookIsSign = #{bookIsSign}
             </if>
-            <if test="isRecommended != null">
+            <if test="isRecommended != null and isRecommended !=5">
                 AND IsRecommended = #{isRecommended}
             </if>
         </where>
         ORDER BY
-        BookIsSign DESC
+        BookIsSign DESC,
+        IsRecommended
     </select>
 
     <update id="updateBookRecomByBookId" parameterType="map">
@@ -677,8 +678,8 @@ wor_book.BookUpdate ASC
         FROM inf_sign
         WHERE
         Status in(0,1,2,4,5,6)
-        ORDER BY
-        SignId
+        ORDER BY FIELD(inf_sign.Status, 1, 5, 4, 2, 6),
+            IsEntry
     </select>
 
     <select id="findLastBookSignByBookId" parameterType="long" resultType="com.qcacg.entity.SignEntity">

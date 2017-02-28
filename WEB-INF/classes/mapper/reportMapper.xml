@@ -23,15 +23,14 @@
         <selectKey keyProperty="reportId" resultType="java.lang.Long" order="AFTER">
             SELECT LAST_INSERT_ID() as reportId
         </selectKey>
-        INSERT INTO inf_report (reportTypeId, reportContent, reporterId, replyId, commentId)
-        VALUES (#{reportTypeId}, #{reportContent}, #{reporterId}, #{replyId}, #{commentId})
+        INSERT INTO inf_report (reportTypeId, reporterId, replyId, commentId)
+        VALUES (#{reportTypeId}, #{reporterId}, #{replyId}, #{commentId})
     </insert>
 
     <select id="findAllReport" resultType="com.qcacg.entity.ReportEntity">
         SELECT
             ReportId AS reportId,
             ReportTypeId AS reportTypeId,
-            ReportContent AS reportContent,
             ReporterId AS reporterId,
             ReportDate AS reportDate,
             CommentId AS commentId,
@@ -39,10 +38,7 @@
             ReportStatus AS reportStatus
         FROM
           inf_report
-        WHERE
-          ReportStatus='0'
-        ORDER BY
-        ReportDate
+        ORDER BY FIELD(ReportStatus, 0, 2, 1) DESC
     </select>
 
     <select id="findCommentContentByCommentId" parameterType="long" resultType="string">
@@ -63,11 +59,37 @@
         ReplyId=#{replyId}
     </select>
 
-    <update id="updateReportStatusByReportId" parameterType="long">
+    <update id="updateReportStatusTwoByReportId" parameterType="long">
+        update inf_report
+        set ReportStatus='2'
+        where ReportId=#{reportId}
+    </update>
+
+    <update id="updateReportStatusOneByReportId" parameterType="long">
         update inf_report
         set ReportStatus='1'
         where ReportId=#{reportId}
     </update>
+
+    <select id="findReportEntityByCommentIdOrReplyId" parameterType="map" resultType="com.qcacg.entity.ReportEntity">
+        SELECT
+          ReportId as reportId,
+          ReportTypeId as reportTypeId,
+          ReporterId as reporterId,
+          ReportDate as reportDate,
+          ReplyId as replyId,
+          CommentId as commentId,
+          ReportStatus as reportStatus
+        FROM inf_report
+        <where>
+            <if test="commentId != null">
+                CommentId=#{commentId}
+            </if>
+            <if test="replyId != null">
+                ReplyId=#{replyId}
+            </if>
+        </where>
+    </select>
 
     <select id="findCommentIdAndReplyIdByReportId" parameterType="long" resultType="map">
         SELECT
@@ -90,8 +112,14 @@
         where ReplyId=#{replyId}
     </update>
 
-    <select id="findReportStatusByReportId" parameterType="long" resultType="string">
+    <select id="findReportEntityByReportId" parameterType="long" resultType="com.qcacg.entity.ReportEntity">
         SELECT
+          ReportId as reportId,
+          ReportTypeId as reportTypeId,
+          ReporterId as reporterId,
+          ReportDate as reportDate,
+          ReplyId as replyId,
+          CommentId as commentId,
           ReportStatus as reportStatus
         FROM inf_report
         WHERE
