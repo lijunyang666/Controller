@@ -1085,4 +1085,12 @@ wor_book.BookUpdate ASC
         wor_book.MonthCopperCoins = wor_book.EveryMonthCopperCoins,
         wor_book.EveryMonthCopperCoins = 0
     </update>
+
+    <update id="updateBookUpdate" parameterType="com.qcacg.entity.BookEntity">
+        UPDATE wor_book
+        SET
+        wor_book.BookUpdate = #{bookEntity.bookUpdate}
+        WHERE
+        wor_book.BookId = #{bookEntity.bookId}
+    </update>
 </mapper>
