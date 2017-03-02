@@ -110,7 +110,26 @@
 			<mvc:mapping path="/pay/withdrawals.shtml"/>
 			<mvc:mapping path="/log/detailForCash.shtml"/>
 			<mvc:mapping path="/logout.shtml"/>
+			<mvc:mapping path="/book/queryBook.shtml"/>
+			<mvc:mapping path="/volume/saveOrUpdateVolume.shtml"/>
+			<mvc:mapping path="/volume/removeVolume.shtml" />
+			<mvc:mapping path="/catalog/volumeChange.shtml"/>
+			<mvc:mapping path="/content/findContent.shtml" />
+			<mvc:mapping path="/content/saveOrUpdateContent.shtml" />
+			<mvc:mapping path="/catalog/contentChange.shtml" />
+			<mvc:mapping path="/content/removeContent.shtml" />
 			<bean class="com.qcacg.interceptor.UserInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/book/queryBook.shtml"/>
+			<mvc:mapping path="/volume/saveOrUpdateVolume.shtml"/>
+			<mvc:mapping path="/volume/removeVolume.shtml" />
+			<mvc:mapping path="/catalog/volumeChange.shtml"/>
+			<mvc:mapping path="/content/findContent.shtml" />
+			<mvc:mapping path="/content/saveOrUpdateContent.shtml" />
+			<mvc:mapping path="/catalog/contentChange.shtml" />
+			<mvc:mapping path="/content/removeContent.shtml" />
+			<bean class="com.qcacg.interceptor.WriterInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>

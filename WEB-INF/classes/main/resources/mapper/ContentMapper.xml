@@ -119,6 +119,8 @@ wor_book.BookId = #{wor_book.BookId}
         wor_content
         WHERE
         VolumeId = #{volumeId}
+        AND
+        ContentStatus = '0'
         ORDER BY
         ContentId ASC
     </select>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qcacg.mapper.WriterMapper" >
+    <select id="getUserIdByBookId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            wb.UserId AS userId
+        FROM
+            wor_book AS wb
+        WHERE
+            wb.BookId = #{bookId}
+    </select>
+
+    <select id="getUserIdByVolumeId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            wb.UserId AS userId
+        FROM
+            wor_volume AS wv,
+            wor_book AS wb
+        WHERE
+            wv.VolumeId = #{volumeId}
+        AND wv.BookId = wb.BookId
+    </select>
+
+    <select id="getUserIdByContentId" parameterType="java.lang.Long" resultType="java.lang.Long">
+        SELECT
+            wb.UserId AS userId
+        FROM
+            wor_volume AS wv,
+            wor_book AS wb,
+            wor_content AS wc
+        WHERE
+            wc.ContentId = #{contentId}
+        AND wv.BookId = wb.BookId
+        AND wv.VolumeId = wc.VolumeId
+    </select>
+</mapper>
