@@ -99,6 +99,7 @@
 
 	<mvc:interceptors>
 		<mvc:interceptor>
+			<mvc:mapping path="/report/report.shtml"/>
 			<mvc:mapping path="/card/sign.shtml"/>
 			<mvc:mapping path="/card/give.shtml"/>
 			<mvc:mapping path="/card/list.shtml"/>
