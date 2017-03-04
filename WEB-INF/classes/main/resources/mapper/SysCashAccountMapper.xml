@@ -35,9 +35,9 @@
             sca.Exchangeable_Cash_Amount AS exchangeableCashAmount,
             sca.UnExchangeable_Cash_Amount AS unexchangeableCashAmount,
             sca.Welfare_Cash_Amount AS welfareCashAmount,
-            sca.Alipay_Account AS alipayAccount,
+--             sca.Alipay_Account AS alipayAccount,
             sca.Freeze_Cash_Amount AS freezeCashAmount,
-            sca.Real_Name AS realName,
+--             sca.Real_Name AS realName,
             u.UserName AS userName
         FROM
             sys_cash_account AS sca,

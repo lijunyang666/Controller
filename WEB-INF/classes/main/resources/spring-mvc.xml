@@ -123,7 +123,6 @@
 		</mvc:interceptor>
 		<mvc:interceptor>
 			<mvc:mapping path="/book/queryBook.shtml"/>
-			<mvc:mapping path="/volume/saveOrUpdateVolume.shtml"/>
 			<mvc:mapping path="/volume/removeVolume.shtml" />
 			<mvc:mapping path="/catalog/volumeChange.shtml"/>
 			<mvc:mapping path="/content/findContent.shtml" />

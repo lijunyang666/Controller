@@ -126,6 +126,8 @@ SELECT
         UPDATE inf_reply
         SET inf_reply.ReplyType = '1'
         WHERE
+        inf_reply.ReplyType = '0'
+        AND
         inf_reply.ReplyUserId = #{userId}
     </update>
     <!--2017年1月10日13:13:16 添加根据id获取回复总数-->
