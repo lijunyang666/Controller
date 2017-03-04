@@ -8,6 +8,7 @@
         wl.type_description AS typeDescription,
         wl.order_status AS orderStatus,
         wl.cash_amount AS cashAmount,
+        wl.trade_no AS tradeNo,
         u.UserName AS username,
         u.Telephone AS telphone,
         u.Email AS email,
@@ -26,7 +27,8 @@
         UPDATE inf_withdrawals_log
         SET
         order_status = #{infWithdrawalsLog.orderStatus},
-        update_time = #{infWithdrawalsLog.updateTime}
+        update_time = #{infWithdrawalsLog.updateTime},
+        trade_no = #{infWithdrawalsLog.tradeNo}
         WHERE
         log_id = #{infWithdrawalsLog.logId}
     </update>
