@@ -26,6 +26,9 @@
             )
         AND cl.pay_user_id = u1.UserId
         AND cl.paied_user_id = u2.UserId
+        AND (cl.order_status = 0
+        OR
+        cl.order_status = 1)
         ORDER BY
             cl.create_time DESC
     </select>
@@ -53,4 +56,13 @@
         AND u2.UserId = icl.paied_user_id
         AND icl.log_id = #{logId}
     </select>
+
+    <update id="updateWithdrawals" parameterType="com.qcacg.entity.InfCardLog">
+         UPDATE inf_card_log
+        SET
+        update_time = #{infCardLog.updateTime},
+        order_status = #{infCardLog.orderStatus}
+        WHERE
+        log_id = #{infCardLog.logId}
+    </update>
 </mapper>
