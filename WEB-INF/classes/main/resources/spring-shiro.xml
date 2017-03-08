@@ -128,6 +128,7 @@
 				/log/** = anon
 				/updateAlipayTelphoneCode.shtml = anon
 				/updateAlipay.shtml = anon
+				/remeber.shtml = anon
 			</value>
 		</property>
 	</bean>

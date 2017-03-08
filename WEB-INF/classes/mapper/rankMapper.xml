@@ -19,6 +19,7 @@
         <result column="everyMonthCopperCoins" property="everyMonthCopperCoins"/>
         <result column="everyMonthHit" property="everyMonthHit"/>
         <result column="everyMonthWordCount" property="everyMonthWordCount"/>
+        <result column="bookIsSign" property="bookIsSign"/>
     </resultMap>
 
     <select id="getRankingList" resultMap="rankResult" parameterType="com.qcacg.entity.rank.RankVo">
@@ -37,7 +38,8 @@
         wor_book.EveryMonthHit AS everyMonthHit,
         wor_book.EveryMonthWordCount AS everyMonthWordCount,
         sys_user.UserId AS userId,
-        sys_user.UserName AS author
+        sys_user.UserName AS author,
+        wor_book.BookIsSign AS bookIsSign
         FROM
         wor_book
         INNER JOIN

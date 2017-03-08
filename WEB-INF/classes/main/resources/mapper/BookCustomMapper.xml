@@ -144,4 +144,14 @@ WHERE
         ORDER BY
         wor_content.ContentId
     </select>
+
+    <select id="findLastBookSignLevelByBookId" parameterType="long" resultType="string">
+        SELECT
+        SignLevel as signLevel
+        FROM inf_sign
+        WHERE BookId=#{bookId}
+        order by SignId desc
+        limit 1
+    </select>
+    
 </mapper>
