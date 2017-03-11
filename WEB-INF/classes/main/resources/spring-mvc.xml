@@ -99,6 +99,11 @@
 
 	<mvc:interceptors>
 		<mvc:interceptor>
+			<mvc:mapping path="/**.shtml"/>
+			<mvc:mapping path="/**/**.shtml"/>
+			<bean class="com.qcacg.interceptor.KeepLoginInterceptor"></bean>
+		</mvc:interceptor>
+		<mvc:interceptor>
 			<mvc:mapping path="/report/report.shtml"/>
 			<mvc:mapping path="/card/sign.shtml"/>
 			<mvc:mapping path="/card/give.shtml"/>
@@ -110,16 +115,34 @@
 			<mvc:mapping path="/pay/amount.shtml"/>
 			<mvc:mapping path="/pay/withdrawals.shtml"/>
 			<mvc:mapping path="/pay/totalIncome.shtml"/>
+			<mvc:mapping path="/pay/orderSum.shtml"/>
 			<mvc:mapping path="/log/detailForCash.shtml"/>
 			<mvc:mapping path="/logout.shtml"/>
-			<mvc:mapping path="/book/queryBook.shtml"/>
 			<mvc:mapping path="/volume/saveOrUpdateVolume.shtml"/>
 			<mvc:mapping path="/volume/removeVolume.shtml" />
-			<mvc:mapping path="/catalog/volumeChange.shtml"/>
 			<mvc:mapping path="/content/findContent.shtml" />
 			<mvc:mapping path="/content/saveOrUpdateContent.shtml" />
-			<mvc:mapping path="/catalog/contentChange.shtml" />
 			<mvc:mapping path="/content/removeContent.shtml" />
+			<mvc:mapping path="/catalog/volumeChange.shtml"/>
+			<mvc:mapping path="/catalog/contentChange.shtml" />
+			<mvc:mapping path="/book/findBookByUser.shtml"/>
+			<mvc:mapping path="/book/queryBook.shtml"/>
+			<mvc:mapping path="/book/saveOrUpdateBook.shtml"/>
+			<mvc:mapping path="/book/userUpdateBookStatus.shtml"/>
+			<mvc:mapping path="/book/userRegainBookSign.shtml"/>
+			<mvc:mapping path="/book/userUpdateBookSign.shtml"/>
+			<mvc:mapping path="/comment/saveComment.shtml"/>
+			<mvc:mapping path="/comment/top.shtml"/>
+			<mvc:mapping path="/updateAlipay.shtml"/>
+			<mvc:mapping path="/relation/saveOrCancelAttention.shtml"/>
+			<mvc:mapping path="/relation/myCareOrCareMe.shtml"/>
+			<mvc:mapping path="/reply/saveReply.shtml"/>
+			<mvc:mapping path="/reply/findCommentAndReplyByReplyUserId.shtml"/>
+			<mvc:mapping path="/report/report.shtml"/>
+			<mvc:mapping path="/info/queryMsg.shtml"/>
+			<mvc:mapping path="/user/upload.shtml"/>
+			<mvc:mapping path="/updatePasswordTelephoneCode.shtml"/>
+			<mvc:mapping path="/bookCollect/**.shtml"/>
 			<bean class="com.qcacg.interceptor.UserInterceptor"></bean>
 		</mvc:interceptor>
 		<mvc:interceptor>
@@ -130,6 +153,7 @@
 			<mvc:mapping path="/content/saveOrUpdateContent.shtml" />
 			<mvc:mapping path="/catalog/contentChange.shtml" />
 			<mvc:mapping path="/content/removeContent.shtml" />
+			<mvc:mapping path="/book/userSignLevelUp.shtml" />
 			<bean class="com.qcacg.interceptor.WriterInterceptor"></bean>
 		</mvc:interceptor>
 	</mvc:interceptors>

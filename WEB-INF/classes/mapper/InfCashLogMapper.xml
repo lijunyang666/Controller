@@ -128,11 +128,21 @@
     </select>
     <select id="findAllIncomeByUserId" parameterType="java.lang.Long" resultType="java.lang.Double">
         SELECT
-        SUM(icl.exchangeable_cash_amount+icl.unexchangeable_cash_amount)
+        SUM(icl.exchangeable_cash_amount+icl.unexchangeable_cash_amount+icl.welfare_cash_amount)
         FROM
         inf_cash_log AS icl
         WHERE
         icl.paied_user_id = #{userId}
+        AND
+        icl.order_status = 1
+    </select>
+    <select id="findAllDefrayByUserId" parameterType="java.lang.Long" resultType="java.lang.Double">
+        SELECT
+        SUM(icl.exchangeable_cash_amount+icl.unexchangeable_cash_amount+icl.welfare_cash_amount)
+        FROM
+        inf_cash_log AS icl
+        WHERE
+        icl.pay_user_id = #{userId}
         AND
         icl.order_status = 1
     </select>
