@@ -33,4 +33,35 @@
         FROM
           sys_user
     </select>
+
+    <!-- 查询用户简单信息 -->
+    <select id="findAllSimpleUsers" resultType="map">
+      SELECT
+        UserId AS userId,
+        UserName AS userName,
+        CreateDate AS createDate,
+        LastLoginDate AS lastLoginDate,
+        UserStatus AS userStatus,
+        IP AS ip
+      FROM
+        sys_user
+      ORDER BY
+        UserId
+    </select>
+
+    <!-- 查询用户详细信息 -->
+    <select id="findDetailUserByUserId" parameterType="long" resultType="map">
+      SELECT
+        Telephone AS telephone,
+        Email AS email,
+        Sex AS sex,
+        Birthday AS birthday,
+        UserAttention AS userAttention,
+        InvitePeople AS invitePeople
+      FROM
+        sys_user
+      WHERE
+        UserId = #{userId}
+    </select>
+
 </mapper>

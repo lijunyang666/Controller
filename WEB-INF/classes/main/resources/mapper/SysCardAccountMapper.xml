@@ -22,7 +22,7 @@
                 sca.Given_Pay_Card_Amount = sca.Given_Pay_Card_Amount + #{sysCardAccount.givenPayCardAmount},
             </if>
             <if test="sysCardAccount.givenWelfareCardAmount!=null">
-                sca.Given_Welfare_Card_Amount = sca.Given_Welfare_Card_Amount + #{sysCardAccount.givenWelfareCardAmount}
+                sca.Given_Welfare_Card_Amount = sca.Given_Welfare_Card_Amount + #{sysCardAccount.givenWelfareCardAmount},
             </if>
         </set>
         WHERE

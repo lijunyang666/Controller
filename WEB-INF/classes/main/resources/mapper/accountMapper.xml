@@ -70,7 +70,7 @@
         ON a.SignLevel = l.SignLevel
         <trim prefix="WHERE" prefixOverrides="AND|OR">
             <if test="start ==null and end ==null">
-                date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 0 month),'%Y-%m')
+                date_format(AccountsDate,'%Y-%m')=date_format(date_sub(curdate(), interval 1 month),'%Y-%m')
             </if>
             <if test="start !=null and end !=null">
                 AND AccountsDate between #{start} AND #{end}

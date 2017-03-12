@@ -1,0 +1,222 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.qcacg.mapper.WorBookRewardMapper" >
+    <select id="findTotalWorBookReward" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+            su.UserName AS userName,
+            su.UserHead AS userHead,
+            wbr.card_amount AS cardAmount
+        FROM
+            wor_book_reward_total AS wbr,
+            sys_user AS su
+        WHERE
+            wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+            cardAmount DESC
+        LIMIT 10
+    </select>
+
+    <select id="findMonthWorBookReward" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        su.UserHead AS userHead,
+        wbr.card_amount AS cardAmount
+        FROM
+        wor_book_reward_month AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 10
+    </select>
+
+    <select id="findWeekWorBookReward" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        su.UserHead AS userHead,
+        wbr.card_amount AS cardAmount
+        FROM
+        wor_book_reward_week AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 10
+    </select>
+
+    <insert id="insertTotalWorBookReward">
+    INSERT IGNORE INTO wor_book_reward_total (user_id, book_id)
+    VALUES
+        (#{userId}, #{bookId})
+    </insert>
+
+    <insert id="insertMonthWorBookReward">
+        INSERT IGNORE INTO wor_book_reward_month (user_id, book_id)
+        VALUES
+        (#{userId}, #{bookId})
+    </insert>
+
+    <insert id="insertWeekWorBookReward">
+        INSERT IGNORE INTO wor_book_reward_week (user_id, book_id)
+        VALUES
+        (#{userId}, #{bookId})
+    </insert>
+
+    <update id="updateTotalWorBookReward" parameterType="com.qcacg.entity.WorBookReward">
+        UPDATE wor_book_reward_total AS wbr
+        SET wbr.card_amount = card_amount + #{worBookReward.cardAmount}
+        WHERE
+            wbr.user_id = #{worBookReward.userId}
+        AND wbr.book_id = #{worBookReward.bookId}
+    </update>
+
+    <update id="updateMonthWorBookReward" parameterType="com.qcacg.entity.WorBookReward">
+        UPDATE wor_book_reward_month AS wbr
+        SET wbr.card_amount = card_amount + #{worBookReward.cardAmount}
+        WHERE
+            wbr.user_id = #{worBookReward.userId}
+        AND wbr.book_id = #{worBookReward.bookId}
+    </update>
+
+    <update id="updateWeekWorBookReward" parameterType="com.qcacg.entity.WorBookReward">
+        UPDATE wor_book_reward_week AS wbr
+        SET wbr.card_amount = card_amount + #{worBookReward.cardAmount}
+        WHERE
+            wbr.user_id = #{worBookReward.userId}
+        AND wbr.book_id = #{worBookReward.bookId}
+    </update>
+
+    <delete id="deleteMonthWorBookRewardTask">
+        DELETE
+        FROM
+            wor_book_reward_month
+        WHERE
+            card_amount = 0
+    </delete>
+
+    <delete id="deleteWeekWorBookRewardTask">
+        DELETE
+        FROM
+            wor_book_reward_week
+        WHERE
+            card_amount = 0
+    </delete>
+
+    <update id="updateTotalWorBookRewardLastTask">
+        UPDATE wor_book_reward_total AS wbr
+        SET wbr.card_amount_last = card_amount
+    </update>
+
+    <update id="updateMonthWorBookRewardLastTask">
+        UPDATE wor_book_reward_month AS wbr
+        SET wbr.card_amount_last = card_amount ,
+        wbr.card_amount = 0
+    </update>
+
+    <update id="updateWeekWorBookRewardLastTask">
+        UPDATE wor_book_reward_week AS wbr
+        SET wbr.card_amount_last = card_amount ,
+        wbr.card_amount = 0
+    </update>
+
+    <select id="findTotalWorBookRewardMore" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        su.UserHead AS userHead,
+        wbr.card_amount AS cardAmount,
+        wbr.user_id AS userId
+        FROM
+        wor_book_reward_total AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 30
+    </select>
+
+    <select id="findMonthWorBookRewardMore" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        su.UserHead AS userHead,
+        wbr.card_amount AS cardAmount,
+        wbr.user_id AS userId
+        FROM
+        wor_book_reward_month AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 30
+    </select>
+
+    <select id="findWeekWorBookRewardMore" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        su.UserHead AS userHead,
+        wbr.card_amount AS cardAmount,
+        wbr.user_id AS userId
+        FROM
+        wor_book_reward_week AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 30
+    </select>
+
+    <select id="findTotalWorBookRewardLastMore" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        wbr.card_amount_last AS cardAmount
+        FROM
+        wor_book_reward_total AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 30
+    </select>
+
+    <select id="findMonthWorBookRewardLastMore" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        wbr.card_amount_last AS cardAmount
+        FROM
+        wor_book_reward_month AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 30
+    </select>
+
+    <select id="findWeekWorBookRewardLastMore" parameterType="java.lang.Long" resultType="com.qcacg.dto.WorBookRewardDTO">
+        SELECT
+        su.UserName AS userName,
+        wbr.card_amount_last AS cardAmount
+        FROM
+        wor_book_reward_week AS wbr,
+        sys_user AS su
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = su.UserId
+        ORDER BY
+        cardAmount DESC
+        LIMIT 30
+    </select>
+</mapper>

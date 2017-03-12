@@ -19,10 +19,10 @@
              UnExchangeable_Cash_Amount = UnExchangeable_Cash_Amount + #{sysCashAccount.unexchangeableCashAmount},
             </if>
             <if test="sysCashAccount.welfareCashAmount!=null">
-            Welfare_Cash_Amount = Welfare_Cash_Amount + #{sysCashAccount.welfareCashAmount}
+            Welfare_Cash_Amount = Welfare_Cash_Amount + #{sysCashAccount.welfareCashAmount},
             </if>
             <if test="sysCashAccount.freezeCashAmount!=null">
-            Freeze_Cash_Amount = Freeze_Cash_Amount + #{sysCashAccount.freezeCashAmount}
+            Freeze_Cash_Amount = Freeze_Cash_Amount + #{sysCashAccount.freezeCashAmount},
             </if>
         </set>
         WHERE
