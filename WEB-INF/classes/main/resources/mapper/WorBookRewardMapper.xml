@@ -219,4 +219,34 @@
         cardAmount DESC
         LIMIT 30
     </select>
+
+    <select id="findTotalWorBookRewardByUserId" resultType="java.lang.Long">
+        SELECT
+        wbr.card_amount AS cardAmount
+        FROM
+        wor_book_reward_total AS wbr
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = #{userId}
+    </select>
+
+    <select id="findMonthWorBookRewardByUserId" resultType="java.lang.Long">
+        SELECT
+        wbr.card_amount AS cardAmount
+        FROM
+        wor_book_reward_month AS wbr
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = #{userId}
+    </select>
+
+    <select id="findWeekWorBookRewardByUserId" resultType="java.lang.Long">
+        SELECT
+        wbr.card_amount AS cardAmount
+        FROM
+        wor_book_reward_week AS wbr
+        WHERE
+        wbr.book_id = #{bookId}
+        AND wbr.user_id = #{userId}
+    </select>
 </mapper>

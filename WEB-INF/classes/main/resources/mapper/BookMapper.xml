@@ -1093,4 +1093,27 @@ wor_book.BookUpdate ASC
         WHERE
         wor_book.BookId = #{bookEntity.bookId}
     </update>
+
+    <select id="findBookCoreList" resultType="map">
+      SELECT
+        BookId AS bookId,
+        BookName AS bookName,
+        BookIsSign AS bookIsSign,
+        UpdateCycle AS updateCycle,
+        BookReviewStatus AS bookReviewStatus
+        FROM
+        wor_book
+        WHERE
+        BookReviewStatus IN ('已审核','已下架')
+    </select>
+
+    <update id="updateBookReviewStatusByBookId" parameterType="map">
+      UPDATE
+      wor_book
+      SET
+      BookReviewStatus = #{bookReviewStatus}
+      WHERE
+      BookId = #{bookId}
+    </update>
+
 </mapper>
