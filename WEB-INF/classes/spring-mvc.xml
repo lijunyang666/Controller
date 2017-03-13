@@ -156,5 +156,9 @@
 			<mvc:mapping path="/book/userSignLevelUp.shtml" />
 			<bean class="com.qcacg.interceptor.WriterInterceptor"></bean>
 		</mvc:interceptor>
+		<mvc:interceptor>
+			<mvc:mapping path="/**/admin**.shtml"/>
+			<bean class="com.qcacg.interceptor.AdminInterceptor"></bean>
+		</mvc:interceptor>
 	</mvc:interceptors>
 </beans>
